@@ -20,7 +20,6 @@ export default tseslint.config(
       },
     },
   },
-  perfectionist.configs["recommended-natural"],
   {
     files: ["**/*.test.ts", "**/*.spec.ts"],
     plugins: {
