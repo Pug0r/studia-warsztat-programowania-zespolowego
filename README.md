@@ -7,6 +7,7 @@ phase 0 TODO:
 - [ ] write decent readme with setup instructions
 - [ ] setup precommit hooks (types!, possibly styling?)
 - [ ] add database connection
+- [ ] clear not needed templates code
 - [ ] meeting with intro on how the structure works
 
 How to run:
