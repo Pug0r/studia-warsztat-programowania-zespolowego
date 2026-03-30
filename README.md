@@ -17,6 +17,7 @@ Architecture:
 Best practices:
 
 Team members:
+--
 - Aleksander Pugowski
 - Maria Tyrpa
 - Bartosz Polak  
