@@ -13,14 +13,20 @@
     "type-check": "npm run type-check --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
     "format:check": "prettier --check .",
+    "format": "prettier --write .",
     "prepare": "husky"
   },
   "devDependencies": {
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0"
   },
-    "lint-staged": {
-    "*.{ts,tsx,js,jsx}": ["eslint --fix", "prettier --write"],
-    "*.{json,md}": ["prettier --write"]
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
   }
 }
