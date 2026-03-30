@@ -33,6 +33,8 @@
   },
   "homepage": "https://github.com/Pug0r/studia-warsztat-programowania-zespolowego#readme",
   "dependencies": {
+    "@supabase/supabase-js": "^2.100.0",
+    "dotenv": "^17.3.1",
     "express": "^5.2.1"
   },
   "devDependencies": {

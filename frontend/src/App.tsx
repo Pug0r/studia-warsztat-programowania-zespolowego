@@ -1,32 +1,27 @@
-import { useEffect, useState } from 'react';
-
-interface ListItem {
-  id: number;
-  name: string;
-}
+import { QueryClientProvider } from "@tanstack/react-query";
+import { AppRoutes } from "./routes/AppRoutes";
+import { ToastContainer } from "react-toastify";
+import { queryClient } from "./app/queryClient";
+import { AuthProvider } from "@/modules/auth/AuthProvider";
 
 function App() {
-  const [items, setItems] = useState<ListItem[]>([]);
-
-  useEffect(() => {
-    fetch('/api/items')
-      .then(res => res.json())
-      .then(data => {
-        console.log("Data received:", data);
-        setItems(data.items); 
-      })
-      .catch(err => console.error("Error fetching data:", err));
-  }, []);
-
   return (
-    <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-      <h1>Monorepo: React + Express</h1>
-      <ul>
-        {items.map(item => (
-          <li key={item.id}>{item.name}</li>
-        ))}
-      </ul>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <AppRoutes />
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 

@@ -1,9 +1,14 @@
 {
   "extends": "@tsconfig/node22/tsconfig.json",
   "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
     "outDir": "./dist",
-    "rootDir": "./"
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
   },
-  "include": ["**/*.ts"],
-  "exclude": ["dist"]
+  "include": ["src"],
+  "exclude": ["dist", "node_modules"]
 }
