@@ -2,11 +2,16 @@
 import express from "express";
 import { middleware } from "#middlewares/middlewares.js";
 import itemRouter from "#api/initial-example/itemRoutes.js";
+import petsRouter from "#modules/pets/pets.routes.js";
+import dotenv from "dotenv";
 
+dotenv.config();
 const app = express();
 const port = process.env.PORT ?? "5000";
 
+app.use(express.json());
 app.use("/api", itemRouter);
+app.use("/api/pets", petsRouter);
 
 app.get("/", middleware);
 

@@ -1,11 +1,17 @@
 FROM node:24-alpine
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
+COPY package.json package-lock.json ./
+COPY backend/package.json ./backend/
+COPY frontend/package.json ./frontend/
+COPY packages/types ./packages/types/
 
-COPY . .
+RUN npm ci
+
+COPY backend ./backend
+
+WORKDIR /app/backend
 
 EXPOSE 5000
 
