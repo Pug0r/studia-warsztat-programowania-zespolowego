@@ -3,11 +3,13 @@
 .env.*
 !.env.example
 
+# Dependencies
+
 package-lock.json
 
-
-# Dependencies
 /node_modules
+/frontend/node_modules
+/backend/node_modules
 
 # TypeScript build output
 /dist
