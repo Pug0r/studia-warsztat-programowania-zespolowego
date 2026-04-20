@@ -137,7 +137,7 @@ function Header() {
           <a className="hp-btn hp-btn--secondary" href="#events">
             View events
           </a>
-          <a className="hp-btn hp-btn--primary" href="#adopt">
+          <a className="hp-btn hp-btn--primary" href="/adopt">
             Find a pet
           </a>
         </div>
@@ -160,7 +160,7 @@ function Hero() {
           volunteers, coordinators, and our veterinary team.
         </p>
         <div className="hp-hero__ctas" id="adopt">
-          <a className="hp-btn hp-btn--primary" href="#adopt">
+          <a className="hp-btn hp-btn--primary" href="/adopt">
             Start adoption
           </a>
           <a className="hp-btn hp-btn--secondary" href="#events">
