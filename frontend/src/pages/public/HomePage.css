@@ -148,6 +148,22 @@
   gap: 0.5rem;
 }
 
+.hp-user-chip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 16rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  background: var(--hp-bg);
+  color: var(--hp-text-muted);
+  border: 1px solid var(--hp-border);
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .hp-btn {
   display: inline-flex;
   align-items: center;

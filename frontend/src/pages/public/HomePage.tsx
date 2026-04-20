@@ -1,5 +1,7 @@
 import "./HomePage.css";
 
+import { useAuth } from "@/modules/auth/hooks/useAuth";
+
 const STATS = [
   {
     value: "1,240+",
@@ -115,6 +117,9 @@ const HERO_IMAGES = {
 } as const;
 
 function Header() {
+  const { session, isLoading, signOut } = useAuth();
+  const userLabel = isLoading ? "Loading..." : (session?.user.email ?? "Guest");
+
   return (
     <header className="hp-header">
       <div className="hp-header__inner">
@@ -132,8 +137,20 @@ function Header() {
         </nav>
         <div className="hp-header__actions">
           <a className="hp-btn hp-btn--ghost" href="/login">
-            LogIn
+            Log in
           </a>
+          <span className="hp-user-chip" title={userLabel}>
+            {userLabel}
+          </span>
+          {session ? (
+            <button
+              type="button"
+              className="hp-btn hp-btn--ghost"
+              onClick={() => void signOut()}
+            >
+              Sign out
+            </button>
+          ) : null}
           <a className="hp-btn hp-btn--secondary" href="#events">
             View events
           </a>
