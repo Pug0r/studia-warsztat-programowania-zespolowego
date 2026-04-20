@@ -8,5 +8,12 @@ export type {
   TablesUpdate,
 } from "./database.types.js";
 export { Constants } from "./database.types.js";
+export type {
+  AdoptionApplicationInsert,
+  AdoptionApplicationRow,
+  AdoptionApplicationRow as AdoptionApplication,
+  AdoptionApplicationUpdate,
+  CreateAdoptionApplicationDTO,
+} from "./adoptionApplication.js";
 export type { CreateUserDTO, UserInsert, UserRow } from "./user.js";
 export type { PetInsert, PetRow, PetRow as Pet, PetUpdate } from "./pet.js";

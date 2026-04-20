@@ -44,6 +44,51 @@ export interface Database {
         };
         Relationships: [];
       };
+      adoption_applications: {
+        Row: {
+          city: string | null;
+          created_at: string;
+          email: string;
+          full_name: string;
+          has_other_pets: boolean | null;
+          housing_type: string | null;
+          id: number;
+          message: string;
+          pet_id: number;
+          phone: string | null;
+          status: "new" | "reviewing" | "accepted" | "rejected";
+          user_id: string | null;
+        };
+        Insert: {
+          city?: string | null;
+          created_at?: string;
+          email: string;
+          full_name: string;
+          has_other_pets?: boolean | null;
+          housing_type?: string | null;
+          id?: number;
+          message: string;
+          pet_id: number;
+          phone?: string | null;
+          status?: "new" | "reviewing" | "accepted" | "rejected";
+          user_id?: string | null;
+        };
+        Update: {
+          city?: string | null;
+          created_at?: string;
+          email?: string;
+          full_name?: string;
+          has_other_pets?: boolean | null;
+          housing_type?: string | null;
+          id?: number;
+          message?: string;
+          pet_id?: number;
+          phone?: string | null;
+          status?: "new" | "reviewing" | "accepted" | "rejected";
+          user_id?: string | null;
+        };
+        Relationships: [];
+      };
       users: {
         Row: {
           created_at: string;
