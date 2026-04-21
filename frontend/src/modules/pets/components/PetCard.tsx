@@ -3,11 +3,15 @@ import type { Pet } from "../types/Pets";
 
 type Props = {
   pet: Pet;
+  onPetClick: (petId: number) => void;
 };
 
-export const PetCard: React.FC<Props> = ({ pet }) => {
+export const PetCard: React.FC<Props> = ({ pet, onPetClick }) => {
   return (
-    <div className="border rounded-2xl p-4 shadow-sm hover:shadow-md transition">
+    <div
+      onClick={() => onPetClick(pet.id)}
+      className="border rounded-2xl p-4 shadow-sm hover:shadow-lg hover:border-slate-300 transition-all cursor-pointer"
+    >
       <h2 className="text-lg font-semibold mb-2">{pet.name}</h2>
 
       <div className="text-sm text-gray-600 space-y-1">

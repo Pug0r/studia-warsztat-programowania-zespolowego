@@ -1,8 +1,11 @@
+import { useState } from "react";
 import type { Pet } from "@/modules/pets/types/Pets";
 import { usePetList } from "@/modules/pets/hooks/usePetList";
 import { PetCard } from "@/modules/pets/components/PetCard";
+import { PetDetailModal } from "@/modules/pets/components/PetDetailModal";
 
 const PetsPage: React.FC = () => {
+  const [selectedPetId, setSelectedPetId] = useState<number | null>(null);
   const { data, error, isPending } = usePetList();
 
   if (isPending) {
@@ -35,9 +38,17 @@ const PetsPage: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {data.map((pet: Pet) => (
-          <PetCard key={pet.id} pet={pet} />
+          <PetCard key={pet.id} pet={pet} onPetClick={setSelectedPetId} />
         ))}
       </div>
+
+      {selectedPetId !== null && (
+        <PetDetailModal
+          petId={selectedPetId}
+          isOpen={selectedPetId !== null}
+          onClose={() => setSelectedPetId(null)}
+        />
+      )}
     </div>
   );
 };

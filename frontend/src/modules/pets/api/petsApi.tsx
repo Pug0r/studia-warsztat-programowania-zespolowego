@@ -5,3 +5,8 @@ export const getPetListRequest = async (): Promise<Pet[]> => {
   const response = await api.get("pets/");
   return response.data;
 };
+
+export const getPetById = async (id: number): Promise<Pet> => {
+  const response = await api.get(`pets/${id}`);
+  return response.data;
+};
