@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as DialogPrimitive from "radix-ui/dialog";
+import { Dialog as DialogPrimitive } from "radix-ui";
 
 import { cn } from "@/lib/utils";
 
@@ -80,7 +80,10 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("flex flex-col gap-2 space-y-1.5 text-center sm:text-left", className)}
+      className={cn(
+        "flex flex-col gap-2 space-y-1.5 text-center sm:text-left",
+        className,
+      )}
       {...props}
     />
   );
@@ -90,7 +93,10 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-footer"
-      className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
+      className={cn(
+        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
+        className,
+      )}
       {...props}
     />
   );
