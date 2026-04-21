@@ -21,7 +21,9 @@ export interface Database {
           description: string;
           id: number;
           name: string;
+          photo_url: string | null;
           species: string;
+          status: "available" | "quarantine";
           weight: number | null;
         };
         Insert: {
@@ -30,7 +32,9 @@ export interface Database {
           description: string;
           id?: number;
           name: string;
+          photo_url?: string | null;
           species: string;
+          status?: "available" | "quarantine";
           weight?: number | null;
         };
         Update: {
@@ -39,7 +43,9 @@ export interface Database {
           description?: string;
           id?: number;
           name?: string;
+          photo_url?: string | null;
           species?: string;
+          status?: "available" | "quarantine";
           weight?: number | null;
         };
         Relationships: [];
