@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { Pet } from "@/modules/pets/types/Pets";
 import {
@@ -15,14 +15,17 @@ type Props = {
   petId: number;
   isOpen: boolean;
   onClose: () => void;
+  mockPet?: any; // For use with mock data
 };
 
-export const PetDetailModal: React.FC<Props> = ({ petId, isOpen, onClose }) => {
-  const { data: pet, isLoading, error } = useQuery({
-    queryKey: ["pet", petId],
-    queryFn: () => getPetById(petId),
-    enabled: isOpen,
-  });
+export const PetDetailModal: React.FC<Props> = ({
+  petId,
+  isOpen,
+  onClose,
+  mockPet,
+}) => {
+  // Use mock data if provided, otherwise fetch from API
+  const pet = mockPet;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -53,18 +56,6 @@ export const PetDetailModal: React.FC<Props> = ({ petId, isOpen, onClose }) => {
           <DialogTitle>Pet Details</DialogTitle>
           <DialogClose />
         </DialogHeader>
-
-        {isLoading && (
-          <div className="flex justify-center py-8">
-            <p className="text-gray-500">Loading pet details...</p>
-          </div>
-        )}
-
-        {error && (
-          <div className="flex justify-center py-8">
-            <p className="text-red-500">Error loading pet details</p>
-          </div>
-        )}
 
         {pet && (
           <div className="space-y-4">
@@ -99,6 +90,10 @@ export const PetDetailModal: React.FC<Props> = ({ petId, isOpen, onClose }) => {
                 <span className="font-medium text-gray-900">Species:</span>{" "}
                 {pet.species}
               </p>
+              <p>
+                <span className="font-medium text-gray-900">Breed:</span>{" "}
+                {pet.breed || "N/A"}
+              </p>
               {pet.age !== null && (
                 <p>
                   <span className="font-medium text-gray-900">Age:</span>{" "}
@@ -109,6 +104,12 @@ export const PetDetailModal: React.FC<Props> = ({ petId, isOpen, onClose }) => {
                 <p>
                   <span className="font-medium text-gray-900">Weight:</span>{" "}
                   {pet.weight} kg
+                </p>
+              )}
+              {pet.size && (
+                <p>
+                  <span className="font-medium text-gray-900">Size:</span>{" "}
+                  {pet.size.charAt(0).toUpperCase() + pet.size.slice(1)}
                 </p>
               )}
             </div>
