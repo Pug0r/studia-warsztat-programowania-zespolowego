@@ -4,6 +4,7 @@ import { RegisterPage } from "@/pages/auth/RegisterPage";
 import { AdoptionApplicationPage } from "@/pages/adoption/AdoptionApplicationPage";
 import { HomePage } from "@/pages/public/HomePage";
 import { DashboardPage } from "@/pages/dashboard/DashboardPage";
+import { PetsPage } from "@/pages/pets/PetsPage";
 import { ProtectedRoute } from "@/routes/ProtectedRoute";
 
 export const AppRoutes = () => {
@@ -22,6 +23,7 @@ export const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+      <Route path="/pets" element={<PetsPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
