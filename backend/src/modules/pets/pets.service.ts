@@ -66,8 +66,8 @@ export const uploadPhoto = async (
   buffer: Buffer,
   mimetype: string,
 ): Promise<string> => {
-  const ext = mimetype.split("/")[1];
-  const path = `${id}/photo.${ext}`;
+  const ext = mimetype.split("/")[1] ?? "jpg";
+  const path = `${String(id)}/photo.${ext}`;
 
   const { error: uploadError } = await supabase.storage
     .from("pet-images")
