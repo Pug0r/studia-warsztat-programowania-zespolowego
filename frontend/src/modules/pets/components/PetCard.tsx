@@ -2,7 +2,7 @@ import React from "react";
 import type { Pet } from "../types/Pets";
 
 type Props = {
-  pet: any; // Na czas mocków
+  pet: Pet;
 };
 
 export const PetCard: React.FC<Props> = ({ pet }) => {
@@ -51,7 +51,6 @@ export const PetCard: React.FC<Props> = ({ pet }) => {
 
       <p className="hp-pet-card__desc">"{pet.description}"</p>
 
-      {/* Używamy globalnej klasy przycisku z HomePage.css */}
       <button className="hp-btn hp-btn--primary" style={{ width: "100%" }}>
         Adopt {pet.name}
       </button>

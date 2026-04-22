@@ -1,145 +1,11 @@
 import type { Pet } from "@/modules/pets/types/Pets";
-// import { usePetList } from "@/modules/pets/hooks/usePetList"; // <-- Czeka na bazę danych
+import { usePetList } from "@/modules/pets/hooks/usePetList";
 import { PetCard } from "@/modules/pets/components/PetCard";
 import { useState } from "react";
 import "./PetsPage.css";
 
-// 1. IDEALNIE SKROJONE SZTUCZNE DANE
-const MOCK_PETS = [
-  {
-    id: "1",
-    name: "Burek",
-    species: "dog",
-    breed: "Mixed breed",
-    size: "large",
-    age: 3,
-    weight: 25,
-    description:
-      "A big, friendly dog full of energy. Loves running after a ball.",
-  },
-  {
-    id: "2",
-    name: "Mruczek",
-    species: "cat",
-    breed: "Domestic Shorthair",
-    size: "small",
-    age: 1,
-    weight: 3,
-    description: "A small and calm kitten who loves sleeping in warm places.",
-  },
-  {
-    id: "3",
-    name: "Azor",
-    species: "dog",
-    breed: "German Shepherd Mix",
-    size: "medium",
-    age: 5,
-    weight: 15,
-    description: "A loyal companion who gets along great with children.",
-  },
-  {
-    id: "4",
-    name: "Puszek",
-    species: "cat",
-    breed: "Persian Cat",
-    size: "medium",
-    age: 2,
-    weight: 5,
-    description: "A fluffy cat that enjoys cuddles and relaxing naps.",
-  },
-  {
-    id: "5",
-    name: "Reksio",
-    species: "dog",
-    breed: "Jack Russell Terrier",
-    size: "small",
-    age: 10,
-    weight: 8,
-    description: "An older, very wise dog looking for a calm and loving home.",
-  },
-  {
-    id: "6",
-    name: "Luna",
-    species: "cat",
-    breed: "Siamese",
-    size: "small",
-    age: 2,
-    weight: 4,
-    description: "A curious and talkative cat who loves human attention.",
-  },
-  {
-    id: "7",
-    name: "Max",
-    species: "dog",
-    breed: "Labrador Retriever",
-    size: "large",
-    age: 4,
-    weight: 30,
-    description:
-      "A friendly and playful dog who enjoys long walks and swimming.",
-  },
-  {
-    id: "8",
-    name: "Kicia",
-    species: "cat",
-    breed: "British Shorthair",
-    size: "medium",
-    age: 3,
-    weight: 6,
-    description:
-      "A calm and gentle cat that enjoys quiet evenings with people.",
-  },
-  {
-    id: "9",
-    name: "Rocky",
-    species: "dog",
-    breed: "Boxer",
-    size: "large",
-    age: 6,
-    weight: 28,
-    description:
-      "A strong but very affectionate dog who loves playing outside.",
-  },
-  {
-    id: "10",
-    name: "Mila",
-    species: "cat",
-    breed: "Maine Coon",
-    size: "large",
-    age: 4,
-    weight: 7,
-    description: "A large, majestic cat with a very friendly personality.",
-  },
-];
-
 export const PetsPage: React.FC = () => {
-  // const { data, error, isPending } = usePetList(); // <-- Czeka na bazę danych
-
-  // if (isPending) {
-  //   return (
-  //     <div className="p-6">
-  //       <p>Loading pets...</p>
-  //     </div>
-  //   );
-  // }
-
-  // if (error) {
-  //   return (
-  //     <div className="p-6 text-red-500">
-  //       <p>Something went wrong while fetching pets.</p>
-  //     </div>
-  //   );
-  // }
-
-  // if (!data || data.length === 0) {
-  //   return (
-  //     <div className="p-6">
-  //       <p>No pets found.</p>
-  //     </div>
-  //   );
-  // }
-
-  const data = MOCK_PETS; // Na razie używamy mocków (usuń gdy będzie baza danych)
+  const { data, error, isPending } = usePetList();
 
   const [selectedSpecies, setSelectedSpecies] = useState<string>("all");
   const [selectedSize, setSelectedSize] = useState<string>("all");
@@ -147,6 +13,36 @@ export const PetsPage: React.FC = () => {
   const [maxAge, setMaxAge] = useState<string>("");
   const [maxWeight, setMaxWeight] = useState<string>("");
   const [searchName, setSearchName] = useState<string>("");
+
+  if (error) {
+    console.error("BŁĄD Z SUPABASE:", error);
+  }
+
+  if (isPending) {
+    return (
+      <div className="p-6">
+        <p>Loading pets...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6 text-red-500">
+        <p>Something went wrong while fetching pets.</p>
+      </div>
+    );
+  }
+
+  if (!data || data.length === 0) {
+    return (
+      <div className="p-6">
+        <p>No pets found.</p>
+      </div>
+    );
+  }
+
+  const petsData = data || [];
 
   const clearAllFilters = () => {
     setSelectedSpecies("all");
@@ -157,17 +53,21 @@ export const PetsPage: React.FC = () => {
     setSearchName("");
   };
 
-  const filteredPets = data.filter((pet) => {
+  const filteredPets = petsData.filter((pet: Pet) => {
     const matchesSpecies =
       selectedSpecies === "all" || pet.species === selectedSpecies;
     const matchesSize = selectedSize === "all" || pet.size === selectedSize;
-    const matchesId = searchId === "" || pet.id.includes(searchId.trim());
+    const matchesId =
+      searchId === "" || String(pet.id).includes(searchId.trim());
     const matchesAge = maxAge === "" || pet.age <= Number(maxAge);
     const matchesWeight = maxWeight === "" || pet.weight <= Number(maxWeight);
+
+    const name = pet.name || "";
+    const breed = pet.breed || "";
     const matchesSearch =
       searchName.trim() === "" ||
-      pet.name.toLowerCase().includes(searchName.trim().toLowerCase()) ||
-      pet.breed.toLowerCase().includes(searchName.trim().toLowerCase());
+      name.toLowerCase().includes(searchName.trim().toLowerCase()) ||
+      breed.toLowerCase().includes(searchName.trim().toLowerCase());
 
     return (
       matchesSpecies &&
@@ -268,7 +168,7 @@ export const PetsPage: React.FC = () => {
         </div>
       ) : (
         <div className="hp-pets-grid">
-          {filteredPets.map((pet) => (
+          {filteredPets.map((pet: Pet) => (
             <PetCard key={pet.id} pet={pet} />
           ))}
         </div>

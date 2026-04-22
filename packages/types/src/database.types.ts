@@ -23,6 +23,8 @@ export interface Database {
           name: string;
           species: string;
           weight: number | null;
+          breed: string | null;
+          size: string | null;
         };
         Insert: {
           age?: number | null;
