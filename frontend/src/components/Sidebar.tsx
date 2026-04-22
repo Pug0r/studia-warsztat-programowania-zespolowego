@@ -6,7 +6,7 @@ import {
   PawPrint,
   Users,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -14,9 +14,13 @@ import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 
 const Sidebar = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const { session, signOut } = useAuth();
   const email = session?.user.email ?? "staff@haven-shelter.org";
+
+  const isDashboardOverview = location.pathname === "/dashboard";
+  const isDashboardAdoptions = location.pathname === "/dashboard/adoptions";
 
   async function handleSignOut() {
     await signOut();
@@ -41,9 +45,15 @@ const Sidebar = () => {
         <Separator />
 
         <nav className="space-y-2" aria-label="Sidebar">
-          <Button variant="secondary" className="w-full justify-start gap-2">
-            <Home className="size-4" />
-            Overview
+          <Button
+            asChild
+            variant={isDashboardOverview ? "secondary" : "ghost"}
+            className="w-full justify-start gap-2"
+          >
+            <Link to="/dashboard">
+              <Home className="size-4" />
+              Overview
+            </Link>
           </Button>
           <Button variant="ghost" className="w-full justify-start gap-2">
             <PawPrint className="size-4" />
@@ -53,9 +63,15 @@ const Sidebar = () => {
             <Users className="size-4" />
             Volunteers
           </Button>
-          <Button variant="ghost" className="w-full justify-start gap-2">
-            <HeartHandshake className="size-4" />
-            Adoptions
+          <Button
+            asChild
+            variant={isDashboardAdoptions ? "secondary" : "ghost"}
+            className="w-full justify-start gap-2"
+          >
+            <Link to="/dashboard/adoptions">
+              <HeartHandshake className="size-4" />
+              Adoptions
+            </Link>
           </Button>
           <Button variant="ghost" className="w-full justify-start gap-2">
             <LifeBuoy className="size-4" />

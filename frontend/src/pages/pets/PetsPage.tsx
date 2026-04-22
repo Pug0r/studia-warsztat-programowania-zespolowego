@@ -59,8 +59,10 @@ export const PetsPage: React.FC = () => {
     const matchesSize = selectedSize === "all" || pet.size === selectedSize;
     const matchesId =
       searchId === "" || String(pet.id).includes(searchId.trim());
-    const matchesAge = maxAge === "" || pet.age <= Number(maxAge);
-    const matchesWeight = maxWeight === "" || pet.weight <= Number(maxWeight);
+    const matchesAge =
+      maxAge === "" || pet.age === null || pet.age <= Number(maxAge);
+    const matchesWeight =
+      maxWeight === "" || pet.weight === null || pet.weight <= Number(maxWeight);
 
     const name = pet.name || "";
     const breed = pet.breed || "";
