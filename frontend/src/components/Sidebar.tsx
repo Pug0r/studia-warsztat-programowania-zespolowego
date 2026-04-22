@@ -45,9 +45,15 @@ const Sidebar = () => {
             <Home className="size-4" />
             Overview
           </Button>
-          <Button variant="ghost" className="w-full justify-start gap-2">
-            <PawPrint className="size-4" />
-            Animals
+          <Button
+            asChild
+            variant="ghost"
+            className="w-full justify-start gap-2"
+          >
+            <Link to="/dashboard/pets">
+              <PawPrint className="size-4" />
+              Animals
+            </Link>
           </Button>
           <Button variant="ghost" className="w-full justify-start gap-2">
             <Users className="size-4" />

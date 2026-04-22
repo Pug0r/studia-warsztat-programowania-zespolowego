@@ -1,6 +1,10 @@
 import type { Request, Response } from "express";
 import * as petsService from "./pets.service.js";
-import { validateCreatePetPayload, validatePetId } from "./pets.validation.js";
+import {
+  validateCreatePetPayload,
+  validatePetId,
+  validateUpdatePetPayload,
+} from "./pets.validation.js";
 
 type MulterRequest = Request & { file?: Express.Multer.File };
 
@@ -45,6 +49,27 @@ export const create = async (req: Request, res: Response) => {
     const pet = await petsService.create(payload);
 
     return res.status(201).json(pet);
+  } catch (error) {
+    if (error instanceof Error) {
+      return sendBadRequest(res, error.message);
+    }
+
+    return sendServerError(res);
+  }
+};
+
+export const update = async (req: Request, res: Response) => {
+  try {
+    const id = validatePetId(req.params.id);
+    const payload = validateUpdatePetPayload(req.body);
+
+    const existing = await petsService.getById(id);
+    if (!existing) {
+      return res.status(404).json({ error: "Pet not found." });
+    }
+
+    const pet = await petsService.update(id, payload);
+    return res.json(pet);
   } catch (error) {
     if (error instanceof Error) {
       return sendBadRequest(res, error.message);

@@ -1,6 +1,6 @@
-import type { PetInsert, PetRow } from "@repo/types";
+import type { PetInsert, PetRow, PetUpdate } from "@repo/types";
 import { supabase } from "#config/supabaseClient.js";
-import type { CreatePetDTO } from "./pets.validation.js";
+import type { CreatePetDTO, UpdatePetDTO } from "./pets.validation.js";
 import type { Pet } from "@repo/types";
 
 export const list = async (): Promise<Pet[]> => {
@@ -31,16 +31,33 @@ export const getById = async (id: number): Promise<PetRow | null> => {
 };
 
 export const create = async (payload: CreatePetDTO): Promise<PetRow> => {
-  const row: PetInsert = {
-    ...payload,
-    species: "unknown",
-  };
+  const row: PetInsert = payload;
 
   const { data, error } = await supabase
     .from("pets")
     .insert(row)
     .select("*")
     .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+export const update = async (
+  id: number,
+  payload: UpdatePetDTO,
+): Promise<PetRow | null> => {
+  const row: PetUpdate = payload;
+
+  const { data, error } = await supabase
+    .from("pets")
+    .update(row)
+    .eq("id", id)
+    .select("*")
+    .maybeSingle();
 
   if (error) {
     throw new Error(error.message);

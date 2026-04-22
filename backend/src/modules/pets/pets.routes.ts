@@ -12,6 +12,7 @@ router.get("/", petsController.list);
 router.get("/:id", petsController.getById);
 router.post("/", petsController.create);
 router.post("/:id/photo", upload.single("photo"), petsController.uploadPhoto);
+router.patch("/:id", petsController.update);
 router.delete("/:id", petsController.delete);
 
 export default router;
