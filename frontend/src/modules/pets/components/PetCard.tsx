@@ -1,5 +1,6 @@
 import React from "react";
 import type { Pet } from "../types/Pets";
+import { PetPhotoUpload } from "./PetPhotoUpload";
 
 type Props = {
   pet: Pet;
@@ -8,6 +9,18 @@ type Props = {
 export const PetCard: React.FC<Props> = ({ pet }) => {
   return (
     <div className="hp-pet-card">
+      {pet.image_url ? (
+        <img
+          src={pet.image_url}
+          alt={pet.name}
+          className="w-full h-48 object-cover"
+        />
+      ) : (
+        <div className="w-full h-48 bg-gray-100 flex items-center justify-center text-gray-400 text-sm">
+          No photo
+        </div>
+      )}
+
       <div className="hp-pet-card__header">
         <div>
           <h2 className="hp-pet-card__title">{pet.name}</h2>
@@ -54,6 +67,8 @@ export const PetCard: React.FC<Props> = ({ pet }) => {
       <button className="hp-btn hp-btn--primary" style={{ width: "100%" }}>
         Adopt {pet.name}
       </button>
+
+      <PetPhotoUpload petId={pet.id} />
     </div>
   );
 };
