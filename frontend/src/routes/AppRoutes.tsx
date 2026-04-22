@@ -12,6 +12,7 @@ export const AppRoutes = () => {
     <Routes>
       <Route index element={<HomePage />} />
       {/* <Route path="/" element={<HomePage />} /> */}
+      <Route path="/pets" element={<PetsPage />} />
       <Route path="/adopt" element={<AdoptionApplicationPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
@@ -23,7 +24,6 @@ export const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-      <Route path="/pets" element={<PetsPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

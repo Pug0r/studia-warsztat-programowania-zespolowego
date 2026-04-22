@@ -20,6 +20,7 @@ export interface Database {
           created_at: string;
           description: string;
           id: number;
+          image_url: string | null;
           name: string;
           species: string;
           weight: number | null;
@@ -31,6 +32,7 @@ export interface Database {
           created_at?: string;
           description: string;
           id?: number;
+          image_url?: string | null;
           name: string;
           species: string;
           weight?: number | null;
@@ -40,6 +42,7 @@ export interface Database {
           created_at?: string;
           description?: string;
           id?: number;
+          image_url?: string | null;
           name?: string;
           species?: string;
           weight?: number | null;
