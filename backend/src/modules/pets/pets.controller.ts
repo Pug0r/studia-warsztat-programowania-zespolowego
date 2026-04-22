@@ -1,9 +1,8 @@
 import type { Request, Response } from "express";
-import type { File } from "multer";
 import * as petsService from "./pets.service.js";
 import { validateCreatePetPayload, validatePetId } from "./pets.validation.js";
 
-type MulterRequest = Request & { file?: File };
+type MulterRequest = Request & { file?: Express.Multer.File };
 
 const sendBadRequest = (res: Response, message: string) =>
   res.status(400).json({ error: message });
