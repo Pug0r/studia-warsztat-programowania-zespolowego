@@ -1,6 +1,7 @@
 import { type Session } from "@supabase/supabase-js";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 
+import { logAuthAuditEvent } from "@/modules/audit/api";
 import { supabase } from "@/lib/supabaseClient";
 import type { AuthContextValue } from "./types";
 import { AuthContext } from "./hooks/AuthContext";
@@ -40,6 +41,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAuthenticated: Boolean(session),
       isLoading,
       signOut: async () => {
+        if (session?.user) {
+          await logAuthAuditEvent("auth.sign_out", {
+            email: session.user.email ?? null,
+          }).catch((auditError) => {
+            console.error("Failed to log sign-out audit event.", auditError);
+          });
+        }
+
         await supabase.auth.signOut();
       },
     }),

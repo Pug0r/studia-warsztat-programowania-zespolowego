@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import { recordAuditEventBestEffort } from "#modules/audit/audit.service.js";
 import * as petsService from "./pets.service.js";
 import { validateCreatePetPayload, validatePetId } from "./pets.validation.js";
 
@@ -41,6 +42,16 @@ export const create = async (req: Request, res: Response) => {
   try {
     const payload = validateCreatePetPayload(req.body);
     const pet = await petsService.create(payload);
+    await recordAuditEventBestEffort(req, {
+      action: "pet.create",
+      entityId: pet.id,
+      entityType: "pet",
+      metadata: {
+        name: pet.name,
+        species: pet.species,
+      },
+      newData: pet,
+    });
 
     return res.status(201).json(pet);
   } catch (error) {
@@ -62,6 +73,15 @@ const deleteById = async (req: Request, res: Response) => {
     }
 
     await petsService.delete(id);
+    await recordAuditEventBestEffort(req, {
+      action: "pet.delete",
+      entityId: pet.id,
+      entityType: "pet",
+      metadata: {
+        name: pet.name,
+      },
+      oldData: pet,
+    });
     return res.status(204).send();
   } catch (error) {
     if (error instanceof Error) {

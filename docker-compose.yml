@@ -31,3 +31,4 @@ services:
       - backend
     environment:
       - VITE_PORT=3000
+      - VITE_API_PROXY_TARGET=http://backend:5000

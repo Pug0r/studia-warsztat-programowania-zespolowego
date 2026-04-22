@@ -20,3 +20,5 @@ package-lock.json
 # Test coverage
 /coverage
 .vite
+
+.log

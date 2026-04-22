@@ -15,5 +15,10 @@ export type {
   AdoptionApplicationUpdate,
   CreateAdoptionApplicationDTO,
 } from "./adoptionApplication.js";
+export type {
+  AuditLogInsert,
+  AuditLogRow,
+  AuditLogUpdate,
+} from "./auditLog.js";
 export type { CreateUserDTO, UserInsert, UserRow } from "./user.js";
 export type { PetInsert, PetRow, PetRow as Pet, PetUpdate } from "./pet.js";
