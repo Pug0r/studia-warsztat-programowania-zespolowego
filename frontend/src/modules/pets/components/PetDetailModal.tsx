@@ -1,5 +1,4 @@
 import React from "react";
-import type { Pet } from "@/modules/pets/types/Pets";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +23,7 @@ export const PetDetailModal: React.FC<Props> = ({
 }) => {
   const pet = mockPet;
 
+
   const getStatusLabel = (status: string) => {
     switch (status) {
       case "available":
@@ -42,7 +42,8 @@ export const PetDetailModal: React.FC<Props> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="pet-detail-dialog max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="pet-detail-dialog max-w-3xl max-h-[90vh]">
+        <div className="pet-detail-scroll">
         <DialogHeader>
           <DialogTitle className="pet-detail__title">
             Meet {pet?.name}!
@@ -150,7 +151,9 @@ export const PetDetailModal: React.FC<Props> = ({
             </button>
           </>
         )}
+        </div>
       </DialogContent>
+
     </Dialog>
   );
 };
