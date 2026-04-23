@@ -12,8 +12,12 @@ export type {
   AdoptionApplicationInsert,
   AdoptionApplicationRow,
   AdoptionApplicationRow as AdoptionApplication,
+  AdoptionApplicationWithPetSummary,
+  AdoptionStatus,
   AdoptionApplicationUpdate,
+  UpdateAdoptionApplicationStatusDTO,
   CreateAdoptionApplicationDTO,
 } from "./adoptionApplication.js";
+export { ADOPTION_STATUSES } from "./adoptionApplication.js";
 export type { CreateUserDTO, UserInsert, UserRow } from "./user.js";
 export type { PetInsert, PetRow, PetRow as Pet, PetUpdate } from "./pet.js";

@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { LoginPage } from "@/pages/auth/LoginPage";
 import { RegisterPage } from "@/pages/auth/RegisterPage";
 import { AdoptionApplicationPage } from "@/pages/adoption/AdoptionApplicationPage";
+import { AdoptionsDashboardPage } from "@/pages/dashboard/AdoptionsDashboardPage";
 import { HomePage } from "@/pages/public/HomePage";
 import { DashboardPage } from "@/pages/dashboard/DashboardPage";
 import { PetsPage } from "@/pages/pets/PetsPage";
@@ -21,6 +22,14 @@ export const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <DashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/adoptions"
+        element={
+          <ProtectedRoute>
+            <AdoptionsDashboardPage />
           </ProtectedRoute>
         }
       />
