@@ -42,114 +42,116 @@ export const PetDetailModal: React.FC<Props> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="pet-detail-dialog max-w-3xl max-h-[90vh]">
-        <div className="pet-detail-scroll">
-        <DialogHeader>
+      {/* Tailwind for the MAX WIDTH and MAX HEIGHT only */}
+      <DialogContent className="shelter-public pet-detail-dialog p-5 pr-2 max-w-4xl w-[90vw]">
+        <div className="pet-detail-scroll flex-1 pr-3">
+        <DialogHeader className="pb-6">
           <DialogTitle className="pet-detail__title">
             Meet {pet?.name}!
           </DialogTitle>
-          <DialogClose />
         </DialogHeader>
 
+          <DialogClose/>
+
         {pet && (
-          <>
-            <div className="pet-detail__layout">
-              {/* Left — Photo */}
-              <div className="pet-detail__photo">
-                {pet.photo_url ? (
-                  <img src={pet.photo_url} alt={pet.name} />
-                ) : (
-                  <span className="pet-detail__photo-placeholder">
-                    No photo available
-                  </span>
-                )}
+          <div className="pt-6 pr-4">
+            <div className="pet-detail__layout pb-5">
+              <div className="pet-detail__left">
+                {/*<div style={{display: 'flex', flexDirection: 'column', gap: '0.75rem'}}>*/}
 
-
-
-              </div>
-
-              {/* Right — Info */}
-              <div className="pet-detail__info">
-                <div className="pet-detail__header">
-                  <p className="pet-detail__breed">{pet.breed}</p>
-                  <span className={statusClass}>
-                    <span className="pet-detail__status-dot" />
-                    {getStatusLabel(pet.status || "available")}
-                  </span>
+                {/* Left — Photo */}
+                <div className="pet-detail__photo">
+                  {pet.photo_url ? (
+                    <img src={pet.photo_url} alt={pet.name} />
+                  ) : (
+                    <span className="pet-detail__photo-placeholder"> No photo available </span>
+                  )}
                 </div>
 
-                {/* Stats */}
-                <div className="pet-detail__stats">
-                  <div className="pet-detail__stat">
-                    <p className="pet-detail__stat-label">Species</p>
-                    <p className="pet-detail__stat-value">{pet.species}</p>
+                {/* CTA — reuses hp-btn from HomePage.css */}
+                <button
+                  className="hp-btn hp-btn--primary"
+                  style={{ width: "80%", height: "8rem", marginTop: "auto", marginBottom: "auto" }}
+                >
+                  Start Adoption Process
+                </button>
+              </div>
+
+                {/* Right — Info */}
+                <div className="pet-detail__info">
+                  <div className="pet-detail__header">
+                    <p className="pet-detail__breed">{pet.breed}</p>
+                    <span className={statusClass}>
+                    <span className="pet-detail__status-dot" />
+                      {getStatusLabel(pet.status || "available")}
+                  </span>
                   </div>
-                  {pet.age !== null && (
+
+                  {/* Stats */}
+                  <div className="pet-detail__stats">
                     <div className="pet-detail__stat">
-                      <p className="pet-detail__stat-label">Age</p>
-                      <p className="pet-detail__stat-value">
-                        {pet.age} year{pet.age !== 1 ? "s" : ""}
+                      <p className="pet-detail__stat-label">Species</p>
+                      <p className="pet-detail__stat-value">{pet.species}</p>
+                    </div>
+                    {pet.age !== null && (
+                      <div className="pet-detail__stat">
+                        <p className="pet-detail__stat-label">Age</p>
+                        <p className="pet-detail__stat-value">
+                          {pet.age} year{pet.age !== 1 ? "s" : ""}
+                        </p>
+                      </div>
+                    )}
+                    {pet.weight !== null && (
+                      <div className="pet-detail__stat">
+                        <p className="pet-detail__stat-label">Weight</p>
+                        <p className="pet-detail__stat-value">{pet.weight} kg</p>
+                      </div>
+                    )}
+                    {pet.size && (
+                      <div className="pet-detail__stat">
+                        <p className="pet-detail__stat-label">Size</p>
+                        <p className="pet-detail__stat-value">{pet.size}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Colorful extra info */}
+                  <div className="pet-detail__extras">
+                    <h3 className="pet-detail__extras-title">More Information</h3>
+                    <div className="pet-detail__extra pet-detail__extra--personality">
+                      <p className="pet-detail__extra-label">Personality</p>
+                      <p className="pet-detail__extra-value">
+                        {pet.personality ||
+                          "Friendly and well-behaved. Adapts well to new environments."}
                       </p>
                     </div>
-                  )}
-                  {pet.weight !== null && (
-                    <div className="pet-detail__stat">
-                      <p className="pet-detail__stat-label">Weight</p>
-                      <p className="pet-detail__stat-value">{pet.weight} kg</p>
+                    <div className="pet-detail__extra pet-detail__extra--home">
+                      <p className="pet-detail__extra-label">Ideal Home</p>
+                      <p className="pet-detail__extra-value">
+                        {pet.ideal_home ||
+                          "Looking for a loving family with a secure home environment."}
+                      </p>
                     </div>
-                  )}
-                  {pet.size && (
-                    <div className="pet-detail__stat">
-                      <p className="pet-detail__stat-label">Size</p>
-                      <p className="pet-detail__stat-value">{pet.size}</p>
+                    <div className="pet-detail__extra pet-detail__extra--needs">
+                      <p className="pet-detail__extra-label">Special Needs</p>
+                      <p className="pet-detail__extra-value">
+                        {pet.special_needs ||
+                          "No special requirements. Regular care and attention needed."}
+                      </p>
                     </div>
-                  )}
-                </div>
-
-                {/* Colorful extra info */}
-                <div className="pet-detail__extras">
-                  <h3 className="pet-detail__extras-title">More Information</h3>
-                  <div className="pet-detail__extra pet-detail__extra--personality">
-                    <p className="pet-detail__extra-label">Personality</p>
-                    <p className="pet-detail__extra-value">
-                      {pet.personality ||
-                        "Friendly and well-behaved. Adapts well to new environments."}
-                    </p>
-                  </div>
-                  <div className="pet-detail__extra pet-detail__extra--home">
-                    <p className="pet-detail__extra-label">Ideal Home</p>
-                    <p className="pet-detail__extra-value">
-                      {pet.ideal_home ||
-                        "Looking for a loving family with a secure home environment."}
-                    </p>
-                  </div>
-                  <div className="pet-detail__extra pet-detail__extra--needs">
-                    <p className="pet-detail__extra-label">Special Needs</p>
-                    <p className="pet-detail__extra-value">
-                      {pet.special_needs ||
-                        "No special requirements. Regular care and attention needed."}
-                    </p>
                   </div>
                 </div>
               </div>
-            </div>
 
             {/* About section — full width below photo + info */}
-            <div className="pet-detail__about">
+            <div className="pet-detail__about pt-2">
               <h3 className="pet-detail__about-title">About {pet.name}</h3>
               <p className="pet-detail__desc">
-                "{pet.long_description || pet.description}"
+                {pet.long_description || pet.description}
               </p>
             </div>
 
-            {/* CTA — reuses hp-btn from HomePage.css */}
-            <button
-              className="hp-btn hp-btn--primary"
-              style={{ width: "100%", marginTop: "0.5rem" }}
-            >
-              Start Adoption Process
-            </button>
-          </>
+          </div>
         )}
         </div>
       </DialogContent>

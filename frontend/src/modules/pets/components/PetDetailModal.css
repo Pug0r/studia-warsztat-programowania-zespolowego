@@ -3,19 +3,16 @@
 /* —— Dialog padding / spacing —— */
 .pet-detail-dialog {
   font-family: var(--hp-font);
-  border-radius: var(--hp-radius-lg);
+  background: var(--hp-surface);
 }
 
 .pet-detail-scroll {
-  max-height: 90vh;
   overflow-y: auto;
-  padding: 0 2rem 2rem 2rem;
 }
 
 .pet-detail-dialog [data-slot="dialog-header"] {
-  padding-bottom: 0.75rem;
-  margin-bottom: 0.25rem;
-  border-bottom: 1px solid var(--hp-border);
+  display: block;
+  border-bottom: 2px solid var(--hp-border);
 }
 
 /* —— "Meet {name}!" title —— */
@@ -46,7 +43,9 @@
 /* —— Photo —— */
 .pet-detail__photo {
   width: 100%;
-  aspect-ratio: 3 / 4;
+  /*flex: 1;*/
+  min-height: 300px;
+  aspect-ratio: 4 / 4;
   background: var(--hp-bg);
   border-radius: var(--hp-radius-lg);
   overflow: hidden;
@@ -62,6 +61,13 @@
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.pet-detail__left {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;  /* match the right column's height */
+  align-items: center;
 }
 
 .pet-detail__photo-placeholder {
@@ -227,21 +233,23 @@
 
 /* —— About section — full width below grid —— */
 .pet-detail__about {
-  margin-top: 0.5rem;
+  border-top: 1px solid var(--hp-border);
+  /*margin-top: 0.5rem;*/
 }
 
 .pet-detail__about-title {
-  font-size: 1.05rem;
+  font-size: 1.4rem;
+  font-style: italic;
   font-weight: 700;
-  color: var(--hp-heading);
+  color: var(--hp-blue);
   margin: 0 0 0.5rem;
+  text-align: center;
 }
 
 .pet-detail__desc {
   font-size: 0.875rem;
   color: var(--hp-text);
   line-height: 1.7;
-  font-style: italic;
   background: var(--hp-blue-soft);
   padding: 1rem 1.125rem;
   border-radius: var(--hp-radius);

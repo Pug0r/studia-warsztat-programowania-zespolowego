@@ -35,9 +35,14 @@ function DialogClose({
   return (
     <DialogPrimitive.Close
       data-slot="dialog-close"
-      className={className}
+      className={cn("absolute right-16 top-7 rounded-sm opacity-70 transition-opacity hover:opacity-100 cursor-pointer",
+        className)}
       {...props}
-    />
+    >
+      <span className="sr-only">Close</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </DialogPrimitive.Close>
+
   );
 }
 
@@ -67,7 +72,10 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "fixed left-1/2 top-1/2 z-50 w-full max-w-lg border border-slate-200 bg-white shadow-lg p-6 rounded-2xl",
+          /* Centering Logic */
+          "fixed left-1/2 top-1/2 z-50 max-h-[90vh] overflow-auto flex flex-col",
+          /* Visual Shell */
+          "border border-slate-200 bg-white shadow-lg rounded-2xl outline-none",
           className,
         )}
         {...props}
