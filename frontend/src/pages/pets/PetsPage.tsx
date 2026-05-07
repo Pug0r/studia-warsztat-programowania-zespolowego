@@ -1,7 +1,8 @@
 import type { Pet } from "@/modules/pets/types/Pets";
-import { usePetList } from "@/modules/pets/hooks/usePetList";
+import { usePetList } from "@/modules/pets/hooks/usePetList"; // <-- Czeka na bazę danych
 import { PetCard } from "@/modules/pets/components/PetCard";
 import { useState } from "react";
+import { PetDetailModal } from "@/modules/pets/components/PetDetailModal";
 import "./PetsPage.css";
 
 export const PetsPage: React.FC = () => {
@@ -13,6 +14,10 @@ export const PetsPage: React.FC = () => {
   const [maxAge, setMaxAge] = useState<string>("");
   const [maxWeight, setMaxWeight] = useState<string>("");
   const [searchName, setSearchName] = useState<string>("");
+
+  const [selectedPetId, setSelectedPetId] = useState<string | number | null>(
+    null,
+  );
 
   if (error) {
     console.error("BŁĄD Z SUPABASE:", error);
@@ -41,7 +46,6 @@ export const PetsPage: React.FC = () => {
       </div>
     );
   }
-
   const petsData = data || [];
 
   const clearAllFilters = () => {
@@ -62,7 +66,9 @@ export const PetsPage: React.FC = () => {
     const matchesAge =
       maxAge === "" || pet.age === null || pet.age <= Number(maxAge);
     const matchesWeight =
-      maxWeight === "" || pet.weight === null || pet.weight <= Number(maxWeight);
+      maxWeight === "" ||
+      pet.weight === null ||
+      pet.weight <= Number(maxWeight);
 
     const name = pet.name || "";
     const breed = pet.breed || "";
@@ -170,10 +176,19 @@ export const PetsPage: React.FC = () => {
         </div>
       ) : (
         <div className="hp-pets-grid">
-          {filteredPets.map((pet: Pet) => (
-            <PetCard key={pet.id} pet={pet} />
+          {filteredPets.map((pet) => (
+            <PetCard key={pet.id} pet={pet} onPetClick={setSelectedPetId} />
           ))}
         </div>
+      )}
+
+      {/* Detail Modal - ukazuje się po kliknięciu na kartę */}
+      {selectedPetId !== null && (
+        <PetDetailModal
+          petId={Number(selectedPetId)}
+          isOpen={selectedPetId !== null}
+          onClose={() => setSelectedPetId(null)}
+        />
       )}
     </div>
   );

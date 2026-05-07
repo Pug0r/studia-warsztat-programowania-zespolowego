@@ -11,6 +11,17 @@ export const getPetListRequest = async (): Promise<Pet[]> => {
   return data;
 };
 
+export const getPetByIdRequest = async (id: number): Promise<Pet> => {
+  const response = await fetch(`/api/pets/${id}`);
+
+  if (!response.ok) {
+    throw new Error(`Backend error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data;
+};
+
 export const uploadPetPhotoRequest = async (
   petId: number,
   file: File,

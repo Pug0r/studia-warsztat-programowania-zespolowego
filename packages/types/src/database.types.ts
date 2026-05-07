@@ -23,6 +23,7 @@ export interface Database {
           image_url: string | null;
           name: string;
           species: string;
+          status: "available" | "quarantine";
           weight: number | null;
           breed: string | null;
           size: string | null;
@@ -35,6 +36,7 @@ export interface Database {
           image_url?: string | null;
           name: string;
           species: string;
+          status?: "available" | "quarantine";
           weight?: number | null;
         };
         Update: {
@@ -45,6 +47,7 @@ export interface Database {
           image_url?: string | null;
           name?: string;
           species?: string;
+          status?: "available" | "quarantine";
           weight?: number | null;
         };
         Relationships: [];
@@ -61,11 +64,7 @@ export interface Database {
           message: string;
           pet_id: number;
           phone: string | null;
-          status:
-            | "new"
-            | "reviewing"
-            | "accepted"
-            | "rejected";
+          status: "new" | "reviewing" | "accepted" | "rejected";
           user_id: string | null;
         };
         Insert: {
@@ -79,11 +78,7 @@ export interface Database {
           message: string;
           pet_id: number;
           phone?: string | null;
-          status?:
-            | "new"
-            | "reviewing"
-            | "accepted"
-            | "rejected";
+          status?: "new" | "reviewing" | "accepted" | "rejected";
           user_id?: string | null;
         };
         Update: {
@@ -97,11 +92,7 @@ export interface Database {
           message?: string;
           pet_id?: number;
           phone?: string | null;
-          status?:
-            | "new"
-            | "reviewing"
-            | "accepted"
-            | "rejected";
+          status?: "new" | "reviewing" | "accepted" | "rejected";
           user_id?: string | null;
         };
         Relationships: [];
