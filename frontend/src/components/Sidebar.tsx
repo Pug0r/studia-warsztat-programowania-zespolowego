@@ -21,6 +21,7 @@ const Sidebar = () => {
 
   const isDashboardOverview = location.pathname === "/dashboard";
   const isDashboardAdoptions = location.pathname === "/dashboard/adoptions";
+  const isDashboardVolunteers = location.pathname === "/dashboard/volunteers";
 
   async function handleSignOut() {
     await signOut();
@@ -59,9 +60,15 @@ const Sidebar = () => {
             <PawPrint className="size-4" />
             Animals
           </Button>
-          <Button variant="ghost" className="w-full justify-start gap-2">
-            <Users className="size-4" />
-            Volunteers
+          <Button
+            asChild
+            variant={isDashboardVolunteers ? "secondary" : "ghost"}
+            className="w-full justify-start gap-2"
+          >
+            <Link to="/dashboard/volunteers">
+              <Users className="size-4" />
+              Volunteers
+            </Link>
           </Button>
           <Button
             asChild
