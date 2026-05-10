@@ -37,7 +37,7 @@ export const PetDetailModal: React.FC<Props> = ({ petId, isOpen, onClose }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       {/* Tailwind for the MAX WIDTH and MAX HEIGHT only */}
-      <DialogContent className="shelter-public pet-detail-dialog p-5 pr-2 max-w-4xl w-[90vw]">
+      <DialogContent className="shelter-public pet-detail-dialog p-5 pr-2 max-w-4xl w-full">
         <div className="pet-detail-scroll flex-1 pr-3">
           <DialogHeader className="pb-6">
             <DialogTitle className="pet-detail__title">
@@ -92,8 +92,8 @@ export const PetDetailModal: React.FC<Props> = ({ petId, isOpen, onClose }) => {
                   {/* Stats */}
                   <div className="pet-detail__stats">
                     <div className="pet-detail__stat">
-                      <p className="pet-detail__stat-label">Species</p>
-                      <p className="pet-detail__stat-value">{pet.species}</p>
+                      <p className="pet-detail__stat-label">Breed</p>
+                      <p className="pet-detail__stat-value">{pet.breed}</p>
                     </div>
                     {pet.age !== null && (
                       <div className="pet-detail__stat">
@@ -127,28 +127,22 @@ export const PetDetailModal: React.FC<Props> = ({ petId, isOpen, onClose }) => {
                     <div className="pet-detail__extra pet-detail__extra--personality">
                       <p className="pet-detail__extra-label">Personality</p>
                       <p className="pet-detail__extra-value">
-                        {
-                          /*pet.personality ||*/
-                          "Friendly and well-behaved. Adapts well to new environments."
-                        }
+                        {pet.personality ||
+                          "Friendly and well-behaved. Adapts well to new environments."}
                       </p>
                     </div>
                     <div className="pet-detail__extra pet-detail__extra--home">
                       <p className="pet-detail__extra-label">Ideal Home</p>
                       <p className="pet-detail__extra-value">
-                        {
-                          /*pet.ideal_home || */
-                          "Looking for a loving family with a secure home environment."
-                        }
+                        {pet.ideal_home ||
+                          "Looking for a loving family with a secure home environment."}
                       </p>
                     </div>
                     <div className="pet-detail__extra pet-detail__extra--needs">
                       <p className="pet-detail__extra-label">Special Needs</p>
                       <p className="pet-detail__extra-value">
-                        {
-                          /* pet.special_needs || */
-                          "No special requirements. Regular care and attention needed."
-                        }
+                        {pet.special_needs ||
+                          "No special requirements. Regular care and attention needed."}
                       </p>
                     </div>
                   </div>
@@ -156,11 +150,26 @@ export const PetDetailModal: React.FC<Props> = ({ petId, isOpen, onClose }) => {
               </div>
 
               {/* About section — full width below photo + info */}
-              <div className="pet-detail__about pt-2">
+
+              {/* <div className="pet-detail__about pt-2">
                 <h3 className="pet-detail__about-title">About {pet.name}</h3>
                 <p className="pet-detail__desc">
-                  {/* pet.long_description  || */ pet.description}
+                  {pet.long_description || pet.description}
                 </p>
+              </div> */}
+
+              {/* Photo Gallery - can be commented out if not ready */}
+              <div className="pet-detail__gallery pt-2">
+                <h3 className="pet-detail__gallery-title">Photo Gallery</h3>
+                <div className="pet-detail__gallery-grid">
+                  {[pet.image_url, ...(pet.image_urls || [])]
+                    .filter(Boolean)
+                    .map((url, index) => (
+                      <div key={index} className="pet-detail__gallery-item">
+                        <img src={url} alt={`${pet.name} photo ${index + 1}`} />
+                      </div>
+                    ))}
+                </div>
               </div>
             </div>
           )}

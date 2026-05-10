@@ -80,17 +80,20 @@ function DialogContent({
   return (
     <DialogPortal>
       <DialogOverlay />
-      <DialogPrimitive.Content
-        data-slot="dialog-content"
-        className={cn(
-          /* Centering Logic */
-          "fixed left-1/2 top-1/2 z-50 max-h-[90vh] overflow-auto flex flex-col",
-          /* Visual Shell */
-          "border border-slate-200 bg-white shadow-lg rounded-2xl outline-none",
-          className,
-        )}
-        {...props}
-      />
+      {/* Full-screen flex container so that the dialog is centered */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <DialogPrimitive.Content
+          data-slot="dialog-content"
+          className={cn(
+            /* Centering Logic */
+            "overflow-auto flex flex-col",
+            /* Visual Shell */
+            "border border-slate-200 bg-white shadow-lg rounded-2xl outline-none",
+            className,
+          )}
+          {...props}
+        />
+      </div>
     </DialogPortal>
   );
 }

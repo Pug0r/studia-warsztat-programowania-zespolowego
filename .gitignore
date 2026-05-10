@@ -23,3 +23,6 @@ package-lock.json
 
 # Intellij IDEA
 /.idea
+
+# Supabase
+/supabase/.temp

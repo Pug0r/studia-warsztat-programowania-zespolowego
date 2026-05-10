@@ -27,6 +27,10 @@ export interface Database {
           weight: number | null;
           breed: string | null;
           size: string | null;
+          personality: string | null;
+          ideal_home: string | null;
+          special_needs: string | null;
+          image_urls: string[] | null;
         };
         Insert: {
           age?: number | null;
@@ -38,6 +42,12 @@ export interface Database {
           species: string;
           status?: "available" | "quarantine";
           weight?: number | null;
+          breed?: string | null;
+          size?: string | null;
+          personality?: string | null;
+          ideal_home?: string | null;
+          special_needs?: string | null;
+          image_urls?: string[] | null;
         };
         Update: {
           age?: number | null;
@@ -49,6 +59,12 @@ export interface Database {
           species?: string;
           status?: "available" | "quarantine";
           weight?: number | null;
+          breed?: string | null;
+          size?: string | null;
+          personality?: string | null;
+          ideal_home?: string | null;
+          special_needs?: string | null;
+          image_urls?: string[] | null;
         };
         Relationships: [];
       };
