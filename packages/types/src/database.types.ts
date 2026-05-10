@@ -61,11 +61,7 @@ export interface Database {
           message: string;
           pet_id: number;
           phone: string | null;
-          status:
-            | "new"
-            | "reviewing"
-            | "accepted"
-            | "rejected";
+          status: "new" | "reviewing" | "accepted" | "rejected";
           user_id: string | null;
         };
         Insert: {
@@ -79,11 +75,7 @@ export interface Database {
           message: string;
           pet_id: number;
           phone?: string | null;
-          status?:
-            | "new"
-            | "reviewing"
-            | "accepted"
-            | "rejected";
+          status?: "new" | "reviewing" | "accepted" | "rejected";
           user_id?: string | null;
         };
         Update: {
@@ -97,11 +89,7 @@ export interface Database {
           message?: string;
           pet_id?: number;
           phone?: string | null;
-          status?:
-            | "new"
-            | "reviewing"
-            | "accepted"
-            | "rejected";
+          status?: "new" | "reviewing" | "accepted" | "rejected";
           user_id?: string | null;
         };
         Relationships: [];

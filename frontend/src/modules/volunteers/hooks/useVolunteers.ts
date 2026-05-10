@@ -37,8 +37,13 @@ export const useUpdateVolunteer = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, payload }: { id: number; payload: UpdateVolunteerDTO }) =>
-      updateVolunteerRequest(id, payload),
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: number;
+      payload: UpdateVolunteerDTO;
+    }) => updateVolunteerRequest(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
     },
