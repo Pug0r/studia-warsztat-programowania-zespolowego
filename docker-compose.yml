@@ -13,10 +13,9 @@ services:
     env_file:
       - ./backend/.env
     environment:
-      - PORT=5000
       - NODE_ENV=development
 
-  frontend:
+  frontend: 
     build:
       context: .
       dockerfile: frontend/dockerfile
@@ -29,5 +28,5 @@ services:
       - /app/node_modules # and this overwrites containers modules over our mapped file
     depends_on:
       - backend
-    environment:
-      - VITE_PORT=3000
+    env_file:
+      - ./frontend/.env

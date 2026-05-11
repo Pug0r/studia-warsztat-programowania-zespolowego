@@ -12,6 +12,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let mounted = true;
 
+    if (!supabase) {
+      setIsLoading(false);
+      return () => {
+        mounted = false;
+      };
+    }
+
     async function loadSession() {
       const { data } = await supabase.auth.getSession();
       if (!mounted) return;
@@ -40,7 +47,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAuthenticated: Boolean(session),
       isLoading,
       signOut: async () => {
-        await supabase.auth.signOut();
+        if (supabase) {
+          await supabase.auth.signOut();
+        }
       },
     }),
     [isLoading, session],
