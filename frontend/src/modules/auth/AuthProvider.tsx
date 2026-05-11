@@ -11,8 +11,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let mounted = true;
+    const client = supabase;
 
-    if (!supabase) {
+    if (!client) {
       setIsLoading(false);
       return () => {
         mounted = false;
@@ -20,7 +21,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     async function loadSession() {
-      const { data } = await supabase.auth.getSession();
+      const { data } = await client.auth.getSession();
       if (!mounted) return;
       setSession(data.session ?? null);
       setIsLoading(false);
@@ -30,7 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, currentSession) => {
+    } = client.auth.onAuthStateChange((_event, currentSession) => {
       setSession(currentSession);
       setIsLoading(false);
     });
