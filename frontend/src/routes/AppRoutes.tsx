@@ -13,8 +13,7 @@ import { CoordinatorRoute } from "@/routes/CoordinatorRoute";
 export const AppRoutes = () => {
   return (
     <Routes>
-      <Route index element={<HomePage />} />
-      {/* <Route path="/" element={<HomePage />} /> */}
+      <Route path="/" element={<HomePage />} />
       <Route path="/pets" element={<PetsPage />} />
       <Route path="/adopt" element={<AdoptionApplicationPage />} />
       <Route path="/login" element={<LoginPage />} />

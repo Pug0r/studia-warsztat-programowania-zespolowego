@@ -6,6 +6,10 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(async (config) => {
+  if (!supabase) {
+    return config;
+  }
+
   const { data, error } = await supabase.auth.getSession();
   if (error) {
     return config;
