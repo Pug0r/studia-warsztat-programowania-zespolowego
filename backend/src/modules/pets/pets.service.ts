@@ -1,7 +1,68 @@
-import type { PetInsert, PetRow } from "@repo/types";
+import type {
+  CreatePetWalkDTO,
+  PetInsert,
+  PetRow,
+  PetWalkPriorityItem,
+  PetWalkInsert,
+  PetWalkRow,
+  PetWithWalkSummary,
+} from "@repo/types";
 import { supabase } from "#config/supabaseClient.js";
 import type { CreatePetDTO } from "./pets.validation.js";
 import type { Pet } from "@repo/types";
+
+const MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+const getDaysSince = (dateString: string | null): number | null => {
+  if (!dateString) {
+    return null;
+  }
+
+  const diff = Date.now() - new Date(dateString).getTime();
+  return Math.max(0, Math.floor(diff / MS_PER_DAY));
+};
+
+const compareWalkUrgency = (a: PetWithWalkSummary, b: PetWithWalkSummary) => {
+  const aTime = a.last_walk_at
+    ? new Date(a.last_walk_at).getTime()
+    : Number.NEGATIVE_INFINITY;
+  const bTime = b.last_walk_at
+    ? new Date(b.last_walk_at).getTime()
+    : Number.NEGATIVE_INFINITY;
+
+  if (aTime !== bTime) {
+    return aTime - bTime;
+  }
+
+  return a.name.localeCompare(b.name);
+};
+
+const buildWalkSummaries = (
+  pets: Pet[],
+  walks: Pick<PetWalkRow, "pet_id" | "walked_at">[],
+): PetWithWalkSummary[] => {
+  const lastWalkByPet = new Map<number, string>();
+  const walkCountByPet = new Map<number, number>();
+
+  for (const walk of walks) {
+    walkCountByPet.set(walk.pet_id, (walkCountByPet.get(walk.pet_id) ?? 0) + 1);
+
+    if (!lastWalkByPet.has(walk.pet_id)) {
+      lastWalkByPet.set(walk.pet_id, walk.walked_at ?? "");
+    }
+  }
+
+  return pets.map((pet) => {
+    const lastWalkAt = lastWalkByPet.get(pet.id) ?? null;
+
+    return {
+      ...pet,
+      days_since_last_walk: getDaysSince(lastWalkAt),
+      last_walk_at: lastWalkAt,
+      walk_count: walkCountByPet.get(pet.id) ?? 0,
+    };
+  });
+};
 
 export const list = async (): Promise<Pet[]> => {
   const { data, error } = await supabase
@@ -14,6 +75,38 @@ export const list = async (): Promise<Pet[]> => {
   }
 
   return data;
+};
+
+export const listWithWalkSummary = async (): Promise<PetWithWalkSummary[]> => {
+  const [{ data: pets, error: petsError }, { data: walks, error: walksError }] =
+    await Promise.all([
+      supabase.from("pets").select("*").order("name", { ascending: true }),
+      supabase
+        .from("pet_walks")
+        .select("pet_id, walked_at")
+        .order("walked_at", { ascending: false }),
+    ]);
+
+  if (petsError) {
+    throw new Error(petsError.message);
+  }
+
+  if (walksError) {
+    throw new Error(walksError.message);
+  }
+
+  return buildWalkSummaries(pets ?? [], walks ?? []);
+};
+
+export const listWalkPriorityDogs = async (): Promise<
+  PetWalkPriorityItem[]
+> => {
+  const summaries = await listWithWalkSummary();
+
+  return summaries.sort(compareWalkUrgency).map((pet, index) => ({
+    ...pet,
+    priority_rank: index + 1,
+  }));
 };
 
 export const getById = async (id: number): Promise<PetRow | null> => {
@@ -93,4 +186,26 @@ export const uploadPhoto = async (
   }
 
   return imageUrl;
+};
+
+export const recordWalk = async (
+  petId: number,
+  payload: CreatePetWalkDTO,
+): Promise<PetWalkRow> => {
+  const row: PetWalkInsert = {
+    pet_id: petId,
+    ...payload,
+  };
+
+  const { data, error } = await supabase
+    .from("pet_walks")
+    .insert(row)
+    .select("*")
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
 };

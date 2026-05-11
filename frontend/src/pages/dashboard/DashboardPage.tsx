@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CalendarDays, Dog } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
@@ -10,12 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-const upcomingTasks = [
-  { title: "Vet check for Luna", time: "09:00", team: "Veterinary" },
-  { title: "Volunteer onboarding", time: "11:30", team: "Community" },
-  { title: "Adoption meet-and-greet", time: "14:00", team: "Adoption" },
-];
+import { WalkMonitoringPanel } from "./WalkMonitoringPanel";
 
 export function DashboardPage() {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -89,34 +84,7 @@ export function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Today&apos;s key tasks</CardTitle>
-              <CardDescription>
-                Priority items for teams on duty
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {upcomingTasks.map((task) => (
-                <div
-                  key={task.title}
-                  className="rounded-lg border border-slate-200 bg-white p-3 text-sm"
-                >
-                  <p className="font-medium text-slate-900">{task.title}</p>
-                  <p className="text-slate-500">{task.time}</p>
-                  <Badge variant="secondary" className="mt-2">
-                    {task.team}
-                  </Badge>
-                </div>
-              ))}
-              <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">
-                <p className="flex items-center gap-2 font-medium">
-                  <Dog className="size-4" />
-                  Kennel hygiene completed for all zones.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          <WalkMonitoringPanel />
         </div>
       </section>
     </main>

@@ -1,6 +1,10 @@
 import type { Request, Response } from "express";
 import * as petsService from "./pets.service.js";
-import { validateCreatePetPayload, validatePetId } from "./pets.validation.js";
+import {
+  validateCreatePetPayload,
+  validateCreatePetWalkPayload,
+  validatePetId,
+} from "./pets.validation.js";
 
 type MulterRequest = Request & { file?: Express.Multer.File };
 
@@ -13,6 +17,26 @@ const sendServerError = (res: Response, message = "Internal server error.") =>
 export const list = async (_req: Request, res: Response) => {
   try {
     const pets = await petsService.list();
+    return res.json(pets);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : undefined;
+    return sendServerError(res, message);
+  }
+};
+
+export const listWithWalkSummary = async (_req: Request, res: Response) => {
+  try {
+    const pets = await petsService.listWithWalkSummary();
+    return res.json(pets);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : undefined;
+    return sendServerError(res, message);
+  }
+};
+
+export const listWalkPriorityDogs = async (_req: Request, res: Response) => {
+  try {
+    const pets = await petsService.listWalkPriorityDogs();
     return res.json(pets);
   } catch (error) {
     const message = error instanceof Error ? error.message : undefined;
@@ -45,6 +69,28 @@ export const create = async (req: Request, res: Response) => {
     const pet = await petsService.create(payload);
 
     return res.status(201).json(pet);
+  } catch (error) {
+    if (error instanceof Error) {
+      return sendBadRequest(res, error.message);
+    }
+
+    return sendServerError(res);
+  }
+};
+
+export const recordWalk = async (req: Request, res: Response) => {
+  try {
+    const petId = validatePetId(req.params.id);
+    const pet = await petsService.getById(petId);
+
+    if (!pet) {
+      return res.status(404).json({ error: "Pet not found." });
+    }
+
+    const payload = validateCreatePetWalkPayload(req.body);
+    const walk = await petsService.recordWalk(petId, payload);
+
+    return res.status(201).json(walk);
   } catch (error) {
     if (error instanceof Error) {
       return sendBadRequest(res, error.message);
