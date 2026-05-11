@@ -48,7 +48,7 @@ const buildWalkSummaries = (
     walkCountByPet.set(walk.pet_id, (walkCountByPet.get(walk.pet_id) ?? 0) + 1);
 
     if (!lastWalkByPet.has(walk.pet_id)) {
-      lastWalkByPet.set(walk.pet_id, walk.walked_at ?? "");
+      lastWalkByPet.set(walk.pet_id, walk.walked_at);
     }
   }
 
@@ -95,7 +95,7 @@ export const listWithWalkSummary = async (): Promise<PetWithWalkSummary[]> => {
     throw new Error(walksError.message);
   }
 
-  return buildWalkSummaries(pets ?? [], walks ?? []);
+  return buildWalkSummaries(pets, walks);
 };
 
 export const listWalkPriorityDogs = async (): Promise<
