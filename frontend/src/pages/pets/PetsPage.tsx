@@ -62,7 +62,9 @@ export const PetsPage: React.FC = () => {
     const matchesAge =
       maxAge === "" || pet.age === null || pet.age <= Number(maxAge);
     const matchesWeight =
-      maxWeight === "" || pet.weight === null || pet.weight <= Number(maxWeight);
+      maxWeight === "" ||
+      pet.weight === null ||
+      pet.weight <= Number(maxWeight);
 
     const name = pet.name || "";
     const breed = pet.breed || "";

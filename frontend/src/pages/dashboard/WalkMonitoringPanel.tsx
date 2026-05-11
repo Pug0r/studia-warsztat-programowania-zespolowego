@@ -106,7 +106,7 @@ export function WalkMonitoringPanel() {
             Volunteer priority queue
           </CardTitle>
           <CardDescription>
-            Pets that have waited the longest are surfaced first. Select one to
+            Pets that have waited the longest are listed first. Select one to
             see the last recorded walk before you log a new outing.
           </CardDescription>
         </CardHeader>
