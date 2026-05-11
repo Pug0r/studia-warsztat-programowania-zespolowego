@@ -12,6 +12,10 @@ function mapAuthError(error: AuthError | null) {
 }
 
 export async function signInWithPassword(payload: AuthPayload) {
+  if (!supabase) {
+    throw new Error("Supabase is not configured.");
+  }
+
   const { data, error } = await supabase.auth.signInWithPassword(payload);
   if (error) {
     throw new Error(mapAuthError(error));
@@ -20,6 +24,10 @@ export async function signInWithPassword(payload: AuthPayload) {
 }
 
 export async function signUpWithPassword(payload: AuthPayload) {
+  if (!supabase) {
+    throw new Error("Supabase is not configured.");
+  }
+
   const { data, error } = await supabase.auth.signUp(payload);
   console.log("error", error);
   if (error) {
