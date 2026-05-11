@@ -142,6 +142,30 @@ export interface Database {
         };
         Relationships: [];
       };
+      volunteers: {
+        Row: {
+          created_at: string;
+          email: string;
+          full_name: string;
+          id: number;
+          phone: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          email: string;
+          full_name: string;
+          id?: number;
+          phone?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          email?: string;
+          full_name?: string;
+          id?: number;
+          phone?: string | null;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<never, never>;
     Functions: Record<never, never>;

@@ -30,3 +30,11 @@ export type {
 } from "./petWalk.js";
 export type { CreateUserDTO, UserInsert, UserRow } from "./user.js";
 export type { PetInsert, PetRow, PetRow as Pet, PetUpdate } from "./pet.js";
+export type {
+  CreateVolunteerDTO,
+  UpdateVolunteerDTO,
+  VolunteerInsert,
+  VolunteerRow,
+  VolunteerRow as Volunteer,
+  VolunteerUpdate,
+} from "./volunteer.js";
