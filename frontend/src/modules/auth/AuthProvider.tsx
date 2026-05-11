@@ -7,13 +7,20 @@ import { AuthContext } from "./hooks/AuthContext";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(Boolean(supabase));
 
   useEffect(() => {
     let mounted = true;
+    if (!supabase) {
+      return () => {
+        mounted = false;
+      };
+    }
+
+    const client = supabase;
 
     async function loadSession() {
-      const { data } = await supabase.auth.getSession();
+      const { data } = await client.auth.getSession();
       if (!mounted) return;
       setSession(data.session ?? null);
       setIsLoading(false);
@@ -23,7 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, currentSession) => {
+    } = client.auth.onAuthStateChange((_event, currentSession) => {
       setSession(currentSession);
       setIsLoading(false);
     });
@@ -40,7 +47,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAuthenticated: Boolean(session),
       isLoading,
       signOut: async () => {
-        await supabase.auth.signOut();
+        if (supabase) {
+          await supabase.auth.signOut();
+        }
       },
     }),
     [isLoading, session],

@@ -1,4 +1,4 @@
-import type { PetInsert } from "@repo/types";
+import type { CreatePetWalkDTO, PetInsert } from "@repo/types";
 
 export type CreatePetDTO = Pick<
   PetInsert,
@@ -57,4 +57,56 @@ export const validatePetId = (id: unknown): number => {
   }
 
   return n;
+};
+
+const isValidDateString = (value: unknown): value is string => {
+  if (typeof value !== "string" || !value.trim()) {
+    return false;
+  }
+
+  return !Number.isNaN(Date.parse(value));
+};
+
+export const validateCreatePetWalkPayload = (
+  payload: unknown,
+): CreatePetWalkDTO => {
+  if (payload == null) {
+    return {};
+  }
+
+  if (typeof payload !== "object") {
+    throw new Error("Payload must be an object.");
+  }
+
+  const { notes, walked_at, walker_id } = payload as Record<string, unknown>;
+  const walkPayload: CreatePetWalkDTO = {};
+
+  if (notes !== undefined) {
+    if (typeof notes !== "string") {
+      throw new Error("Field 'notes' must be a string when provided.");
+    }
+
+    const trimmedNotes = notes.trim();
+    if (trimmedNotes) {
+      walkPayload.notes = trimmedNotes;
+    }
+  }
+
+  if (walked_at !== undefined) {
+    if (!isValidDateString(walked_at)) {
+      throw new Error("Field 'walked_at' must be a valid date string.");
+    }
+
+    walkPayload.walked_at = new Date(walked_at).toISOString();
+  }
+
+  if (walker_id !== undefined) {
+    if (typeof walker_id !== "string" || !walker_id.trim()) {
+      throw new Error("Field 'walker_id' must be a non-empty string.");
+    }
+
+    walkPayload.walker_id = walker_id.trim();
+  }
+
+  return walkPayload;
 };

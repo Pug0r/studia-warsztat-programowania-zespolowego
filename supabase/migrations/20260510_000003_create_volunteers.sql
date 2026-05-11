@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS volunteers (
+  id BIGSERIAL PRIMARY KEY,
+  full_name TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
+  phone TEXT,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
+);

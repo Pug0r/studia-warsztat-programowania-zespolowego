@@ -68,6 +68,33 @@ export interface Database {
         };
         Relationships: [];
       };
+      pet_walks: {
+        Row: {
+          created_at: string;
+          id: number;
+          notes: string | null;
+          pet_id: number;
+          walked_at: string;
+          walker_id: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          id?: number;
+          notes?: string | null;
+          pet_id: number;
+          walked_at?: string;
+          walker_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          id?: number;
+          notes?: string | null;
+          pet_id?: number;
+          walked_at?: string;
+          walker_id?: string | null;
+        };
+        Relationships: [];
+      };
       adoption_applications: {
         Row: {
           city: string | null;
@@ -131,6 +158,30 @@ export interface Database {
           email?: string;
           id?: string;
           name?: string;
+        };
+        Relationships: [];
+      };
+      volunteers: {
+        Row: {
+          created_at: string;
+          email: string;
+          full_name: string;
+          id: number;
+          phone: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          email: string;
+          full_name: string;
+          id?: number;
+          phone?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          email?: string;
+          full_name?: string;
+          id?: number;
+          phone?: string | null;
         };
         Relationships: [];
       };
