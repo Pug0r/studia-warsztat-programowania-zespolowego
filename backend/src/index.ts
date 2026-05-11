@@ -8,7 +8,11 @@ import petsRouter from "#modules/pets/pets.routes.js";
 import volunteersRouter from "#modules/volunteers/volunteers.routes.js";
 
 const app = express();
-const port = process.env.PORT ?? "5000";
+const { PORT } = process.env;
+
+if (!PORT) {
+  throw new Error("PORT environment variable is required");
+}
 
 app.use(express.json());
 app.use("/api", itemRouter);
@@ -18,6 +22,6 @@ app.use("/api/volunteers", volunteersRouter);
 
 app.get("/", middleware);
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}`);
 });
