@@ -11,14 +11,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let mounted = true;
-    const client = supabase;
-
-    if (!client) {
+    if (!supabase) {
       setIsLoading(false);
       return () => {
         mounted = false;
       };
     }
+
+    const client = supabase;
 
     async function loadSession() {
       const { data } = await client.auth.getSession();
