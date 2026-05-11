@@ -136,9 +136,15 @@ function Header() {
           <a href="#portals">Staff</a>
         </nav>
         <div className="hp-header__actions">
-          <a className="hp-btn hp-btn--ghost" href="/login">
-            Log in
-          </a>
+          {session ? (
+            <a className="hp-btn hp-btn--ghost" href="/dashboard">
+              Dashboard
+            </a>
+          ) : (
+            <a className="hp-btn hp-btn--ghost" href="/login">
+              Log in
+            </a>
+          )}
           <span className="hp-user-chip" title={userLabel}>
             {userLabel}
           </span>
