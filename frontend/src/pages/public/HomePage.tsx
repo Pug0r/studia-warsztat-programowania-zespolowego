@@ -160,7 +160,7 @@ function Header() {
           <a className="hp-btn hp-btn--secondary" href="#events">
             View events
           </a>
-          <a className="hp-btn hp-btn--primary" href="/adopt">
+          <a className="hp-btn hp-btn--primary" href="/pets">
             Find a pet
           </a>
         </div>
