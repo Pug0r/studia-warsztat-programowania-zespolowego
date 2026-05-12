@@ -8,6 +8,8 @@ type Props = {
 };
 
 export const PetCard: React.FC<Props> = ({ pet, onPetClick }) => {
+  const normalizedSize = pet.size?.toLowerCase();
+
   return (
     <div
       className="hp-pet-card"
@@ -59,11 +61,13 @@ export const PetCard: React.FC<Props> = ({ pet, onPetClick }) => {
         </p>
         <p>
           <strong>Size:</strong>{" "}
-          {pet.size === "small"
+          {normalizedSize === "small"
             ? "Small"
-            : pet.size === "medium"
+            : normalizedSize === "medium"
               ? "Medium"
-              : "Large"}
+              : normalizedSize === "large"
+                ? "Large"
+                : "Unknown"}
         </p>
       </div>
 

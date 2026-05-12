@@ -4,6 +4,7 @@ import {
   validateCreatePetPayload,
   validateCreatePetWalkPayload,
   validatePetId,
+  validateSize,
 } from "./pets.validation.js";
 
 type MulterRequest = Request & { file?: Express.Multer.File };
@@ -14,9 +15,10 @@ const sendBadRequest = (res: Response, message: string) =>
 const sendServerError = (res: Response, message = "Internal server error.") =>
   res.status(500).json({ error: message });
 
-export const list = async (_req: Request, res: Response) => {
+export const list = async (req: Request, res: Response) => {
   try {
-    const pets = await petsService.list();
+    const size = validateSize(req.query.size);
+    const pets = await petsService.list(size);
     return res.json(pets);
   } catch (error) {
     const message = error instanceof Error ? error.message : undefined;

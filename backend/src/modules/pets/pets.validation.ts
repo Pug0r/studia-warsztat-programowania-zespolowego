@@ -59,6 +59,14 @@ export const validatePetId = (id: unknown): number => {
   return n;
 };
 
+export const validateSize = (size: unknown): string | undefined => {
+  if (size === undefined || size === null) return undefined;
+  if (typeof size !== "string") throw new Error("Size must be a string.");
+  const allowedSizes = ["small", "medium", "large"];
+  if (!allowedSizes.includes(size)) throw new Error(`Invalid size: ${size}`);
+  return size;
+};
+
 const isValidDateString = (value: unknown): value is string => {
   if (typeof value !== "string" || !value.trim()) {
     return false;
