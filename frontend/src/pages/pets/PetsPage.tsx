@@ -89,11 +89,11 @@ export const PetsPage: React.FC = () => {
     // 'shelter-public' aktywuje globalne zmienne z HomePage.css
     <div className="shelter-public hp-pets-page">
       <div className="flex items-center justify-between mb-6">
-  <h1 className="hp-pets-title">Find your friend!</h1>
-  <Link to="/" className="hp-btn hp-btn--secondary">
-    Back to home
-  </Link>
-</div>
+        <h1 className="hp-pets-title">Find your friend!</h1>
+        <Link to="/" className="hp-btn hp-btn--secondary">
+          Back to home
+        </Link>
+      </div>
 
       <div className="hp-filters">
         <div className="hp-filter-group">
