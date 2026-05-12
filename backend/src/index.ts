@@ -18,6 +18,7 @@ app.use(express.json());
 app.use("/api", itemRouter);
 app.use("/api/adoption-applications", adoptionApplicationsRouter);
 app.use("/api/pets", petsRouter);
+app.use("/api/pets/:id", petsRouter);
 app.use("/api/volunteers", volunteersRouter);
 
 app.get("/", middleware);

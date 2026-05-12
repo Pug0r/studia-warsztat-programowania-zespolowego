@@ -1,7 +1,8 @@
 import type { Pet } from "@/modules/pets/types/Pets";
-import { usePetList } from "@/modules/pets/hooks/usePetList";
+import { usePetList } from "@/modules/pets/hooks/usePetList"; // <-- Czeka na bazę danych
 import { PetCard } from "@/modules/pets/components/PetCard";
 import { useState } from "react";
+import { PetDetailModal } from "@/modules/pets/components/PetDetailModal";
 import { Link } from "react-router-dom";
 import "./PetsPage.css";
 
@@ -14,6 +15,10 @@ export const PetsPage: React.FC = () => {
   const [maxAge, setMaxAge] = useState<string>("");
   const [maxWeight, setMaxWeight] = useState<string>("");
   const [searchName, setSearchName] = useState<string>("");
+
+  const [selectedPetId, setSelectedPetId] = useState<string | number | null>(
+    null,
+  );
 
   if (error) {
     console.error("BŁĄD Z SUPABASE:", error);
@@ -42,7 +47,6 @@ export const PetsPage: React.FC = () => {
       </div>
     );
   }
-
   const petsData = data || [];
 
   const clearAllFilters = () => {
@@ -179,10 +183,19 @@ export const PetsPage: React.FC = () => {
         </div>
       ) : (
         <div className="hp-pets-grid">
-          {filteredPets.map((pet: Pet) => (
-            <PetCard key={pet.id} pet={pet} />
+          {filteredPets.map((pet) => (
+            <PetCard key={pet.id} pet={pet} onPetClick={setSelectedPetId} />
           ))}
         </div>
+      )}
+
+      {/* Detail Modal - ukazuje się po kliknięciu na kartę */}
+      {selectedPetId !== null && (
+        <PetDetailModal
+          petId={Number(selectedPetId)}
+          isOpen={selectedPetId !== null}
+          onClose={() => setSelectedPetId(null)}
+        />
       )}
     </div>
   );

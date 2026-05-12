@@ -20,3 +20,9 @@ package-lock.json
 # Test coverage
 /coverage
 .vite
+
+# Intellij IDEA
+/.idea
+
+# Supabase
+/supabase/.temp

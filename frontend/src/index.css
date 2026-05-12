@@ -1,5 +1,63 @@
 @import "tailwindcss";
 
+/* —— Dialog animations (global) —— */
+@keyframes dialog-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dialog-content-in {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dialog-overlay-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes dialog-content-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+}
+
+[data-slot="dialog-overlay"][data-state="open"] {
+  animation: dialog-overlay-in 0.2s ease-out forwards;
+}
+
+[data-slot="dialog-overlay"][data-state="closed"] {
+  animation: dialog-overlay-out 0.2s ease-in forwards;
+}
+
+/* Content */
+[data-slot="dialog-content"][data-state="open"] {
+  animation: dialog-content-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+[data-slot="dialog-content"][data-state="closed"] {
+  animation: dialog-content-out 0.2s ease-in forwards;
+}
+
 * {
   box-sizing: border-box;
 }

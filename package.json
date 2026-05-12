@@ -18,6 +18,8 @@
     "prepare": "husky"
   },
   "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0"
   },
@@ -29,5 +31,9 @@
     "*.{json,md}": [
       "prettier --write"
     ]
+  },
+  "dependencies": {
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
   }
 }
