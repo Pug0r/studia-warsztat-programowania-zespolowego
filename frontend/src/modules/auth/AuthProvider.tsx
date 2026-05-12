@@ -12,7 +12,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let mounted = true;
     if (!supabase) {
-      setIsLoading(false);
       return () => {
         mounted = false;
       };

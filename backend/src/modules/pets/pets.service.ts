@@ -64,11 +64,17 @@ const buildWalkSummaries = (
   });
 };
 
-export const list = async (): Promise<Pet[]> => {
-  const { data, error } = await supabase
+export const list = async (size?: string): Promise<Pet[]> => {
+  let query = supabase
     .from("pets")
     .select("*")
     .order("name", { ascending: true });
+
+  if (size) {
+    query = query.eq("size", size);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     throw new Error(error.message);
