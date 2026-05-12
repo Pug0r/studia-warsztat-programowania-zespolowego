@@ -2,6 +2,7 @@ import type { Pet } from "@/modules/pets/types/Pets";
 import { usePetList } from "@/modules/pets/hooks/usePetList";
 import { PetCard } from "@/modules/pets/components/PetCard";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import "./PetsPage.css";
 
 export const PetsPage: React.FC = () => {
@@ -56,7 +57,8 @@ export const PetsPage: React.FC = () => {
   const filteredPets = petsData.filter((pet: Pet) => {
     const matchesSpecies =
       selectedSpecies === "all" || pet.species === selectedSpecies;
-    const matchesSize = selectedSize === "all" || pet.size === selectedSize;
+    const matchesSize =
+      selectedSize === "all" || pet.size?.toLowerCase() === selectedSize;
     const matchesId =
       searchId === "" || String(pet.id).includes(searchId.trim());
     const matchesAge =
@@ -86,7 +88,12 @@ export const PetsPage: React.FC = () => {
   return (
     // 'shelter-public' aktywuje globalne zmienne z HomePage.css
     <div className="shelter-public hp-pets-page">
-      <h1 className="hp-pets-title">Find your friend!</h1>
+      <div className="flex items-center justify-between mb-6">
+  <h1 className="hp-pets-title">Find your friend!</h1>
+  <Link to="/" className="hp-btn hp-btn--secondary">
+    Back to home
+  </Link>
+</div>
 
       <div className="hp-filters">
         <div className="hp-filter-group">
