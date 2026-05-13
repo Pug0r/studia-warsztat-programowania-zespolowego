@@ -156,3 +156,24 @@ export const uploadPhoto = async (req: MulterRequest, res: Response) => {
     return sendServerError(res);
   }
 };
+
+export const listUpcomingWalks = async (req: Request, res: Response) => {
+  try {
+    const walkerId = req.user?.id;
+
+    if (!walkerId) {
+      return res.status(401).json({ error: "Walker ID not found in token" });
+    }
+
+    console.log("Controller: Fetching walks for walker:", walkerId);
+
+    // Zmieniamy tylko to - wywołujemy serwis
+    const walks = await petsService.listUpcomingWalks(walkerId);
+
+    console.log("Controller: Found walks:", walks.length);
+    res.json(walks);
+  } catch (error) {
+    console.error("Controller Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};

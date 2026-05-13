@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { WalkMonitoringPanel } from "./WalkMonitoringPanel";
+import { MyWalksPanel } from "./MyWalksPanel";
 
 export function DashboardPage() {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -68,23 +69,27 @@ export function DashboardPage() {
           </Card>
         </div>
 
-        <div className="grid gap-4 xl:grid-cols-[1.3fr_1fr]">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CalendarDays className="size-5" />
-                Shelter calendar
-              </CardTitle>
-              <CardDescription>
-                Appointments, adoptions, and community events
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex justify-center">
-              <Calendar mode="single" selected={date} onSelect={setDate} />
-            </CardContent>
-          </Card>
+        <div className="space-y-4">
+          <MyWalksPanel />
 
-          <WalkMonitoringPanel />
+          <div className="grid gap-4 xl:grid-cols-[1.3fr_1fr]">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CalendarDays className="size-5" />
+                  Shelter calendar
+                </CardTitle>
+                <CardDescription>
+                  Appointments, adoptions, and community events
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex justify-center">
+                <Calendar mode="single" selected={date} onSelect={setDate} />
+              </CardContent>
+            </Card>
+
+            <WalkMonitoringPanel />
+          </div>
         </div>
       </section>
     </main>
