@@ -93,6 +93,37 @@ export const uploadPetPhotoRequest = async (
   return data.image_url;
 };
 
+export const cancelWalkRequest = async (walkId: number): Promise<void> => {
+  if (!supabase) {
+    throw new Error("Supabase client is not initialized");
+  }
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const token = session?.access_token;
+
+  const response = await fetch(`/api/pets/walks/${walkId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    let message = `Cancel walk error: ${response.status}`;
+    try {
+      const data = await response.json();
+      if (typeof data?.error === "string") {
+        message = data.error;
+      }
+    } catch {
+      // response had no JSON body
+    }
+    throw new Error(message);
+  }
+};
+
 export const getMyWalksRequest = async (): Promise<PetWalkRow[]> => {
   if (!supabase) {
     throw new Error("Supabase client is not initialized");
