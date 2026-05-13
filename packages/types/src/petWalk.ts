@@ -11,7 +11,7 @@ export type PetWalk = PetWalkRow;
 
 export type CreatePetWalkDTO = Pick<
   PetWalkInsert,
-  "notes" | "walked_at" | "walker_id"
+  "notes" | "walked_at" | "end_at" | "walker_id"
 >;
 
 export type PetWithWalkSummary = PetRow & {

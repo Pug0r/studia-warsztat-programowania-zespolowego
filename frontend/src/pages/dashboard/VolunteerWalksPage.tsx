@@ -69,9 +69,7 @@ export function VolunteerWalksPage() {
                 <Clock3 className="size-5" />
                 Walk calendar
               </CardTitle>
-              <CardDescription>
-                Choose a day for the walk. Past dates are disabled.
-              </CardDescription>
+              <CardDescription>Choose a day for the walk.</CardDescription>
             </CardHeader>
             <CardContent>
               <Calendar
@@ -82,7 +80,7 @@ export function VolunteerWalksPage() {
                 disabled={{ before: new Date(new Date().setHours(0, 0, 0, 0)) }}
                 modifiers={{ walked: walkDays }}
                 modifiersClassNames={{
-                  walked: "bg-emerald-100 text-emerald-900",
+                  walked: "bg-emerald-100 text-emerald-900 rounded-md",
                 }}
               />
             </CardContent>

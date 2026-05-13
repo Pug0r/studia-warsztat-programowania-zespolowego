@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, useMemo } from "react";
 import { Dog } from "lucide-react";
 
 import { useAuth } from "@/modules/auth/hooks/useAuth";
@@ -16,6 +16,7 @@ import { showToast } from "@/lib/toast";
 import {
   useRecordPetWalk,
   useWalkPriorityDogs,
+  useWalkEvents,
 } from "@/modules/pets/hooks/useWalkMonitoring";
 
 const lastWalkFormatter = new Intl.DateTimeFormat("en-US", {
@@ -68,21 +69,119 @@ export function VolunteerPriorityQueueCard({
   //   onSelectedDateChange,
 }: VolunteerPriorityQueueCardProps) {
   const { session } = useAuth();
-  const [selectedDogId, setSelectedDogId] = useState("");
+  const [selectedDogId, setSelectedDogId] = useState<number | null>(null);
   const [selectedTime, setSelectedTime] = useState("08:00");
+
+  const [durationMinutes, setDurationMinutes] = useState(60);
   const [notes, setNotes] = useState("");
 
   const selectedDate = selectedDateProp;
 
   const priorityQuery = useWalkPriorityDogs();
+  const walkEventsQuery = useWalkEvents();
   const recordWalkMutation = useRecordPetWalk();
 
   const priorityDogs = priorityQuery.data ?? [];
+  const walkEvents = walkEventsQuery.data ?? [];
 
   const selectedDog =
-    priorityDogs.find((dog) => String(dog.id) === selectedDogId) ??
+    priorityDogs.find((dog) => dog.id === selectedDogId) ??
     priorityDogs[0] ??
     null;
+
+  type WalkEvent = {
+    pet_id: number;
+    walker_id: string | null;
+    walked_at: string;
+    end_at: string | null;
+  };
+
+  function getWalkEnd(walk: WalkEvent) {
+    const start = new Date(walk.walked_at);
+
+    return walk.end_at
+      ? new Date(walk.end_at)
+      : new Date(start.getTime() + 60 * 60 * 1000);
+  }
+
+  function hasOverlap(
+    startTime: Date,
+    endTime: Date,
+    walk: WalkEvent,
+    matchPetId: number | null,
+    matchWalkerId?: string,
+  ) {
+    if (matchPetId && walk.pet_id === matchPetId) {
+      const walkStart = new Date(walk.walked_at);
+      const walkEnd = getWalkEnd(walk);
+
+      if (startTime < walkEnd && endTime > walkStart) return true;
+    }
+
+    if (matchWalkerId && walk.walker_id === matchWalkerId) {
+      const walkStart = new Date(walk.walked_at);
+      const walkEnd = getWalkEnd(walk);
+
+      if (startTime < walkEnd && endTime > walkStart) return true;
+    }
+
+    return false;
+  }
+
+  function generateTimeSlots(): string[] {
+    const slots: string[] = [];
+
+    for (let hour = 8; hour < 20; hour++) {
+      for (let minute = 0; minute < 60; minute += 30) {
+        slots.push(
+          `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`,
+        );
+      }
+    }
+
+    return slots;
+  }
+
+  // Generate available time slots (30-minute intervals)
+  const availableTimeSlots = useMemo(() => {
+    if (!selectedDate) return [];
+
+    const slots = generateTimeSlots();
+
+    const userId = session?.user.id;
+    const petId = selectedDogId;
+
+    return slots.filter((timeSlot) => {
+      const [hour, minute] = timeSlot.split(":").map(Number);
+
+      const startTime = new Date(selectedDate);
+      startTime.setHours(hour, minute, 0, 0);
+
+      const endTime = new Date(
+        startTime.getTime() + durationMinutes * 60 * 1000,
+      );
+
+      for (const walk of walkEvents) {
+        if (hasOverlap(startTime, endTime, walk, petId, userId)) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [
+    selectedDate,
+    durationMinutes,
+    selectedDogId,
+    walkEvents,
+    session?.user.id,
+  ]);
+
+  // Update selected time when available slots change
+
+  const safeSelectedTime = availableTimeSlots.includes(selectedTime)
+    ? selectedTime
+    : availableTimeSlots[0];
 
   async function handleWalkSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -97,10 +196,14 @@ export function VolunteerPriorityQueueCard({
     walkDate.setHours(hour, minute, 0, 0);
 
     try {
+      const endDate = new Date(
+        walkDate.getTime() + durationMinutes * 60 * 1000,
+      );
       await recordWalkMutation.mutateAsync({
         petId: selectedDog.id,
         payload: {
           walked_at: walkDate.toISOString(),
+          end_at: endDate.toISOString(),
           walker_id: session?.user.id,
           ...(notes.trim() ? { notes: notes.trim() } : {}),
         },
@@ -182,19 +285,18 @@ export function VolunteerPriorityQueueCard({
               value={
                 selectedDogId || (selectedDog?.id ? String(selectedDog.id) : "")
               }
-              onChange={(event) => setSelectedDogId(event.target.value)}
+              onChange={(event) => setSelectedDogId(Number(event.target.value))}
               disabled={priorityQuery.isPending || priorityDogs.length === 0}
             >
-              <option value="">Select a pet</option>
               {priorityDogs.map((dog) => (
                 <option key={dog.id} value={dog.id}>
-                  {dog.name} - last walk: {formatLastWalk(dog.last_walk_at)}
+                  {dog.name}
                 </option>
               ))}
             </select>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 items-stretch sm:grid-cols-2">
             <div className="space-y-2">
               <div>
                 <Label htmlFor="walk-date-select">Selected date: </Label>
@@ -204,34 +306,47 @@ export function VolunteerPriorityQueueCard({
                     : "No date selected"}
                 </p>
               </div>
+              <Label htmlFor="walk-duration-select">Walk duration</Label>
+              <select
+                id="walk-duration-select"
+                value={durationMinutes}
+                onChange={(event) =>
+                  setDurationMinutes(Number(event.target.value))
+                }
+                className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-slate-950 focus-visible:ring-[3px] focus-visible:ring-slate-950/50"
+              >
+                <option value={30}>30 minutes</option>
+                <option value={60}>1 hour</option>
+                <option value={90}>1 hour 30 minutes</option>
+                <option value={120}>2 hours</option>
+              </select>
               <Label htmlFor="walk-time-select">Choose time</Label>
               <select
                 id="walk-time-select"
-                value={selectedTime}
+                value={safeSelectedTime}
                 onChange={(event) => setSelectedTime(event.target.value)}
                 className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-slate-950 focus-visible:ring-[3px] focus-visible:ring-slate-950/50"
               >
-                {Array.from({ length: 8 }, (_, index) => {
-                  const hour = index + 8;
-                  const time = `${String(hour).padStart(2, "0")}:00`;
-                  return (
+                {availableTimeSlots.length > 0 ? (
+                  availableTimeSlots.map((time) => (
                     <option key={time} value={time}>
                       {time}
                     </option>
-                  );
-                })}
+                  ))
+                ) : (
+                  <option disabled>No available times</option>
+                )}
               </select>
             </div>
 
-            <div className="space-y-2">
+            <div className="flex h-full flex-col space-y-2">
               <Label htmlFor="walk-notes">Walk notes</Label>
               <textarea
                 id="walk-notes"
                 value={notes}
                 onChange={(event) => setNotes(event.target.value)}
                 placeholder="Optional notes for the coordinator"
-                rows={4}
-                className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-xs outline-none transition-[color,box-shadow] placeholder:text-slate-500 focus-visible:border-slate-950 focus-visible:ring-[3px] focus-visible:ring-slate-950/50"
+                className="w-full flex-1 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-xs outline-none transition-[color,box-shadow] placeholder:text-slate-500 focus-visible:border-slate-950 focus-visible:ring-[3px] focus-visible:ring-slate-950/50"
               />
             </div>
           </div>

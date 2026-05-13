@@ -207,10 +207,80 @@ export const uploadPhoto = async (
   return imageUrl;
 };
 
+export const checkWalkConflicts = async (
+  petId: number,
+  walkerId: string | undefined,
+  walkedAt: string,
+  endAt: string | undefined,
+): Promise<{ hasPetConflict: boolean; hasWalkerConflict: boolean }> => {
+  let hasPetConflict = false;
+  let hasWalkerConflict = false;
+
+  if (!endAt) {
+    return { hasPetConflict, hasWalkerConflict };
+  }
+
+  // Check if pet is already booked during this time
+  const { data: petConflicts, error: petError } = await supabase
+    .from("pet_walks")
+    .select("id")
+    .eq("pet_id", petId)
+    .lte("walked_at", endAt)
+    .gte("end_at", walkedAt);
+
+  if (petError) {
+    throw new Error(`Error checking pet conflicts: ${petError.message}`);
+  }
+
+  hasPetConflict = petConflicts.length > 0;
+
+  // Check if walker is already booked during this time
+  if (walkerId) {
+    const { data: walkerConflicts, error: walkerError } = await supabase
+      .from("pet_walks")
+      .select("id")
+      .eq("walker_id", walkerId)
+      .lte("walked_at", endAt)
+      .gte("end_at", walkedAt);
+
+    if (walkerError) {
+      throw new Error(
+        `Error checking walker conflicts: ${walkerError.message}`,
+      );
+    }
+
+    hasWalkerConflict = walkerConflicts.length > 0;
+  }
+
+  return { hasPetConflict, hasWalkerConflict };
+};
+
 export const recordWalk = async (
   petId: number,
   payload: CreatePetWalkDTO,
 ): Promise<PetWalkRow> => {
+  // Check for conflicts if we have end_at
+  if (payload.end_at && payload.walked_at) {
+    const { hasPetConflict, hasWalkerConflict } = await checkWalkConflicts(
+      petId,
+      payload.walker_id ?? undefined,
+      payload.walked_at,
+      payload.end_at,
+    );
+
+    if (hasPetConflict) {
+      throw new Error(
+        "This pet is already reserved for a walk during the selected time.",
+      );
+    }
+
+    if (hasWalkerConflict) {
+      throw new Error(
+        "You are already occupied during the selected time. Please choose a different time.",
+      );
+    }
+  }
+
   const row: PetWalkInsert = {
     pet_id: petId,
     ...payload,
