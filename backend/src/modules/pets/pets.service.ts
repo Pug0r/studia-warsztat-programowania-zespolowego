@@ -247,7 +247,7 @@ export const listUpcomingWalks = async (
 
   const { data, error } = await supabase
     .from("pet_walks")
-    .select("*")
+    .select("*, pets (name)")
     .eq("walker_id", walkerId)
     .gt("walked_at", now)
     .order("walked_at", { ascending: true });
