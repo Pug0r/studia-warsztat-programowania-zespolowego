@@ -167,7 +167,6 @@ export const listUpcomingWalks = async (req: Request, res: Response) => {
 
     console.log("Controller: Fetching walks for walker:", walkerId);
 
-    // Zmieniamy tylko to - wywołujemy serwis
     const walks = await petsService.listUpcomingWalks(walkerId);
 
     console.log("Controller: Found walks:", walks.length);
