@@ -38,7 +38,7 @@ export const authMiddleware: ExpressRequestHandler = async (req, res, next) => {
         .json({ error: "Missing or invalid authorization header" });
     }
 
-    const token = authHeader.slice(7); // Usuń "Bearer "
+    const token = authHeader.slice(7);
     console.log("Token length:", token.length);
 
     const { data, error } = await supabaseAuth.auth.getUser(token);
