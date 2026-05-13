@@ -216,6 +216,30 @@ export const recordWalk = async (
   return data;
 };
 
+export const getWalkById = async (
+  walkId: number,
+): Promise<PetWalkRow | null> => {
+  const { data, error } = await supabase
+    .from("pet_walks")
+    .select("*")
+    .eq("id", walkId)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+export const cancelWalk = async (walkId: number): Promise<void> => {
+  const { error } = await supabase.from("pet_walks").delete().eq("id", walkId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+};
+
 export const listUpcomingWalks = async (
   walkerId: string,
 ): Promise<PetWalkRow[]> => {

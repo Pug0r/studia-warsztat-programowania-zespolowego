@@ -20,6 +20,8 @@ router.post("/:id/photo", upload.single("photo"), petsController.uploadPhoto);
 
 router.get("/", petsController.list);
 
+router.delete("/walks/:walkId", authMiddleware, petsController.cancelWalk);
+
 router.get("/:id", petsController.getById);
 router.delete("/:id", petsController.delete);
 

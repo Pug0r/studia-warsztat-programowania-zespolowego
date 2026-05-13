@@ -7,6 +7,7 @@ import type {
 } from "@repo/types";
 
 import {
+  cancelWalkRequest,
   getPetWalkPriorityRequest,
   getPetWalkSummaryRequest,
   recordPetWalkRequest,
@@ -63,5 +64,20 @@ export const useMyWalks = (options?: { enabled?: boolean }) => {
     staleTime: 30 * 1000,
     refetchInterval: 1000 * 60 * 5,
     enabled: options?.enabled ?? true,
+  });
+};
+
+export const useCancelWalk = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, number>({
+    mutationFn: cancelWalkRequest,
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: MY_WALKS_QUERY_KEY }),
+        queryClient.invalidateQueries({ queryKey: WALK_PRIORITY_QUERY_KEY }),
+        queryClient.invalidateQueries({ queryKey: WALK_SUMMARY_QUERY_KEY }),
+      ]);
+    },
   });
 };
