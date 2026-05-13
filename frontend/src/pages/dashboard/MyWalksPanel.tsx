@@ -54,7 +54,7 @@ export function MyWalksPanel() {
                     <div className="flex items-center gap-2">
                       <Dog className="size-4 text-slate-500" />
                       <p className="font-medium text-slate-900">
-                        Pet ID: {walk.pet_id}
+                        Pet: {walk.pets?.name || "Unknown"}
                       </p>
                     </div>
                     <p className="mt-1 text-sm text-slate-600">
