@@ -233,10 +233,7 @@ export const getWalkById = async (
 };
 
 export const cancelWalk = async (walkId: number): Promise<void> => {
-  const { error } = await supabase
-    .from("pet_walks")
-    .delete()
-    .eq("id", walkId);
+  const { error } = await supabase.from("pet_walks").delete().eq("id", walkId);
 
   if (error) {
     throw new Error(error.message);
