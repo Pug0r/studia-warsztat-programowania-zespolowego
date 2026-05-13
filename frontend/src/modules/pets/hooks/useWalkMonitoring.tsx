@@ -10,6 +10,7 @@ import {
   getPetWalkPriorityRequest,
   getPetWalkSummaryRequest,
   recordPetWalkRequest,
+  getMyWalksRequest,
 } from "../api/petsApi";
 
 export const WALK_PRIORITY_QUERY_KEY = ["pet_walk_priority"] as const;
@@ -50,5 +51,17 @@ export const useRecordPetWalk = () => {
         queryClient.invalidateQueries({ queryKey: WALK_SUMMARY_QUERY_KEY }),
       ]);
     },
+  });
+};
+
+export const MY_WALKS_QUERY_KEY = ["my_walks"] as const;
+
+export const useMyWalks = (options?: { enabled?: boolean }) => {
+  return useQuery<PetWalkRow[], Error>({
+    queryKey: MY_WALKS_QUERY_KEY,
+    queryFn: getMyWalksRequest,
+    staleTime: 30 * 1000,
+    refetchInterval: 1000 * 60 * 5,
+    enabled: options?.enabled ?? true,
   });
 };

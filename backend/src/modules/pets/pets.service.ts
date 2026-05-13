@@ -215,3 +215,32 @@ export const recordWalk = async (
 
   return data;
 };
+
+export const listUpcomingWalks = async (
+  walkerId: string,
+): Promise<PetWalkRow[]> => {
+  const now = new Date().toISOString();
+
+  const { data, error } = await supabase
+    .from("pet_walks")
+    .select("*")
+    .eq("walker_id", walkerId)
+    .gt("walked_at", now)
+    .order("walked_at", { ascending: true });
+
+  console.log("Query result:", {
+    count: data?.length,
+    data: data?.map((d) => ({
+      id: d.id,
+      walked_at: d.walked_at,
+      walker_id: d.walker_id,
+    })),
+    error: error?.message,
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};

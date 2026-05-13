@@ -2,6 +2,7 @@
 import express from "express";
 import "dotenv/config";
 import { middleware } from "#middlewares/middlewares.js";
+import { authMiddleware } from "#middlewares/middlewares.js";
 import itemRouter from "#api/initial-example/itemRoutes.js";
 import adoptionApplicationsRouter from "#modules/adoptionApplications/adoptionApplications.routes.js";
 import petsRouter from "#modules/pets/pets.routes.js";
@@ -16,9 +17,13 @@ if (!PORT) {
 
 app.use(express.json());
 app.use("/api", itemRouter);
-app.use("/api/adoption-applications", adoptionApplicationsRouter);
+app.use(
+  "/api/adoption-applications",
+  authMiddleware,
+  adoptionApplicationsRouter,
+);
 app.use("/api/pets", petsRouter);
-app.use("/api/volunteers", volunteersRouter);
+app.use("/api/volunteers", authMiddleware, volunteersRouter);
 
 app.get("/", middleware);
 

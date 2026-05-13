@@ -6,6 +6,8 @@ import type {
   Pet,
 } from "@repo/types";
 
+import { supabase } from "@/lib/supabaseClient";
+
 export const getPetListRequest = async (): Promise<Pet[]> => {
   const response = await fetch("/api/pets/");
 
@@ -89,4 +91,33 @@ export const uploadPetPhotoRequest = async (
   }
   const data = await response.json();
   return data.image_url;
+};
+
+export const getMyWalksRequest = async (): Promise<PetWalkRow[]> => {
+  if (!supabase) {
+    throw new Error("Supabase client is not initialized");
+  }
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const token = session?.access_token;
+
+  if (!token) {
+    console.warn(
+      "No active session found - requesting walks anyway (will likely 401)",
+    );
+  }
+
+  const response = await fetch("/api/pets/my-walks", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`My walks error: ${response.status}`);
+  }
+
+  return response.json();
 };

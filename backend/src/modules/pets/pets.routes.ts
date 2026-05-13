@@ -1,6 +1,7 @@
 import express from "express";
 import multer from "multer";
 import * as petsController from "./pets.controller.js";
+import { authMiddleware } from "#middlewares/middlewares.js";
 
 const router = express.Router();
 const upload = multer({
@@ -10,10 +11,15 @@ const upload = multer({
 
 router.get("/walk-summary", petsController.listWithWalkSummary);
 router.get("/walk-priority", petsController.listWalkPriorityDogs);
-router.get("/", petsController.list);
+router.get("/my-walks", authMiddleware, petsController.listUpcomingWalks);
+
 router.post("/", petsController.create);
+
 router.post("/:id/walks", petsController.recordWalk);
 router.post("/:id/photo", upload.single("photo"), petsController.uploadPhoto);
+
+router.get("/", petsController.list);
+
 router.get("/:id", petsController.getById);
 router.delete("/:id", petsController.delete);
 
