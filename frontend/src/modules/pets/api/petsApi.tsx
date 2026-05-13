@@ -74,6 +74,17 @@ export const recordPetWalkRequest = async (
   return data;
 };
 
+export const getPetWalksRequest = async (): Promise<PetWalkRow[]> => {
+  const response = await fetch("/api/pets/walks");
+
+  if (!response.ok) {
+    throw new Error(`Backend error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data;
+};
+
 export const uploadPetPhotoRequest = async (
   petId: number,
   file: File,

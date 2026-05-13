@@ -10,6 +10,7 @@ const upload = multer({
 
 router.get("/walk-summary", petsController.listWithWalkSummary);
 router.get("/walk-priority", petsController.listWalkPriorityDogs);
+router.get("/walks", petsController.listWalks);
 router.get("/", petsController.list);
 router.post("/", petsController.create);
 router.post("/:id/walks", petsController.recordWalk);

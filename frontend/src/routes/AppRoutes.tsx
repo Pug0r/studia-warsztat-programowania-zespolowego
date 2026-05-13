@@ -4,11 +4,13 @@ import { RegisterPage } from "@/pages/auth/RegisterPage";
 import { AdoptionApplicationPage } from "@/pages/adoption/AdoptionApplicationPage";
 import { AdoptionsDashboardPage } from "@/pages/dashboard/AdoptionsDashboardPage";
 import { VolunteersDashboardPage } from "@/pages/dashboard/VolunteersDashboardPage";
+import { VolunteerWalksPage } from "@/pages/dashboard/VolunteerWalksPage";
 import { HomePage } from "@/pages/public/HomePage";
 import { DashboardPage } from "@/pages/dashboard/DashboardPage";
 import { PetsPage } from "@/pages/pets/PetsPage";
 import { ProtectedRoute } from "@/routes/ProtectedRoute";
 import { CoordinatorRoute } from "@/routes/CoordinatorRoute";
+import { VolunteerRoute } from "@/routes/VolunteerRoute";
 
 export const AppRoutes = () => {
   return (
@@ -40,6 +42,14 @@ export const AppRoutes = () => {
           <CoordinatorRoute>
             <VolunteersDashboardPage />
           </CoordinatorRoute>
+        }
+      />
+      <Route
+        path="/dashboard/walks"
+        element={
+          <VolunteerRoute>
+            <VolunteerWalksPage />
+          </VolunteerRoute>
         }
       />
       <Route path="*" element={<Navigate to="/" replace />} />

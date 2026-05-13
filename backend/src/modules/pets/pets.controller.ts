@@ -46,6 +46,16 @@ export const listWalkPriorityDogs = async (_req: Request, res: Response) => {
   }
 };
 
+export const listWalks = async (_req: Request, res: Response) => {
+  try {
+    const walks = await petsService.listWalks();
+    return res.json(walks);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : undefined;
+    return sendServerError(res, message);
+  }
+};
+
 export const getById = async (req: Request, res: Response) => {
   try {
     const id = validatePetId(req.params.id);

@@ -115,6 +115,19 @@ export const listWalkPriorityDogs = async (): Promise<
   }));
 };
 
+export const listWalks = async (): Promise<PetWalkRow[]> => {
+  const { data, error } = await supabase
+    .from("pet_walks")
+    .select("*")
+    .order("walked_at", { ascending: false });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
 export const getById = async (id: number): Promise<PetRow | null> => {
   const { data, error } = await supabase
     .from("pets")

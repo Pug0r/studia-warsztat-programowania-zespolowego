@@ -9,6 +9,7 @@ import type {
 import {
   getPetWalkPriorityRequest,
   getPetWalkSummaryRequest,
+  getPetWalksRequest,
   recordPetWalkRequest,
 } from "../api/petsApi";
 
@@ -29,6 +30,16 @@ export const useWalkSummary = (options?: { enabled?: boolean }) => {
   return useQuery<PetWithWalkSummary[], Error>({
     queryKey: WALK_SUMMARY_QUERY_KEY,
     queryFn: getPetWalkSummaryRequest,
+    staleTime: 30 * 1000,
+    refetchInterval: 1000 * 60 * 15,
+    enabled: options?.enabled ?? true,
+  });
+};
+
+export const useWalkEvents = (options?: { enabled?: boolean }) => {
+  return useQuery<PetWalkRow[], Error>({
+    queryKey: ["pet_walk_events"],
+    queryFn: getPetWalksRequest,
     staleTime: 30 * 1000,
     refetchInterval: 1000 * 60 * 15,
     enabled: options?.enabled ?? true,
