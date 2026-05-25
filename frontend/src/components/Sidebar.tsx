@@ -4,6 +4,7 @@ import {
   LifeBuoy,
   LogOut,
   PawPrint,
+  Stethoscope,
   Users,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -22,6 +23,9 @@ const Sidebar = () => {
   const isDashboardOverview = location.pathname === "/dashboard";
   const isDashboardAdoptions = location.pathname === "/dashboard/adoptions";
   const isDashboardVolunteers = location.pathname === "/dashboard/volunteers";
+  const isHealthCards = location.pathname.startsWith("/health-cards");
+  const isVet =
+    (session?.user?.user_metadata?.role as string | undefined) === "vet";
 
   async function handleSignOut() {
     await signOut();
@@ -84,6 +88,18 @@ const Sidebar = () => {
             <LifeBuoy className="size-4" />
             Support cases
           </Button>
+          {isVet && (
+            <Button
+              asChild
+              variant={isHealthCards ? "secondary" : "ghost"}
+              className="w-full justify-start gap-2"
+            >
+              <Link to="/health-cards">
+                <Stethoscope className="size-4" />
+                Health cards
+              </Link>
+            </Button>
+          )}
         </nav>
 
         <Separator />
