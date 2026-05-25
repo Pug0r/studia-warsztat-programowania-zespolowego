@@ -39,5 +39,5 @@ export const listByPet = async (
     throw new Error(error.message);
   }
 
-  return data ?? [];
+  return data;
 };
