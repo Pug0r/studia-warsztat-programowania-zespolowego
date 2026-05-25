@@ -9,7 +9,7 @@ export const HEALTH_CARD_ENTRY_TYPES = [
 
 export type HealthCardEntryType = (typeof HEALTH_CARD_ENTRY_TYPES)[number];
 
-export type HealthCardEntryRow = {
+export interface HealthCardEntryRow {
   id: number;
   pet_id: number;
   entry_type: HealthCardEntryType;
@@ -21,4 +21,4 @@ export type HealthCardEntryRow = {
   vet_email: string | null;
   created_at: string;
   updated_at: string;
-};
+}
