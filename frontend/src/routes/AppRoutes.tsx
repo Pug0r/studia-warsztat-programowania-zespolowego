@@ -7,8 +7,11 @@ import { VolunteersDashboardPage } from "@/pages/dashboard/VolunteersDashboardPa
 import { HomePage } from "@/pages/public/HomePage";
 import { DashboardPage } from "@/pages/dashboard/DashboardPage";
 import { PetsPage } from "@/pages/pets/PetsPage";
+import { HealthCardsPatientsPage } from "@/pages/healthCards/HealthCardsPatientsPage";
+import { HealthCardPage } from "@/pages/healthCards/HealthCardPage";
 import { ProtectedRoute } from "@/routes/ProtectedRoute";
 import { CoordinatorRoute } from "@/routes/CoordinatorRoute";
+import { VetRoute } from "@/routes/VetRoute";
 
 export const AppRoutes = () => {
   return (
@@ -40,6 +43,22 @@ export const AppRoutes = () => {
           <CoordinatorRoute>
             <VolunteersDashboardPage />
           </CoordinatorRoute>
+        }
+      />
+      <Route
+        path="/health-cards"
+        element={
+          <VetRoute>
+            <HealthCardsPatientsPage />
+          </VetRoute>
+        }
+      />
+      <Route
+        path="/health-cards/:petId"
+        element={
+          <VetRoute>
+            <HealthCardPage />
+          </VetRoute>
         }
       />
       <Route path="*" element={<Navigate to="/" replace />} />

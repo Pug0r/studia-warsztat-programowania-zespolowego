@@ -1,0 +1,276 @@
+/* Health Cards module — scoped styles. Reuses `hp-*` design tokens from
+   HomePage.css and adds `hc-*` classes for the health card UI.
+   The `.hc-page-wrap` selector provides explicit colors for `hp-btn`
+   classes that otherwise rely on CSS variables only defined under
+   `.shelter-public` (set on the public pages). */
+
+.hc-page-wrap .hp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.hc-page-wrap .hp-btn--primary {
+  background: #059669;
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+
+.hc-page-wrap .hp-btn--primary:hover {
+  background: #047857;
+}
+
+.hc-page-wrap .hp-btn--secondary {
+  background: #ffffff;
+  color: #2563eb;
+  border: 1px solid #e4e4e7;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+
+.hc-page-wrap .hp-btn--secondary:hover {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.hc-page {
+  max-width: var(--hp-max, 1100px);
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.hc-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.hc-page__title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--hp-heading, #0f172a);
+  margin: 0;
+}
+
+.hc-page__subtitle {
+  color: var(--hp-text-muted, #475569);
+  font-size: 0.95rem;
+  margin-top: 0.25rem;
+}
+
+.hc-search {
+  margin-bottom: 1.5rem;
+  max-width: 360px;
+}
+
+.hc-patient-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.25rem;
+}
+
+.hc-patient-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.hc-empty {
+  color: var(--hp-text-muted, #475569);
+  font-style: italic;
+  padding: 1rem 0;
+}
+
+.hc-section {
+  background: var(--hp-surface, #fff);
+  border: 1px solid var(--hp-border, #e2e8f0);
+  border-radius: var(--hp-radius-lg, 12px);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--hp-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.04));
+}
+
+.hc-section__title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--hp-heading, #0f172a);
+  margin: 0 0 0.75rem;
+}
+
+.hc-pet-summary {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.hc-pet-summary__img {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.hc-pet-summary__placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-size: 0.75rem;
+}
+
+.hc-pet-summary__name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.hc-pet-summary__meta {
+  font-size: 0.85rem;
+  color: var(--hp-text-muted, #475569);
+  margin: 0.25rem 0 0;
+}
+
+.hc-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.hc-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+@media (max-width: 600px) {
+  .hc-form__row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hc-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.hc-form__label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--hp-text, #1e293b);
+}
+
+.hc-form__textarea {
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.hc-form__error {
+  color: #b91c1c;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.hc-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.hc-entry-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.hc-entry {
+  background: var(--hp-surface, #fff);
+  border: 1px solid var(--hp-border, #e2e8f0);
+  border-left: 4px solid var(--hp-blue, #2563eb);
+  border-radius: var(--hp-radius-lg, 12px);
+  padding: 1rem 1.25rem;
+}
+
+.hc-entry__head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.hc-entry__date {
+  font-weight: 600;
+  color: var(--hp-heading, #0f172a);
+}
+
+.hc-entry__type {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: var(--hp-blue-soft, #dbeafe);
+  color: var(--hp-blue, #2563eb);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.hc-entry__title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0.25rem 0 0.5rem;
+  color: var(--hp-heading, #0f172a);
+}
+
+.hc-entry__field {
+  margin: 0.25rem 0;
+  color: var(--hp-text, #1e293b);
+  font-size: 0.95rem;
+}
+
+.hc-entry__description {
+  white-space: pre-wrap;
+}
+
+.hc-entry__meta {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--hp-text-muted, #475569);
+}
+
+.hc-banner {
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  color: #92400e;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.hc-banner--error {
+  background: #fee2e2;
+  border-color: #fecaca;
+  color: #b91c1c;
+}
