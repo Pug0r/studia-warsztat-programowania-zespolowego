@@ -1,4 +1,4 @@
-import { useState, type FormEvent, useMemo } from "react";
+import { useState, type FormEvent } from "react";
 import { Dog } from "lucide-react";
 
 import { useAuth } from "@/modules/auth/hooks/useAuth";
@@ -143,45 +143,33 @@ export function VolunteerPriorityQueueCard({
   }
 
   // Generate available time slots (30-minute intervals)
-  const availableTimeSlots = useMemo(() => {
-    if (!selectedDate) return [];
+  const availableTimeSlots = selectedDate
+    ? generateTimeSlots().filter((timeSlot) => {
+        const [hour, minute] = timeSlot.split(":").map(Number);
 
-    const slots = generateTimeSlots();
+        const startTime = new Date(selectedDate);
+        startTime.setHours(hour, minute, 0, 0);
 
-    const userId = session?.user.id;
-    const petId = selectedDogId;
+        const endTime = new Date(
+          startTime.getTime() + durationMinutes * 60 * 1000,
+        );
 
-    return slots.filter((timeSlot) => {
-      const [hour, minute] = timeSlot.split(":").map(Number);
+        const userId = session?.user.id;
+        const petId = selectedDog?.id ?? null;
 
-      const startTime = new Date(selectedDate);
-      startTime.setHours(hour, minute, 0, 0);
-
-      const endTime = new Date(
-        startTime.getTime() + durationMinutes * 60 * 1000,
-      );
-
-      for (const walk of walkEvents) {
-        if (hasOverlap(startTime, endTime, walk, petId, userId)) {
-          return false;
+        for (const walk of walkEvents) {
+          if (hasOverlap(startTime, endTime, walk, petId, userId)) {
+            return false;
+          }
         }
-      }
 
-      return true;
-    });
-  }, [
-    selectedDate,
-    durationMinutes,
-    selectedDogId,
-    walkEvents,
-    session?.user.id,
-  ]);
-
-  // Update selected time when available slots change
+        return true;
+      })
+    : [];
 
   const safeSelectedTime = availableTimeSlots.includes(selectedTime)
     ? selectedTime
-    : availableTimeSlots[0];
+    : (availableTimeSlots[0] ?? "08:00");
 
   async function handleWalkSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -191,7 +179,7 @@ export function VolunteerPriorityQueueCard({
       return;
     }
 
-    const [hour, minute] = selectedTime.split(":").map(Number);
+    const [hour, minute] = safeSelectedTime.split(":").map(Number);
     const walkDate = new Date(selectedDate);
     walkDate.setHours(hour, minute, 0, 0);
 
@@ -282,9 +270,7 @@ export function VolunteerPriorityQueueCard({
             <select
               id="walk-pet-select"
               className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-slate-950 focus-visible:ring-[3px] focus-visible:ring-slate-950/50"
-              value={
-                selectedDogId || (selectedDog?.id ? String(selectedDog.id) : "")
-              }
+              value={selectedDog?.id?.toString() ?? ""}
               onChange={(event) => setSelectedDogId(Number(event.target.value))}
               disabled={priorityQuery.isPending || priorityDogs.length === 0}
             >

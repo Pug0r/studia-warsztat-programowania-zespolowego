@@ -86,7 +86,7 @@ export const validateCreatePetWalkPayload = (
     throw new Error("Payload must be an object.");
   }
 
-  const { notes, walked_at, walker_id, duration_minutes } = payload as Record<
+  const { notes, walked_at, walker_id, end_at } = payload as Record<
     string,
     unknown
   >;
@@ -119,25 +119,13 @@ export const validateCreatePetWalkPayload = (
     walkPayload.walker_id = walker_id.trim();
   }
 
-  // Handle duration_minutes and calculate end_at
-  if (duration_minutes !== undefined) {
-    const validDurations = [30, 60, 90, 120];
-    if (
-      typeof duration_minutes !== "number" ||
-      !validDurations.includes(duration_minutes)
-    ) {
-      throw new Error(
-        `Field 'duration_minutes' must be one of: ${validDurations.join(", ")}`,
-      );
+  // Handle end_at if provided directly
+  if (end_at !== undefined) {
+    if (!isValidDateString(end_at)) {
+      throw new Error("Field 'end_at' must be a valid date string.");
     }
 
-    if (walkPayload.walked_at) {
-      const startTime = new Date(walkPayload.walked_at);
-      const endTime = new Date(
-        startTime.getTime() + duration_minutes * 60 * 1000,
-      );
-      walkPayload.end_at = endTime.toISOString();
-    }
+    walkPayload.end_at = new Date(end_at).toISOString();
   }
 
   return walkPayload;

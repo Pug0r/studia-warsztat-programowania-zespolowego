@@ -67,7 +67,10 @@ export const recordPetWalkRequest = async (
   });
 
   if (!response.ok) {
-    throw new Error(`Walk record error: ${response.status}`);
+    const errorText = await response.text();
+    console.error(errorText);
+
+    throw new Error(`Walk record error: ${response.status} - ${errorText}`);
   }
 
   const data = await response.json();
