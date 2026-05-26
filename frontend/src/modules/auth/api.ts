@@ -36,6 +36,7 @@ export async function signUpWithPassword(payload: AuthPayload) {
   }
 
   const { data, error } = await supabase.auth.signUp(payload);
+  console.log("error", error);
   if (error) {
     throw new Error(mapAuthError(error));
   }
