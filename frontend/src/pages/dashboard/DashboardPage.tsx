@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { WalkMonitoringPanel } from "./WalkMonitoringPanel";
+import { WalkMonitoringPanel } from "../../modules/volunteers/components/WalkMonitoringPanel";
 
 export function DashboardPage() {
   const [date, setDate] = useState<Date | undefined>(new Date());
