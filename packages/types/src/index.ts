@@ -20,6 +20,16 @@ export type {
 } from "./adoptionApplication.js";
 export { ADOPTION_STATUSES } from "./adoptionApplication.js";
 export type {
+  AuditActionSettingInsert,
+  AuditActionSettingRow,
+  AuditActionSettingUpdate,
+} from "./auditActionSetting.js";
+export type {
+  AuditLogInsert,
+  AuditLogRow,
+  AuditLogUpdate,
+} from "./auditLog.js";
+export type {
   PetWalk,
   PetWalkPriorityItem,
   PetWalkInsert,

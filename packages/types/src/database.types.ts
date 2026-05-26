@@ -14,6 +14,78 @@ export interface Database {
   };
   public: {
     Tables: {
+      audit_action_settings: {
+        Row: {
+          action: string;
+          created_at: string;
+          enabled: boolean;
+          updated_at: string;
+        };
+        Insert: {
+          action: string;
+          created_at?: string;
+          enabled?: boolean;
+          updated_at?: string;
+        };
+        Update: {
+          action?: string;
+          created_at?: string;
+          enabled?: boolean;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      audit_logs: {
+        Row: {
+          action: string;
+          actor_email: string | null;
+          actor_user_id: string | null;
+          created_at: string;
+          entity_id: string | null;
+          entity_type: string;
+          id: number;
+          ip_address: string | null;
+          metadata: Json;
+          method: string;
+          new_data: Json | null;
+          old_data: Json | null;
+          route: string;
+          user_agent: string | null;
+        };
+        Insert: {
+          action: string;
+          actor_email?: string | null;
+          actor_user_id?: string | null;
+          created_at?: string;
+          entity_id?: string | null;
+          entity_type: string;
+          id?: number;
+          ip_address?: string | null;
+          metadata?: Json;
+          method: string;
+          new_data?: Json | null;
+          old_data?: Json | null;
+          route: string;
+          user_agent?: string | null;
+        };
+        Update: {
+          action?: string;
+          actor_email?: string | null;
+          actor_user_id?: string | null;
+          created_at?: string;
+          entity_id?: string | null;
+          entity_type?: string;
+          id?: number;
+          ip_address?: string | null;
+          metadata?: Json;
+          method?: string;
+          new_data?: Json | null;
+          old_data?: Json | null;
+          route?: string;
+          user_agent?: string | null;
+        };
+        Relationships: [];
+      };
       pets: {
         Row: {
           age: number | null;
