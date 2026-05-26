@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Clock3 } from "lucide-react";
-import { VolunteerPriorityQueueCard } from "./VolunteerPriorityQueueCard";
+import { VolunteerPriorityQueueCard } from "../../modules/volunteers/components/VolunteerPriorityQueueCard";
 import { useWalkEvents } from "@/modules/pets/hooks/useWalkMonitoring";
 import { useMemo } from "react";
 

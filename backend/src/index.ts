@@ -4,6 +4,7 @@ import "dotenv/config";
 import { middleware } from "#middlewares/middlewares.js";
 import itemRouter from "#api/initial-example/itemRoutes.js";
 import adoptionApplicationsRouter from "#modules/adoptionApplications/adoptionApplications.routes.js";
+import healthCardsRouter from "#modules/healthCards/healthCards.routes.js";
 import petsRouter from "#modules/pets/pets.routes.js";
 import volunteersRouter from "#modules/volunteers/volunteers.routes.js";
 
@@ -20,6 +21,7 @@ app.use("/api/adoption-applications", adoptionApplicationsRouter);
 app.use("/api/pets", petsRouter);
 app.use("/api/pets/:id", petsRouter);
 app.use("/api/volunteers", volunteersRouter);
+app.use("/api/health-cards", healthCardsRouter);
 
 app.get("/", middleware);
 

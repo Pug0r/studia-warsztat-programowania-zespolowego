@@ -275,7 +275,7 @@ export function WalkMonitoringPanel({
               No walk history has been recorded yet.
             </p>
           ) : (
-            <div className="max-h-[32rem] space-y-3 overflow-auto pr-1">
+            <div className="max-h-128 space-y-3 overflow-auto pr-1">
               {walkSummary.map((pet) => {
                 const status = getWalkStatus(pet.days_since_last_walk);
 
