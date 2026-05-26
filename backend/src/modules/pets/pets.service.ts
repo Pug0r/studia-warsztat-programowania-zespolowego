@@ -84,12 +84,14 @@ export const list = async (size?: string): Promise<Pet[]> => {
 };
 
 export const listWithWalkSummary = async (): Promise<PetWithWalkSummary[]> => {
+  const now = new Date().toISOString();
   const [{ data: pets, error: petsError }, { data: walks, error: walksError }] =
     await Promise.all([
       supabase.from("pets").select("*").order("name", { ascending: true }),
       supabase
         .from("pet_walks")
         .select("pet_id, walked_at")
+        .lt("walked_at", now)
         .order("walked_at", { ascending: false }),
     ]);
 
