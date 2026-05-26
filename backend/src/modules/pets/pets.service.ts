@@ -221,12 +221,13 @@ export const checkWalkConflicts = async (
   }
 
   // Check if pet is already booked during this time
+  // Using strict inequalities: walk1.end > walk2.start AND walk1.start < walk2.end
   const { data: petConflicts, error: petError } = await supabase
     .from("pet_walks")
     .select("id")
     .eq("pet_id", petId)
-    .lte("walked_at", endAt)
-    .gte("end_at", walkedAt);
+    .lt("walked_at", endAt)
+    .gt("end_at", walkedAt);
 
   if (petError) {
     throw new Error(`Error checking pet conflicts: ${petError.message}`);
@@ -240,8 +241,8 @@ export const checkWalkConflicts = async (
       .from("pet_walks")
       .select("id")
       .eq("walker_id", walkerId)
-      .lte("walked_at", endAt)
-      .gte("end_at", walkedAt);
+      .lt("walked_at", endAt)
+      .gt("end_at", walkedAt);
 
     if (walkerError) {
       throw new Error(
