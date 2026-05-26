@@ -60,9 +60,14 @@ const Sidebar = () => {
               Overview
             </Link>
           </Button>
-          <Button variant="ghost" className="w-full justify-start gap-2">
-            <PawPrint className="size-4" />
-            Animals
+          <Button variant="ghost" className="w-full p-0">
+            <Link
+              to="/pets"
+              className="w-full flex items-center gap-2 justify-start px-3 py-2"
+            >
+              <PawPrint className="size-4" />
+              Animals
+            </Link>
           </Button>
           <Button
             asChild
