@@ -197,6 +197,7 @@ export const PetsPage: React.FC = () => {
         {selectedPetId !== null && (
           <PetDetailModal
             petId={Number(selectedPetId)}
+            initialData={petsData.find((p) => p.id === selectedPetId)}
             isOpen={selectedPetId !== null}
             onClose={() => setSelectedPetId(null)}
           />
