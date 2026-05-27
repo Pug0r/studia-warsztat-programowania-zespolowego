@@ -3,10 +3,6 @@
   background: var(--hp-surface);
 }
 
-.pet-detail-scroll {
-  overflow-y: auto;
-}
-
 .pet-detail-dialog [data-slot="dialog-header"] {
   display: block;
   border-bottom: 2px solid var(--hp-border);

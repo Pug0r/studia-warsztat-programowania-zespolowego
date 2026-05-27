@@ -20,6 +20,30 @@ export type {
 } from "./adoptionApplication.js";
 export { ADOPTION_STATUSES } from "./adoptionApplication.js";
 export type {
+  AuditActionSettingInsert,
+  AuditActionSettingRow,
+  AuditActionSettingUpdate,
+} from "./auditActionSetting.js";
+export type {
+  AuditLogInsert,
+  AuditLogRow,
+  AuditLogUpdate,
+} from "./auditLog.js";
+export type {
+  CreateMedicalEventDTO,
+  MedicalEventReminderRow,
+  MedicalEventRow,
+  MedicalEventStatus,
+  MedicalEventType,
+  MedicalReminderAudienceRole,
+  MedicalReminderRunResult,
+  UpdateMedicalEventDTO,
+} from "./medicalSchedule.js";
+export {
+  MEDICAL_EVENT_STATUSES,
+  MEDICAL_EVENT_TYPES,
+} from "./medicalSchedule.js";
+export type {
   PetWalk,
   PetWalkPriorityItem,
   PetWalkInsert,
@@ -28,6 +52,13 @@ export type {
   PetWalkUpdate,
   CreatePetWalkDTO,
 } from "./petWalk.js";
+
+export type {
+  CalendarEvent,
+  CalendarEventInsert,
+  CalendarEventRow,
+  CalendarEventUpdate,
+} from "./calendarEvent.js";
 export type { PetInsert, PetRow, PetRow as Pet, PetUpdate } from "./pet.js";
 export type {
   CreateVolunteerDTO,

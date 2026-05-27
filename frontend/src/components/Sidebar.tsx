@@ -1,4 +1,6 @@
 import {
+  CalendarCheck,
+  Dog,
   HeartHandshake,
   Home,
   LifeBuoy,
@@ -26,6 +28,8 @@ const Sidebar = () => {
   const isDashboardOverview = location.pathname === "/dashboard";
   const isDashboardAdoptions = location.pathname === "/dashboard/adoptions";
   const isDashboardVolunteers = location.pathname === "/dashboard/volunteers";
+  const isDashboardVolunteerWalks = location.pathname === "/dashboard/walks";
+  const isManageEvents = location.pathname === "/dashboard/manage-events";
   const isHealthCards = location.pathname.startsWith("/health-cards");
   const isDashboardAdmin = location.pathname === "/dashboard/admin";
   const isVet = role === "vet";
@@ -64,9 +68,14 @@ const Sidebar = () => {
               Overview
             </Link>
           </Button>
-          <Button variant="ghost" className="w-full justify-start gap-2">
-            <PawPrint className="size-4" />
-            Animals
+          <Button variant="ghost" className="w-full p-0">
+            <Link
+              to="/pets"
+              className="w-full flex items-center gap-2 justify-start px-3 py-2"
+            >
+              <PawPrint className="size-4" />
+              Animals
+            </Link>
           </Button>
           <Button
             asChild
@@ -76,6 +85,16 @@ const Sidebar = () => {
             <Link to="/dashboard/volunteers">
               <Users className="size-4" />
               Volunteers
+            </Link>
+          </Button>
+          <Button
+            asChild
+            variant={isDashboardVolunteerWalks ? "secondary" : "ghost"}
+            className="w-full justify-start gap-2"
+          >
+            <Link to="/dashboard/walks">
+              <Dog className="size-4" />
+              My walks
             </Link>
           </Button>
           <Button
@@ -91,6 +110,16 @@ const Sidebar = () => {
           <Button variant="ghost" className="w-full justify-start gap-2">
             <LifeBuoy className="size-4" />
             Support cases
+          </Button>
+          <Button
+            asChild
+            variant={isManageEvents ? "secondary" : "ghost"}
+            className="w-full justify-start gap-2"
+          >
+            <Link to="/dashboard/manage-events">
+              <CalendarCheck className="size-4" />
+              Manage events
+            </Link>
           </Button>
           {isVet && (
             <Button
