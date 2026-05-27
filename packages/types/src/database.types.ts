@@ -14,26 +14,58 @@ export interface Database {
   };
   public: {
     Tables: {
-      audit_action_settings: {
+      adoption_applications: {
         Row: {
-          action: string;
+          city: string | null;
           created_at: string;
-          enabled: boolean;
-          updated_at: string;
+          email: string;
+          full_name: string;
+          has_other_pets: boolean | null;
+          housing_type: string | null;
+          id: number;
+          message: string;
+          pet_id: number;
+          phone: string | null;
+          status: string;
+          user_id: string | null;
         };
         Insert: {
-          action: string;
+          city?: string | null;
           created_at?: string;
-          enabled?: boolean;
-          updated_at?: string;
+          email: string;
+          full_name: string;
+          has_other_pets?: boolean | null;
+          housing_type?: string | null;
+          id?: number;
+          message: string;
+          pet_id: number;
+          phone?: string | null;
+          status?: string;
+          user_id?: string | null;
         };
         Update: {
-          action?: string;
+          city?: string | null;
           created_at?: string;
-          enabled?: boolean;
-          updated_at?: string;
+          email?: string;
+          full_name?: string;
+          has_other_pets?: boolean | null;
+          housing_type?: string | null;
+          id?: number;
+          message?: string;
+          pet_id?: number;
+          phone?: string | null;
+          status?: string;
+          user_id?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "adoption_applications_pet_id_fkey";
+            columns: ["pet_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       audit_logs: {
         Row: {
@@ -86,218 +118,12 @@ export interface Database {
         };
         Relationships: [];
       };
-      medical_event_reminders: {
-        Row: {
-          audience_role: "admin" | "coordinator";
-          created_at: string;
-          due_at: string;
-          id: number;
-          medical_event_id: number;
-          read_at: string | null;
-        };
-        Insert: {
-          audience_role: "admin" | "coordinator";
-          created_at?: string;
-          due_at: string;
-          id?: number;
-          medical_event_id: number;
-          read_at?: string | null;
-        };
-        Update: {
-          audience_role?: "admin" | "coordinator";
-          created_at?: string;
-          due_at?: string;
-          id?: number;
-          medical_event_id?: number;
-          read_at?: string | null;
-        };
-        Relationships: [];
-      };
-      medical_events: {
-        Row: {
-          created_at: string;
-          created_by: string | null;
-          created_by_email: string | null;
-          id: number;
-          notes: string | null;
-          pet_id: number;
-          reminder_sent_at: string | null;
-          scheduled_at: string;
-          status: "scheduled" | "completed" | "cancelled";
-          title: string;
-          type: "vaccination" | "checkup" | "surgery" | "other";
-          updated_at: string;
-        };
-        Insert: {
-          created_at?: string;
-          created_by?: string | null;
-          created_by_email?: string | null;
-          id?: number;
-          notes?: string | null;
-          pet_id: number;
-          reminder_sent_at?: string | null;
-          scheduled_at: string;
-          status?: "scheduled" | "completed" | "cancelled";
-          title: string;
-          type: "vaccination" | "checkup" | "surgery" | "other";
-          updated_at?: string;
-        };
-        Update: {
-          created_at?: string;
-          created_by?: string | null;
-          created_by_email?: string | null;
-          id?: number;
-          notes?: string | null;
-          pet_id?: number;
-          reminder_sent_at?: string | null;
-          scheduled_at?: string;
-          status?: "scheduled" | "completed" | "cancelled";
-          title?: string;
-          type?: "vaccination" | "checkup" | "surgery" | "other";
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
-      pets: {
-        Row: {
-          age: number | null;
-          created_at: string;
-          description: string;
-          id: number;
-          image_url: string | null;
-          name: string;
-          species: string;
-          status: "available" | "quarantine";
-          weight: number | null;
-          breed: string | null;
-          size: string | null;
-          personality: string | null;
-          ideal_home: string | null;
-          special_needs: string | null;
-          image_urls: string[] | null;
-        };
-        Insert: {
-          age?: number | null;
-          created_at?: string;
-          description: string;
-          id?: number;
-          image_url?: string | null;
-          name: string;
-          species: string;
-          status?: "available" | "quarantine";
-          weight?: number | null;
-          breed?: string | null;
-          size?: string | null;
-          personality?: string | null;
-          ideal_home?: string | null;
-          special_needs?: string | null;
-          image_urls?: string[] | null;
-        };
-        Update: {
-          age?: number | null;
-          created_at?: string;
-          description?: string;
-          id?: number;
-          image_url?: string | null;
-          name?: string;
-          species?: string;
-          status?: "available" | "quarantine";
-          weight?: number | null;
-          breed?: string | null;
-          size?: string | null;
-          personality?: string | null;
-          ideal_home?: string | null;
-          special_needs?: string | null;
-          image_urls?: string[] | null;
-        };
-        Relationships: [];
-      };
-      pet_walks: {
-        Row: {
-          created_at: string;
-          id: number;
-          notes: string | null;
-          pet_id: number;
-          walked_at: string;
-          walker_id: string | null;
-          end_at: string | null;
-        };
-        Insert: {
-          created_at?: string;
-          id?: number;
-          notes?: string | null;
-          pet_id: number;
-          walked_at?: string;
-          walker_id?: string | null;
-          end_at?: string | null;
-        };
-        Update: {
-          created_at?: string;
-          id?: number;
-          notes?: string | null;
-          pet_id?: number;
-          walked_at?: string;
-          walker_id?: string | null;
-          end_at?: string | null;
-        };
-        Relationships: [];
-      };
-      adoption_applications: {
-        Row: {
-          city: string | null;
-          created_at: string;
-          email: string;
-          full_name: string;
-          has_other_pets: boolean | null;
-          housing_type: string | null;
-          id: number;
-          message: string;
-          pet_id: number;
-          phone: string | null;
-          status: "new" | "reviewing" | "accepted" | "rejected";
-          user_id: string | null;
-        };
-        Insert: {
-          city?: string | null;
-          created_at?: string;
-          email: string;
-          full_name: string;
-          has_other_pets?: boolean | null;
-          housing_type?: string | null;
-          id?: number;
-          message: string;
-          pet_id: number;
-          phone?: string | null;
-          status?: "new" | "reviewing" | "accepted" | "rejected";
-          user_id?: string | null;
-        };
-        Update: {
-          city?: string | null;
-          created_at?: string;
-          email?: string;
-          full_name?: string;
-          has_other_pets?: boolean | null;
-          housing_type?: string | null;
-          id?: number;
-          message?: string;
-          pet_id?: number;
-          phone?: string | null;
-          status?: "new" | "reviewing" | "accepted" | "rejected";
-          user_id?: string | null;
-        };
-        Relationships: [];
-      };
       calendar_events: {
         Row: {
           created_at: string;
           description: string;
           ends_at: string | null;
-          event_type:
-            | "open_day"
-            | "food_drive"
-            | "volunteer_training"
-            | "community_event"
-            | "other";
+          event_type: string;
           id: number;
           is_public: boolean;
           location: string;
@@ -309,12 +135,7 @@ export interface Database {
           created_at?: string;
           description: string;
           ends_at?: string | null;
-          event_type?:
-            | "open_day"
-            | "food_drive"
-            | "volunteer_training"
-            | "community_event"
-            | "other";
+          event_type?: string;
           id?: number;
           is_public?: boolean;
           location: string;
@@ -326,12 +147,7 @@ export interface Database {
           created_at?: string;
           description?: string;
           ends_at?: string | null;
-          event_type?:
-            | "open_day"
-            | "food_drive"
-            | "volunteer_training"
-            | "community_event"
-            | "other";
+          event_type?: string;
           id?: number;
           is_public?: boolean;
           location?: string;
@@ -341,24 +157,301 @@ export interface Database {
         };
         Relationships: [];
       };
-      users: {
+      health_card_entries: {
         Row: {
           created_at: string;
-          email: string;
-          id: string;
-          name: string;
+          description: string | null;
+          entry_type: string;
+          id: number;
+          medication: string | null;
+          pet_id: number;
+          title: string;
+          treatment_date: string;
+          updated_at: string;
+          vet_email: string | null;
+          vet_id: string | null;
         };
         Insert: {
           created_at?: string;
-          email: string;
-          id?: string;
-          name: string;
+          description?: string | null;
+          entry_type?: string;
+          id?: number;
+          medication?: string | null;
+          pet_id: number;
+          title: string;
+          treatment_date?: string;
+          updated_at?: string;
+          vet_email?: string | null;
+          vet_id?: string | null;
         };
         Update: {
           created_at?: string;
-          email?: string;
-          id?: string;
+          description?: string | null;
+          entry_type?: string;
+          id?: number;
+          medication?: string | null;
+          pet_id?: number;
+          title?: string;
+          treatment_date?: string;
+          updated_at?: string;
+          vet_email?: string | null;
+          vet_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "health_card_entries_pet_id_fkey";
+            columns: ["pet_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      medical_event_reminders: {
+        Row: {
+          audience_role: string;
+          created_at: string;
+          due_at: string;
+          id: number;
+          medical_event_id: number;
+          read_at: string | null;
+        };
+        Insert: {
+          audience_role: string;
+          created_at?: string;
+          due_at: string;
+          id?: number;
+          medical_event_id: number;
+          read_at?: string | null;
+        };
+        Update: {
+          audience_role?: string;
+          created_at?: string;
+          due_at?: string;
+          id?: number;
+          medical_event_id?: number;
+          read_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "medical_event_reminders_medical_event_id_fkey";
+            columns: ["medical_event_id"];
+            isOneToOne: false;
+            referencedRelation: "medical_events";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      medical_events: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          created_by_email: string | null;
+          id: number;
+          notes: string | null;
+          pet_id: number;
+          reminder_sent_at: string | null;
+          scheduled_at: string;
+          status: string;
+          title: string;
+          type: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          created_by_email?: string | null;
+          id?: number;
+          notes?: string | null;
+          pet_id: number;
+          reminder_sent_at?: string | null;
+          scheduled_at: string;
+          status?: string;
+          title: string;
+          type: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          created_by_email?: string | null;
+          id?: number;
+          notes?: string | null;
+          pet_id?: number;
+          reminder_sent_at?: string | null;
+          scheduled_at?: string;
+          status?: string;
+          title?: string;
+          type?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "medical_events_pet_id_fkey";
+            columns: ["pet_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      pet_health_entries: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          description: string | null;
+          end_date: string | null;
+          id: number;
+          notes: string | null;
+          pet_id: number;
+          start_date: string | null;
+          title: string;
+          type: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          description?: string | null;
+          end_date?: string | null;
+          id?: number;
+          notes?: string | null;
+          pet_id: number;
+          start_date?: string | null;
+          title: string;
+          type: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          description?: string | null;
+          end_date?: string | null;
+          id?: number;
+          notes?: string | null;
+          pet_id?: number;
+          start_date?: string | null;
+          title?: string;
+          type?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pet_health_entries_pet_id_fkey";
+            columns: ["pet_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      pet_walks: {
+        Row: {
+          created_at: string;
+          end_at: string | null;
+          id: number;
+          notes: string | null;
+          pet_id: number;
+          walked_at: string;
+          walker_id: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          end_at?: string | null;
+          id?: number;
+          notes?: string | null;
+          pet_id: number;
+          walked_at?: string;
+          walker_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          end_at?: string | null;
+          id?: number;
+          notes?: string | null;
+          pet_id?: number;
+          walked_at?: string;
+          walker_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pet_walks_pet_id_fkey";
+            columns: ["pet_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      pets: {
+        Row: {
+          age: number | null;
+          breed: string | null;
+          created_at: string;
+          description: string;
+          id: number;
+          ideal_home: string | null;
+          image_url: string | null;
+          image_urls: string[] | null;
+          name: string;
+          personality: string | null;
+          size: string | null;
+          special_needs: string | null;
+          species: string;
+          weight: number | null;
+        };
+        Insert: {
+          age?: number | null;
+          breed?: string | null;
+          created_at?: string;
+          description: string;
+          id?: number;
+          ideal_home?: string | null;
+          image_url?: string | null;
+          image_urls?: string[] | null;
+          name: string;
+          personality?: string | null;
+          size?: string | null;
+          special_needs?: string | null;
+          species: string;
+          weight?: number | null;
+        };
+        Update: {
+          age?: number | null;
+          breed?: string | null;
+          created_at?: string;
+          description?: string;
+          id?: number;
+          ideal_home?: string | null;
+          image_url?: string | null;
+          image_urls?: string[] | null;
           name?: string;
+          personality?: string | null;
+          size?: string | null;
+          special_needs?: string | null;
+          species?: string;
+          weight?: number | null;
+        };
+        Relationships: [];
+      };
+      profiles: {
+        Row: {
+          created_at: string | null;
+          email: string | null;
+          id: string;
+          role: Database["public"]["Enums"]["user_role"];
+        };
+        Insert: {
+          created_at?: string | null;
+          email?: string | null;
+          id: string;
+          role?: Database["public"]["Enums"]["user_role"];
+        };
+        Update: {
+          created_at?: string | null;
+          email?: string | null;
+          id?: string;
+          role?: Database["public"]["Enums"]["user_role"];
         };
         Relationships: [];
       };
@@ -389,7 +482,9 @@ export interface Database {
     };
     Views: Record<never, never>;
     Functions: Record<never, never>;
-    Enums: Record<never, never>;
+    Enums: {
+      user_role: "user" | "admin" | "vet" | "coordinator" | "volunteer";
+    };
     CompositeTypes: Record<never, never>;
   };
 }
@@ -499,8 +594,9 @@ export type Enums<
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof DatabaseWithoutInternals },
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+      | keyof DefaultSchema["CompositeTypes"]
+      | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
@@ -516,6 +612,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_role: ["user", "admin", "vet", "coordinator", "volunteer"],
+    },
   },
 } as const;
