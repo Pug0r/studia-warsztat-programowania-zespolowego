@@ -30,6 +30,7 @@ const Sidebar = () => {
   const isDashboardAdoptions = location.pathname === "/dashboard/adoptions";
   const isDashboardVolunteers = location.pathname === "/dashboard/volunteers";
   const isDashboardVolunteerWalks = location.pathname === "/dashboard/walks";
+  const isDashboardAdmin = location.pathname === "/dashboard/admin";
   const isCoordinatorWalkCalendar =
     location.pathname === "/dashboard/walk-calendar";
   const isManageEvents = location.pathname === "/dashboard/manage-events";
@@ -39,6 +40,7 @@ const Sidebar = () => {
     "coordinator";
   const isVet =
     (session?.user?.user_metadata?.role as string | undefined) === "vet";
+  const isAdmin = role === "admin";
 
   async function handleSignOut() {
     await signOut();
