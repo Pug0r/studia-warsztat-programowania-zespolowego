@@ -7,6 +7,7 @@ import {
   PawPrint,
   Stethoscope,
   Users,
+  CalendarCheck,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -25,6 +26,7 @@ const Sidebar = () => {
   const isDashboardAdoptions = location.pathname === "/dashboard/adoptions";
   const isDashboardVolunteers = location.pathname === "/dashboard/volunteers";
   const isDashboardVolunteerWalks = location.pathname === "/dashboard/walks";
+  const isManageEvents = location.pathname === "/dashboard/manage-events";
   // const role = session?.user?.user_metadata?.role as string | undefined;
   // const isVolunteer = role === "volunteer";
   const isHealthCards = location.pathname.startsWith("/health-cards");
@@ -108,6 +110,16 @@ const Sidebar = () => {
           <Button variant="ghost" className="w-full justify-start gap-2">
             <LifeBuoy className="size-4" />
             Support cases
+          </Button>
+          <Button
+            asChild
+            variant={isManageEvents ? "secondary" : "ghost"}
+            className="w-full justify-start gap-2"
+          >
+            <Link to="/dashboard/manage-events">
+              <CalendarCheck className="size-4" />
+              Manage events
+            </Link>
           </Button>
           {isVet && (
             <Button
