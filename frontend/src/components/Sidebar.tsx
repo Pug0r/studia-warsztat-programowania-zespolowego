@@ -1,4 +1,5 @@
 import {
+  Dog,
   HeartHandshake,
   Home,
   LifeBuoy,
@@ -23,6 +24,9 @@ const Sidebar = () => {
   const isDashboardOverview = location.pathname === "/dashboard";
   const isDashboardAdoptions = location.pathname === "/dashboard/adoptions";
   const isDashboardVolunteers = location.pathname === "/dashboard/volunteers";
+  const isDashboardVolunteerWalks = location.pathname === "/dashboard/walks";
+  // const role = session?.user?.user_metadata?.role as string | undefined;
+  // const isVolunteer = role === "volunteer";
   const isHealthCards = location.pathname.startsWith("/health-cards");
   const isVet =
     (session?.user?.user_metadata?.role as string | undefined) === "vet";
@@ -79,6 +83,18 @@ const Sidebar = () => {
               Volunteers
             </Link>
           </Button>
+          {/* {isVolunteer ? ( */}
+          <Button
+            asChild
+            variant={isDashboardVolunteerWalks ? "secondary" : "ghost"}
+            className="w-full justify-start gap-2"
+          >
+            <Link to="/dashboard/walks">
+              <Dog className="size-4" />
+              My walks
+            </Link>
+          </Button>
+          {/* ) : null} */}
           <Button
             asChild
             variant={isDashboardAdoptions ? "secondary" : "ghost"}

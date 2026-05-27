@@ -4,6 +4,7 @@ import { RegisterPage } from "@/pages/auth/RegisterPage";
 import { AdoptionApplicationPage } from "@/pages/adoption/AdoptionApplicationPage";
 import { AdoptionsDashboardPage } from "@/pages/dashboard/AdoptionsDashboardPage";
 import { VolunteersDashboardPage } from "@/pages/dashboard/VolunteersDashboardPage";
+import { VolunteerWalksPage } from "@/pages/volunteer/VolunteerWalksPage";
 import { HomePage } from "@/pages/public/HomePage";
 import { DashboardPage } from "@/pages/dashboard/DashboardPage";
 import { PetsPage } from "@/pages/pets/PetsPage";
@@ -11,6 +12,7 @@ import { HealthCardsPatientsPage } from "@/pages/healthCards/HealthCardsPatients
 import { HealthCardPage } from "@/pages/healthCards/HealthCardPage";
 import { ProtectedRoute } from "@/routes/ProtectedRoute";
 import { CoordinatorRoute } from "@/routes/CoordinatorRoute";
+import { VolunteerRoute } from "@/routes/VolunteerRoute";
 import { VetRoute } from "@/routes/VetRoute";
 
 export const AppRoutes = () => {
@@ -43,6 +45,14 @@ export const AppRoutes = () => {
           <CoordinatorRoute>
             <VolunteersDashboardPage />
           </CoordinatorRoute>
+        }
+      />
+      <Route
+        path="/dashboard/walks"
+        element={
+          <VolunteerRoute>
+            <VolunteerWalksPage />
+          </VolunteerRoute>
         }
       />
       <Route

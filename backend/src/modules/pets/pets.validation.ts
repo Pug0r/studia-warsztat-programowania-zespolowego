@@ -59,19 +59,6 @@ export const validatePetId = (id: unknown): number => {
   return n;
 };
 
-export const validateWalkId = (id: unknown): number => {
-  if (typeof id !== "string" || !id.trim()) {
-    throw new Error("Parameter 'walkId' is required.");
-  }
-
-  const n = Number(id);
-  if (!Number.isInteger(n) || n <= 0) {
-    throw new Error("Parameter 'walkId' must be a positive integer.");
-  }
-
-  return n;
-};
-
 export const validateSize = (size: unknown): string | undefined => {
   if (size === undefined || size === null) return undefined;
   if (typeof size !== "string") throw new Error("Size must be a string.");
@@ -99,7 +86,10 @@ export const validateCreatePetWalkPayload = (
     throw new Error("Payload must be an object.");
   }
 
-  const { notes, walked_at, walker_id } = payload as Record<string, unknown>;
+  const { notes, walked_at, walker_id, end_at } = payload as Record<
+    string,
+    unknown
+  >;
   const walkPayload: CreatePetWalkDTO = {};
 
   if (notes !== undefined) {
@@ -127,6 +117,15 @@ export const validateCreatePetWalkPayload = (
     }
 
     walkPayload.walker_id = walker_id.trim();
+  }
+
+  // Handle end_at if provided directly
+  if (end_at !== undefined) {
+    if (!isValidDateString(end_at)) {
+      throw new Error("Field 'end_at' must be a valid date string.");
+    }
+
+    walkPayload.end_at = new Date(end_at).toISOString();
   }
 
   return walkPayload;

@@ -76,6 +76,7 @@ export interface Database {
           pet_id: number;
           walked_at: string;
           walker_id: string | null;
+          end_at: string | null;
         };
         Insert: {
           created_at?: string;
@@ -84,6 +85,7 @@ export interface Database {
           pet_id: number;
           walked_at?: string;
           walker_id?: string | null;
+          end_at?: string | null;
         };
         Update: {
           created_at?: string;
@@ -92,6 +94,7 @@ export interface Database {
           pet_id?: number;
           walked_at?: string;
           walker_id?: string | null;
+          end_at?: string | null;
         };
         Relationships: [];
       };
