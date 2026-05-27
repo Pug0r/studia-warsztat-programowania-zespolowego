@@ -87,6 +87,7 @@ function DialogContent({
           className={cn(
             /* Centering Logic */
             "overflow-auto flex flex-col",
+            "max-h-full",
             /* Visual Shell */
             "border border-slate-200 bg-white shadow-lg rounded-2xl outline-none",
             className,
