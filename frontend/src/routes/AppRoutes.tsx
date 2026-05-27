@@ -16,6 +16,8 @@ import { ProtectedRoute } from "@/routes/ProtectedRoute";
 import { CoordinatorRoute } from "@/routes/CoordinatorRoute";
 import { VolunteerRoute } from "@/routes/VolunteerRoute";
 import { VetRoute } from "@/routes/VetRoute";
+import { AdminRoute } from "@/routes/AdminRoute";
+import { AdminPanelPage } from "@/pages/admin/AdminPanelPage";
 
 export const AppRoutes = () => {
   return (
@@ -80,6 +82,14 @@ export const AppRoutes = () => {
             <HealthCardPage />
           </VetRoute>
         }
+      />
+      <Route
+        path="/dashboard/admin"
+        element={
+          <AdminRoute>
+            <AdminPanelPage />
+          </AdminRoute>
+          }
       />
       <Route
         path="/medical-schedule"
