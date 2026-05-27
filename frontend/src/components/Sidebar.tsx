@@ -1,5 +1,6 @@
 import {
   CalendarCheck,
+  CalendarClock,
   Dog,
   HeartHandshake,
   Home,
@@ -28,6 +29,7 @@ const Sidebar = () => {
   const isDashboardVolunteerWalks = location.pathname === "/dashboard/walks";
   const isManageEvents = location.pathname === "/dashboard/manage-events";
   const isHealthCards = location.pathname.startsWith("/health-cards");
+  const isMedicalSchedule = location.pathname.startsWith("/medical-schedule");
   const isVet =
     (session?.user?.user_metadata?.role as string | undefined) === "vet";
 
@@ -118,16 +120,28 @@ const Sidebar = () => {
             </Link>
           </Button>
           {isVet && (
-            <Button
-              asChild
-              variant={isHealthCards ? "secondary" : "ghost"}
-              className="w-full justify-start gap-2"
-            >
-              <Link to="/health-cards">
-                <Stethoscope className="size-4" />
-                Health cards
-              </Link>
-            </Button>
+            <>
+              <Button
+                asChild
+                variant={isHealthCards ? "secondary" : "ghost"}
+                className="w-full justify-start gap-2"
+              >
+                <Link to="/health-cards">
+                  <Stethoscope className="size-4" />
+                  Health cards
+                </Link>
+              </Button>
+              <Button
+                asChild
+                variant={isMedicalSchedule ? "secondary" : "ghost"}
+                className="w-full justify-start gap-2"
+              >
+                <Link to="/medical-schedule">
+                  <CalendarClock className="size-4" />
+                  Medical calendar
+                </Link>
+              </Button>
+            </>
           )}
         </nav>
 

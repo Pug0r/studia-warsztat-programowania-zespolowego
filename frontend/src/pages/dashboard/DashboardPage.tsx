@@ -16,6 +16,8 @@ import {
   formatEventDateTime,
   getEventTypeLabel,
 } from "@/modules/events/utils/calendar";
+import { MedicalReminderBanner } from "@/modules/medicalSchedule/MedicalReminderBanner";
+import { UpcomingMedicalEventsPanel } from "@/modules/medicalSchedule/UpcomingMedicalEventsPanel";
 import { WalkMonitoringPanel } from "@/modules/volunteers/components/WalkMonitoringPanel";
 
 export function DashboardPage() {
@@ -36,6 +38,8 @@ export function DashboardPage() {
             Track adoptions, volunteers, and daily medical work in one place.
           </p>
         </header>
+
+        <MedicalReminderBanner />
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <Card>
@@ -75,6 +79,8 @@ export function DashboardPage() {
             </CardContent>
           </Card>
         </div>
+
+        <UpcomingMedicalEventsPanel />
 
         <div className="grid gap-4 xl:grid-cols-[1.3fr_1fr]">
           <Card>
