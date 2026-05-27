@@ -252,9 +252,6 @@ function EventsAndCalendar() {
           <h2 id="events-heading">Upcoming events</h2>
           <p>Fairs, training, and community days—join us on site or online.</p>
         </div>
-        <a className="hp-link" href="#calendar">
-          Full calendar →
-        </a>
       </div>
       <div className="hp-events-layout">
         <div className="hp-card-list">
