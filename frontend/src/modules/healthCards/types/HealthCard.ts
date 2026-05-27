@@ -34,3 +34,11 @@ export const HEALTH_CARD_ENTRY_TYPE_LABELS: Record<
   checkup: "Check-up",
   other: "Other",
 };
+
+export interface HealthCardEntryPayload {
+  entry_type: HealthCardEntryType;
+  title: string;
+  description: string | null;
+  medication: string | null;
+  treatment_date: string;
+}

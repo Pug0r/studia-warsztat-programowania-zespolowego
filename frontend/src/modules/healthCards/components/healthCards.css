@@ -177,6 +177,31 @@
   color: var(--hp-text, #1e293b);
 }
 
+.hc-form__input {
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--hp-border, #e2e8f0);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--hp-text, #1e293b);
+}
+
+.hc-form__input:focus {
+  outline: none;
+  border-color: var(--hp-blue, #2563eb);
+}
+
+.hc-form__select {
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--hp-border, #e2e8f0);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--hp-text, #1e293b);
+}
+
 .hc-form__textarea {
   font-family: inherit;
   resize: vertical;
@@ -234,6 +259,25 @@
   color: var(--hp-blue, #2563eb);
   font-size: 0.75rem;
   font-weight: 600;
+}
+
+.hc-entry__edit {
+  margin-left: auto;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.hc-entry__delete {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
+  background: #dc2626;
+  color: #fff;
+  border-color: #dc2626;
+}
+
+.hc-entry__delete:hover {
+  background: #b91c1c;
+  border-color: #b91c1c;
 }
 
 .hc-entry__title {
