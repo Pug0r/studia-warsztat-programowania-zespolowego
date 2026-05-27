@@ -1,4 +1,4 @@
-import { supabase } from "#config/supabaseClient.js";
+import { getSupabaseAdmin, supabase } from "#config/supabaseClient.js";
 
 interface AddUserInput {
   email: string;
@@ -43,12 +43,10 @@ export const getUserData = async (id: string) => {
 
 export const addUser = async (input: AddUserInput) => {
   const { email, password, role } = input;
+  const supabaseAdmin = getSupabaseAdmin();
 
-  /**
-   * 1. Tworzenie usera w Supabase Auth
-   */
   const { data: authUser, error: authError } =
-    await supabase.auth.admin.createUser({
+    await supabaseAdmin.auth.admin.createUser({
       email,
       password,
       email_confirm: true,
@@ -65,9 +63,6 @@ export const addUser = async (input: AddUserInput) => {
 
   const userId = authUser.user.id;
 
-  /**
-   * 2. Insert do profiles
-   */
   const { data, error } = await supabase
     .from("profiles")
     .insert({
@@ -105,13 +100,16 @@ export const addRole = async (input: UpdateRoleInput) => {
 };
 
 export const deleteUser = async (id: string) => {
-  /**
-   * 1. Usuń z auth
-   */
-  const { error: authError } = await supabase.auth.admin.deleteUser(id);
+  const supabaseAdmin = getSupabaseAdmin();
+
+  const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(id);
+  const { error } = await supabase.from("profiles").delete().eq("id", id);
 
   if (authError) {
     throw new Error(authError.message);
+  }
+  if (error) {
+    throw new Error(error.message);
   }
 
   return true;

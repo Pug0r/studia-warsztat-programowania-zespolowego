@@ -93,6 +93,12 @@ export const adminMiddleware: ExpressRequestHandler = async (
       });
     }
 
+    if (data.role !== "admin") {
+      return res.status(403).json({
+        error: "Forbidden",
+      });
+    }
+
     next();
   } catch (error) {
     const message = error instanceof Error ? error.message : "Auth error";

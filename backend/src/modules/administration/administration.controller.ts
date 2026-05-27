@@ -86,6 +86,8 @@ export const deleteUser = async (req: Request, res: Response) => {
   try {
     const id = validateUserId(req.params.id);
 
+    console.log("HEEREE; ", id);
+
     await administrationService.deleteUser(id);
 
     return res.status(204).send();

@@ -12,6 +12,8 @@ import { HealthCardPage } from "@/pages/healthCards/HealthCardPage";
 import { ProtectedRoute } from "@/routes/ProtectedRoute";
 import { CoordinatorRoute } from "@/routes/CoordinatorRoute";
 import { VetRoute } from "@/routes/VetRoute";
+import { AdminRoute } from "@/routes/AdminRoute";
+import { AdminPanelPage } from "@/pages/admin/AdminPanelPage";
 
 export const AppRoutes = () => {
   return (
@@ -59,6 +61,14 @@ export const AppRoutes = () => {
           <VetRoute>
             <HealthCardPage />
           </VetRoute>
+        }
+      />
+      <Route
+        path="/dashboard/admin"
+        element={
+          <AdminRoute>
+            <AdminPanelPage />
+          </AdminRoute>
         }
       />
       <Route path="*" element={<Navigate to="/" replace />} />
