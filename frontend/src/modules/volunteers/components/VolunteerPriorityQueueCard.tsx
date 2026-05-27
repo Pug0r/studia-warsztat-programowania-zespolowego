@@ -59,6 +59,18 @@ const formatWalkAge = (daysSinceLastWalk: number | null) => {
   return `${daysSinceLastWalk} days since the last walk.`;
 };
 
+const formatWalkDateQuery = (date: Date | undefined) => {
+  if (!date) {
+    return undefined;
+  }
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
 type VolunteerPriorityQueueCardProps = {
   selectedDate?: Date | undefined;
   onSelectedDateChange?: (value: Date | undefined) => void;
@@ -76,8 +88,9 @@ export function VolunteerPriorityQueueCard({
   const [notes, setNotes] = useState("");
 
   const selectedDate = selectedDateProp;
+  const selectedDateQuery = formatWalkDateQuery(selectedDate);
 
-  const priorityQuery = useWalkPriorityDogs();
+  const priorityQuery = useWalkPriorityDogs({ date: selectedDateQuery });
   const walkEventsQuery = useWalkEvents();
   const recordWalkMutation = useRecordPetWalk();
 

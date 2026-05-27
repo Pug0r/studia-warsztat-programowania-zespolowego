@@ -67,6 +67,18 @@ export const validateSize = (size: unknown): string | undefined => {
   return size;
 };
 
+export const validateOptionalDate = (value: unknown): string | undefined => {
+  if (value === undefined || value === null || value === "") {
+    return undefined;
+  }
+
+  if (typeof value !== "string" || Number.isNaN(Date.parse(value))) {
+    throw new Error("Date must be a valid date string.");
+  }
+
+  return new Date(value).toISOString();
+};
+
 const isValidDateString = (value: unknown): value is string => {
   if (typeof value !== "string" || !value.trim()) {
     return false;

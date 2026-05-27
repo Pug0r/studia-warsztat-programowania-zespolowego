@@ -11,6 +11,7 @@ import { DashboardPage } from "@/pages/dashboard/DashboardPage";
 import { PetsPage } from "@/pages/pets/PetsPage";
 import { HealthCardsPatientsPage } from "@/pages/healthCards/HealthCardsPatientsPage";
 import { HealthCardPage } from "@/pages/healthCards/HealthCardPage";
+import { MedicalSchedulePage } from "@/pages/medicalSchedule/MedicalSchedulePage";
 import { ProtectedRoute } from "@/routes/ProtectedRoute";
 import { CoordinatorRoute } from "@/routes/CoordinatorRoute";
 import { VolunteerRoute } from "@/routes/VolunteerRoute";
@@ -77,6 +78,14 @@ export const AppRoutes = () => {
         element={
           <VetRoute>
             <HealthCardPage />
+          </VetRoute>
+        }
+      />
+      <Route
+        path="/medical-schedule"
+        element={
+          <VetRoute>
+            <MedicalSchedulePage />
           </VetRoute>
         }
       />

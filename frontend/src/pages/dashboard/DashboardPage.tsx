@@ -9,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { WalkMonitoringPanel } from "@/modules/volunteers/components/WalkMonitoringPanel";
 import { useEventCalendar } from "@/modules/events/hooks/useEventCalendar";
 import { useUpcomingEvents } from "@/modules/events/hooks/useUpcomingEvents";
 import {
@@ -17,6 +16,7 @@ import {
   formatEventDateTime,
   getEventTypeLabel,
 } from "@/modules/events/utils/calendar";
+import { WalkMonitoringPanel } from "@/modules/volunteers/components/WalkMonitoringPanel";
 
 export function DashboardPage() {
   const eventsQuery = useUpcomingEvents();

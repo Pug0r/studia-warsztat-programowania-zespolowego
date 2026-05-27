@@ -8,15 +8,24 @@ import {
 } from "@/components/ui/dialog";
 import "./PetDetailModal.css";
 import { usePet } from "../hooks/usePet";
+import type { Pet } from "../types/Pets";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   petId: number;
+  initialData?: Pet;
   isOpen: boolean;
   onClose: () => void;
 };
 
-export const PetDetailModal: React.FC<Props> = ({ petId, isOpen, onClose }) => {
-  const { data: pet } = usePet(petId);
+export const PetDetailModal: React.FC<Props> = ({
+  petId,
+  initialData,
+  isOpen,
+  onClose,
+}) => {
+  const navigate = useNavigate();
+  const { data: pet } = usePet(petId, { initialData });
 
   const getStatusLabel = (status: string) => {
     switch (status) {
@@ -37,8 +46,9 @@ export const PetDetailModal: React.FC<Props> = ({ petId, isOpen, onClose }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       {/* Tailwind for the MAX WIDTH and MAX HEIGHT only */}
-      <DialogContent className="shelter-public pet-detail-dialog p-5 pr-2 max-w-4xl w-full">
-        <div className="pet-detail-scroll flex-1 pr-3">
+      <DialogContent className="shelter-public pet-detail-dialog p-5 pt-2 pb-2 max-h-[90vh] pr-2 max-w-4xl w-full">
+        {/* Scrollable content area */}
+        <div className="overflow-y-auto flex-1 pr-3 min-h-0">
           <DialogHeader className="pb-6">
             <DialogTitle className="pet-detail__title">
               Meet {pet?.name}!
@@ -48,11 +58,9 @@ export const PetDetailModal: React.FC<Props> = ({ petId, isOpen, onClose }) => {
           <DialogClose />
 
           {pet && (
-            <div className="pt-6 pr-4">
+            <div className="pt-5 pr-4">
               <div className="pet-detail__layout pb-5">
                 <div className="pet-detail__left">
-                  {/*<div style={{display: 'flex', flexDirection: 'column', gap: '0.75rem'}}>*/}
-
                   {/* Left — Photo */}
                   <div className="pet-detail__photo">
                     {pet.image_url ? (
@@ -74,6 +82,7 @@ export const PetDetailModal: React.FC<Props> = ({ petId, isOpen, onClose }) => {
                       marginTop: "auto",
                       marginBottom: "auto",
                     }}
+                    onClick={() => navigate(`/adopt?petId=${petId}`)}
                   >
                     Start Adoption Process
                   </button>
@@ -148,15 +157,6 @@ export const PetDetailModal: React.FC<Props> = ({ petId, isOpen, onClose }) => {
                   </div>
                 </div>
               </div>
-
-              {/* About section — full width below photo + info */}
-
-              {/* <div className="pet-detail__about pt-2">
-                <h3 className="pet-detail__about-title">About {pet.name}</h3>
-                <p className="pet-detail__desc">
-                  {pet.long_description || pet.description}
-                </p>
-              </div> */}
 
               {/* Photo Gallery - can be commented out if not ready */}
               <div className="pet-detail__gallery pt-2">
