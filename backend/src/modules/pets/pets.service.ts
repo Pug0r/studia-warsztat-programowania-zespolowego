@@ -5,6 +5,7 @@ import type {
   PetWalkPriorityItem,
   PetWalkInsert,
   PetWalkRow,
+  PetWalkUpdate,
   PetWithWalkSummary,
 } from "@repo/types";
 import { supabase } from "#config/supabaseClient.js";
@@ -222,6 +223,7 @@ export const checkWalkConflicts = async (
   walkerId: string | undefined,
   walkedAt: string,
   endAt: string | undefined,
+  excludeWalkId?: number,
 ): Promise<{ hasPetConflict: boolean; hasWalkerConflict: boolean }> => {
   let hasPetConflict = false;
   let hasWalkerConflict = false;
@@ -232,12 +234,18 @@ export const checkWalkConflicts = async (
 
   // Check if pet is already booked during this time
   // Using strict inequalities: walk1.end > walk2.start AND walk1.start < walk2.end
-  const { data: petConflicts, error: petError } = await supabase
+  let petQuery = supabase
     .from("pet_walks")
     .select("id")
     .eq("pet_id", petId)
     .lt("walked_at", endAt)
     .gt("end_at", walkedAt);
+
+  if (excludeWalkId) {
+    petQuery = petQuery.neq("id", excludeWalkId);
+  }
+
+  const { data: petConflicts, error: petError } = await petQuery;
 
   if (petError) {
     throw new Error(`Error checking pet conflicts: ${petError.message}`);
@@ -247,12 +255,18 @@ export const checkWalkConflicts = async (
 
   // Check if walker is already booked during this time
   if (walkerId) {
-    const { data: walkerConflicts, error: walkerError } = await supabase
+    let walkerQuery = supabase
       .from("pet_walks")
       .select("id")
       .eq("walker_id", walkerId)
       .lt("walked_at", endAt)
       .gt("end_at", walkedAt);
+
+    if (excludeWalkId) {
+      walkerQuery = walkerQuery.neq("id", excludeWalkId);
+    }
+
+    const { data: walkerConflicts, error: walkerError } = await walkerQuery;
 
     if (walkerError) {
       throw new Error(
@@ -314,4 +328,87 @@ export const recordWalk = async (
   }
 
   return data;
+};
+
+export const getWalkById = async (id: number): Promise<PetWalkRow | null> => {
+  const { data, error } = await supabase
+    .from("pet_walks")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+export const updateWalk = async (
+  id: number,
+  payload: PetWalkUpdate,
+): Promise<PetWalkRow | null> => {
+  const existingWalk = await getWalkById(id);
+
+  if (!existingWalk) {
+    return null;
+  }
+
+  const petId = payload.pet_id ?? existingWalk.pet_id;
+  const walkedAt = payload.walked_at ?? existingWalk.walked_at;
+  const endAt =
+    payload.end_at === undefined ? existingWalk.end_at : payload.end_at;
+  const walkerId =
+    payload.walker_id === undefined
+      ? existingWalk.walker_id
+      : payload.walker_id;
+
+  if (await isPetBlockedForWalk(petId, walkedAt)) {
+    throw new Error("This pet has a medical procedure scheduled that day.");
+  }
+
+  if (endAt) {
+    const { hasPetConflict, hasWalkerConflict } = await checkWalkConflicts(
+      petId,
+      walkerId ?? undefined,
+      walkedAt,
+      endAt,
+      id,
+    );
+
+    if (hasPetConflict) {
+      throw new Error(
+        "This pet is already reserved for a walk during the selected time.",
+      );
+    }
+
+    if (hasWalkerConflict) {
+      throw new Error(
+        "The walker is already occupied during the selected time.",
+      );
+    }
+  }
+
+  const { data, error } = await supabase
+    .from("pet_walks")
+    .update(payload)
+    .eq("id", id)
+    .select("*")
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+export const deleteWalk = async (id: number): Promise<boolean> => {
+  const { error } = await supabase.from("pet_walks").delete().eq("id", id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return true;
 };

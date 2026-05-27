@@ -1,5 +1,6 @@
 import {
   CalendarCheck,
+  CalendarDays,
   Dog,
   HeartHandshake,
   Home,
@@ -29,11 +30,15 @@ const Sidebar = () => {
   const isDashboardAdoptions = location.pathname === "/dashboard/adoptions";
   const isDashboardVolunteers = location.pathname === "/dashboard/volunteers";
   const isDashboardVolunteerWalks = location.pathname === "/dashboard/walks";
+  const isCoordinatorWalkCalendar =
+    location.pathname === "/dashboard/walk-calendar";
   const isManageEvents = location.pathname === "/dashboard/manage-events";
   const isHealthCards = location.pathname.startsWith("/health-cards");
-  const isDashboardAdmin = location.pathname === "/dashboard/admin";
-  const isVet = role === "vet";
-  const isAdmin = role === "admin";
+  const isCoordinator =
+    (session?.user?.user_metadata?.role as string | undefined) ===
+    "coordinator";
+  const isVet =
+    (session?.user?.user_metadata?.role as string | undefined) === "vet";
 
   async function handleSignOut() {
     await signOut();
@@ -97,6 +102,18 @@ const Sidebar = () => {
               My walks
             </Link>
           </Button>
+          {isCoordinator && (
+            <Button
+              asChild
+              variant={isCoordinatorWalkCalendar ? "secondary" : "ghost"}
+              className="w-full justify-start gap-2"
+            >
+              <Link to="/dashboard/walk-calendar">
+                <CalendarDays className="size-4" />
+                Walk calendar
+              </Link>
+            </Button>
+          )}
           <Button
             asChild
             variant={isDashboardAdoptions ? "secondary" : "ghost"}

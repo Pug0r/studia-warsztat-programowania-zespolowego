@@ -1,4 +1,4 @@
-import type { CreatePetWalkDTO, PetInsert } from "@repo/types";
+import type { CreatePetWalkDTO, PetInsert, PetWalkUpdate } from "@repo/types";
 
 export type CreatePetDTO = Pick<
   PetInsert,
@@ -54,6 +54,19 @@ export const validatePetId = (id: unknown): number => {
   const n = Number(id);
   if (!Number.isInteger(n) || n <= 0) {
     throw new Error("Parameter 'id' must be a positive integer.");
+  }
+
+  return n;
+};
+
+export const validateWalkId = (id: unknown): number => {
+  if (typeof id !== "string" || !id.trim()) {
+    throw new Error("Parameter 'walkId' is required.");
+  }
+
+  const n = Number(id);
+  if (!Number.isInteger(n) || n <= 0) {
+    throw new Error("Parameter 'walkId' must be a positive integer.");
   }
 
   return n;
@@ -138,6 +151,74 @@ export const validateCreatePetWalkPayload = (
     }
 
     walkPayload.end_at = new Date(end_at).toISOString();
+  }
+
+  return walkPayload;
+};
+
+export const validateUpdatePetWalkPayload = (
+  payload: unknown,
+): PetWalkUpdate => {
+  if (!payload || typeof payload !== "object") {
+    throw new Error("Payload must be an object.");
+  }
+
+  const { end_at, notes, pet_id, walked_at, walker_id } = payload as Record<
+    string,
+    unknown
+  >;
+  const walkPayload: PetWalkUpdate = {};
+
+  if (pet_id !== undefined) {
+    if (
+      typeof pet_id !== "number" ||
+      !Number.isInteger(pet_id) ||
+      pet_id <= 0
+    ) {
+      throw new Error("Field 'pet_id' must be a positive integer.");
+    }
+
+    walkPayload.pet_id = pet_id;
+  }
+
+  if (notes !== undefined) {
+    if (notes !== null && typeof notes !== "string") {
+      throw new Error("Field 'notes' must be a string or null when provided.");
+    }
+
+    walkPayload.notes = notes === null ? null : notes.trim() || null;
+  }
+
+  if (walked_at !== undefined) {
+    if (!isValidDateString(walked_at)) {
+      throw new Error("Field 'walked_at' must be a valid date string.");
+    }
+
+    walkPayload.walked_at = new Date(walked_at).toISOString();
+  }
+
+  if (walker_id !== undefined) {
+    if (
+      walker_id !== null &&
+      (typeof walker_id !== "string" || !walker_id.trim())
+    ) {
+      throw new Error("Field 'walker_id' must be a non-empty string or null.");
+    }
+
+    walkPayload.walker_id = walker_id === null ? null : walker_id.trim();
+  }
+
+  if (end_at !== undefined) {
+    if (end_at !== null && !isValidDateString(end_at)) {
+      throw new Error("Field 'end_at' must be a valid date string or null.");
+    }
+
+    walkPayload.end_at =
+      end_at === null ? null : new Date(end_at).toISOString();
+  }
+
+  if (Object.keys(walkPayload).length === 0) {
+    throw new Error("At least one field must be provided.");
   }
 
   return walkPayload;
