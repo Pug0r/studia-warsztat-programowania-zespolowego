@@ -41,10 +41,18 @@ export const getPetWalkSummaryRequest = async (): Promise<
   return data;
 };
 
-export const getPetWalkPriorityRequest = async (): Promise<
-  PetWalkPriorityItem[]
-> => {
-  const response = await fetch("/api/pets/walk-priority");
+export const getPetWalkPriorityRequest = async (
+  date?: string,
+): Promise<PetWalkPriorityItem[]> => {
+  const params = new URLSearchParams();
+  if (date) {
+    params.set("date", date);
+  }
+
+  const query = params.toString();
+  const response = await fetch(
+    `/api/pets/walk-priority${query ? `?${query}` : ""}`,
+  );
 
   if (!response.ok) {
     throw new Error(`Backend error: ${response.status}`);

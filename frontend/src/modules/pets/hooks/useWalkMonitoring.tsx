@@ -16,10 +16,13 @@ import {
 export const WALK_PRIORITY_QUERY_KEY = ["pet_walk_priority"] as const;
 export const WALK_SUMMARY_QUERY_KEY = ["pet_walk_summary"] as const;
 
-export const useWalkPriorityDogs = (options?: { enabled?: boolean }) => {
+export const useWalkPriorityDogs = (options?: {
+  date?: string;
+  enabled?: boolean;
+}) => {
   return useQuery<PetWalkPriorityItem[], Error>({
-    queryKey: WALK_PRIORITY_QUERY_KEY,
-    queryFn: getPetWalkPriorityRequest,
+    queryKey: [...WALK_PRIORITY_QUERY_KEY, options?.date],
+    queryFn: () => getPetWalkPriorityRequest(options?.date),
     staleTime: 30 * 1000,
     refetchInterval: 1000 * 60 * 15,
     enabled: options?.enabled ?? true,

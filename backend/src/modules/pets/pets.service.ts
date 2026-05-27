@@ -8,6 +8,10 @@ import type {
   PetWithWalkSummary,
 } from "@repo/types";
 import { supabase } from "#config/supabaseClient.js";
+import {
+  getBlockedPetIdsForWalkDate,
+  isPetBlockedForWalk,
+} from "#modules/medicalSchedule/medicalSchedule.service.js";
 import type { CreatePetDTO } from "./pets.validation.js";
 import type { Pet } from "@repo/types";
 
@@ -106,15 +110,19 @@ export const listWithWalkSummary = async (): Promise<PetWithWalkSummary[]> => {
   return buildWalkSummaries(pets, walks);
 };
 
-export const listWalkPriorityDogs = async (): Promise<
-  PetWalkPriorityItem[]
-> => {
+export const listWalkPriorityDogs = async (
+  walkDate: string | Date = new Date(),
+): Promise<PetWalkPriorityItem[]> => {
   const summaries = await listWithWalkSummary();
+  const blockedPetIds = await getBlockedPetIdsForWalkDate(walkDate);
 
-  return summaries.sort(compareWalkUrgency).map((pet, index) => ({
-    ...pet,
-    priority_rank: index + 1,
-  }));
+  return summaries
+    .filter((pet) => !blockedPetIds.has(pet.id))
+    .sort(compareWalkUrgency)
+    .map((pet, index) => ({
+      ...pet,
+      priority_rank: index + 1,
+    }));
 };
 
 export const listWalks = async (): Promise<PetWalkRow[]> => {
@@ -262,6 +270,12 @@ export const recordWalk = async (
   petId: number,
   payload: CreatePetWalkDTO,
 ): Promise<PetWalkRow> => {
+  const walkedAt = payload.walked_at ?? new Date().toISOString();
+
+  if (await isPetBlockedForWalk(petId, walkedAt)) {
+    throw new Error("This pet has a medical procedure scheduled that day.");
+  }
+
   // Check for conflicts if we have end_at
   if (payload.end_at && payload.walked_at) {
     const { hasPetConflict, hasWalkerConflict } = await checkWalkConflicts(

@@ -1,4 +1,5 @@
 import {
+  CalendarCheck,
   Dog,
   HeartHandshake,
   Home,
@@ -7,7 +8,6 @@ import {
   PawPrint,
   Stethoscope,
   Users,
-  CalendarCheck,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -27,8 +27,6 @@ const Sidebar = () => {
   const isDashboardVolunteers = location.pathname === "/dashboard/volunteers";
   const isDashboardVolunteerWalks = location.pathname === "/dashboard/walks";
   const isManageEvents = location.pathname === "/dashboard/manage-events";
-  // const role = session?.user?.user_metadata?.role as string | undefined;
-  // const isVolunteer = role === "volunteer";
   const isHealthCards = location.pathname.startsWith("/health-cards");
   const isVet =
     (session?.user?.user_metadata?.role as string | undefined) === "vet";
@@ -85,7 +83,6 @@ const Sidebar = () => {
               Volunteers
             </Link>
           </Button>
-          {/* {isVolunteer ? ( */}
           <Button
             asChild
             variant={isDashboardVolunteerWalks ? "secondary" : "ghost"}
@@ -96,7 +93,6 @@ const Sidebar = () => {
               My walks
             </Link>
           </Button>
-          {/* ) : null} */}
           <Button
             asChild
             variant={isDashboardAdoptions ? "secondary" : "ghost"}

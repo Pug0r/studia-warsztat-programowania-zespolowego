@@ -3,6 +3,7 @@ import * as petsService from "./pets.service.js";
 import {
   validateCreatePetPayload,
   validateCreatePetWalkPayload,
+  validateOptionalDate,
   validatePetId,
   validateSize,
 } from "./pets.validation.js";
@@ -36,13 +37,17 @@ export const listWithWalkSummary = async (_req: Request, res: Response) => {
   }
 };
 
-export const listWalkPriorityDogs = async (_req: Request, res: Response) => {
+export const listWalkPriorityDogs = async (req: Request, res: Response) => {
   try {
-    const pets = await petsService.listWalkPriorityDogs();
+    const walkDate = validateOptionalDate(req.query.date);
+    const pets = await petsService.listWalkPriorityDogs(walkDate);
     return res.json(pets);
   } catch (error) {
-    const message = error instanceof Error ? error.message : undefined;
-    return sendServerError(res, message);
+    if (error instanceof Error) {
+      return sendBadRequest(res, error.message);
+    }
+
+    return sendServerError(res);
   }
 };
 

@@ -14,6 +14,150 @@ export interface Database {
   };
   public: {
     Tables: {
+      audit_action_settings: {
+        Row: {
+          action: string;
+          created_at: string;
+          enabled: boolean;
+          updated_at: string;
+        };
+        Insert: {
+          action: string;
+          created_at?: string;
+          enabled?: boolean;
+          updated_at?: string;
+        };
+        Update: {
+          action?: string;
+          created_at?: string;
+          enabled?: boolean;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      audit_logs: {
+        Row: {
+          action: string;
+          actor_email: string | null;
+          actor_user_id: string | null;
+          created_at: string;
+          entity_id: string | null;
+          entity_type: string;
+          id: number;
+          ip_address: string | null;
+          metadata: Json;
+          method: string;
+          new_data: Json | null;
+          old_data: Json | null;
+          route: string;
+          user_agent: string | null;
+        };
+        Insert: {
+          action: string;
+          actor_email?: string | null;
+          actor_user_id?: string | null;
+          created_at?: string;
+          entity_id?: string | null;
+          entity_type: string;
+          id?: number;
+          ip_address?: string | null;
+          metadata?: Json;
+          method: string;
+          new_data?: Json | null;
+          old_data?: Json | null;
+          route: string;
+          user_agent?: string | null;
+        };
+        Update: {
+          action?: string;
+          actor_email?: string | null;
+          actor_user_id?: string | null;
+          created_at?: string;
+          entity_id?: string | null;
+          entity_type?: string;
+          id?: number;
+          ip_address?: string | null;
+          metadata?: Json;
+          method?: string;
+          new_data?: Json | null;
+          old_data?: Json | null;
+          route?: string;
+          user_agent?: string | null;
+        };
+        Relationships: [];
+      };
+      medical_event_reminders: {
+        Row: {
+          audience_role: "admin" | "coordinator";
+          created_at: string;
+          due_at: string;
+          id: number;
+          medical_event_id: number;
+          read_at: string | null;
+        };
+        Insert: {
+          audience_role: "admin" | "coordinator";
+          created_at?: string;
+          due_at: string;
+          id?: number;
+          medical_event_id: number;
+          read_at?: string | null;
+        };
+        Update: {
+          audience_role?: "admin" | "coordinator";
+          created_at?: string;
+          due_at?: string;
+          id?: number;
+          medical_event_id?: number;
+          read_at?: string | null;
+        };
+        Relationships: [];
+      };
+      medical_events: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          created_by_email: string | null;
+          id: number;
+          notes: string | null;
+          pet_id: number;
+          reminder_sent_at: string | null;
+          scheduled_at: string;
+          status: "scheduled" | "completed" | "cancelled";
+          title: string;
+          type: "vaccination" | "checkup" | "surgery" | "other";
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          created_by_email?: string | null;
+          id?: number;
+          notes?: string | null;
+          pet_id: number;
+          reminder_sent_at?: string | null;
+          scheduled_at: string;
+          status?: "scheduled" | "completed" | "cancelled";
+          title: string;
+          type: "vaccination" | "checkup" | "surgery" | "other";
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          created_by_email?: string | null;
+          id?: number;
+          notes?: string | null;
+          pet_id?: number;
+          reminder_sent_at?: string | null;
+          scheduled_at?: string;
+          status?: "scheduled" | "completed" | "cancelled";
+          title?: string;
+          type?: "vaccination" | "checkup" | "surgery" | "other";
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       pets: {
         Row: {
           age: number | null;
