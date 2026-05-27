@@ -28,7 +28,6 @@ export type {
   PetWalkUpdate,
   CreatePetWalkDTO,
 } from "./petWalk.js";
-export type { CreateUserDTO, UserInsert, UserRow } from "./user.js";
 export type { PetInsert, PetRow, PetRow as Pet, PetUpdate } from "./pet.js";
 export type {
   CreateVolunteerDTO,

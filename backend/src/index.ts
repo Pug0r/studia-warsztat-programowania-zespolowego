@@ -8,6 +8,7 @@ import adoptionApplicationsRouter from "#modules/adoptionApplications/adoptionAp
 import healthCardsRouter from "#modules/healthCards/healthCards.routes.js";
 import petsRouter from "#modules/pets/pets.routes.js";
 import volunteersRouter from "#modules/volunteers/volunteers.routes.js";
+import adminRoute from "#modules/administration/administration.routes.js";
 
 const app = express();
 const { PORT } = process.env;
@@ -26,6 +27,7 @@ app.use(
 app.use("/api/pets", petsRouter);
 app.use("/api/health-cards", healthCardsRouter);
 app.use("/api/volunteers", authMiddleware, volunteersRouter);
+app.use("/api/administration", adminRoute);
 
 app.get("/", middleware);
 
