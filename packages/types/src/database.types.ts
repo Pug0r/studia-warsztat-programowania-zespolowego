@@ -66,26 +66,6 @@ export interface Database {
             referencedColumns: ["id"];
           },
         ];
-      audit_action_settings: {
-        Row: {
-          action: string;
-          created_at: string;
-          enabled: boolean;
-          updated_at: string;
-        };
-        Insert: {
-          action: string;
-          created_at?: string;
-          enabled?: boolean;
-          updated_at?: string;
-        };
-        Update: {
-          action?: string;
-          created_at?: string;
-          enabled?: boolean;
-          updated_at?: string;
-        };
-        Relationships: [];
       };
       audit_logs: {
         Row: {
@@ -139,79 +119,6 @@ export interface Database {
         Relationships: [];
       };
       calendar_events: {
-      medical_event_reminders: {
-        Row: {
-          audience_role: "admin" | "coordinator";
-          created_at: string;
-          due_at: string;
-          id: number;
-          medical_event_id: number;
-          read_at: string | null;
-        };
-        Insert: {
-          audience_role: "admin" | "coordinator";
-          created_at?: string;
-          due_at: string;
-          id?: number;
-          medical_event_id: number;
-          read_at?: string | null;
-        };
-        Update: {
-          audience_role?: "admin" | "coordinator";
-          created_at?: string;
-          due_at?: string;
-          id?: number;
-          medical_event_id?: number;
-          read_at?: string | null;
-        };
-        Relationships: [];
-      };
-      medical_events: {
-        Row: {
-          created_at: string;
-          created_by: string | null;
-          created_by_email: string | null;
-          id: number;
-          notes: string | null;
-          pet_id: number;
-          reminder_sent_at: string | null;
-          scheduled_at: string;
-          status: "scheduled" | "completed" | "cancelled";
-          title: string;
-          type: "vaccination" | "checkup" | "surgery" | "other";
-          updated_at: string;
-        };
-        Insert: {
-          created_at?: string;
-          created_by?: string | null;
-          created_by_email?: string | null;
-          id?: number;
-          notes?: string | null;
-          pet_id: number;
-          reminder_sent_at?: string | null;
-          scheduled_at: string;
-          status?: "scheduled" | "completed" | "cancelled";
-          title: string;
-          type: "vaccination" | "checkup" | "surgery" | "other";
-          updated_at?: string;
-        };
-        Update: {
-          created_at?: string;
-          created_by?: string | null;
-          created_by_email?: string | null;
-          id?: number;
-          notes?: string | null;
-          pet_id?: number;
-          reminder_sent_at?: string | null;
-          scheduled_at?: string;
-          status?: "scheduled" | "completed" | "cancelled";
-          title?: string;
-          type?: "vaccination" | "checkup" | "surgery" | "other";
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
-      pets: {
         Row: {
           created_at: string;
           description: string;
@@ -447,7 +354,6 @@ export interface Database {
           pet_id: number;
           walked_at: string;
           walker_id: string | null;
-          end_at: string | null;
         };
         Insert: {
           created_at?: string;
@@ -457,7 +363,6 @@ export interface Database {
           pet_id: number;
           walked_at?: string;
           walker_id?: string | null;
-          end_at?: string | null;
         };
         Update: {
           created_at?: string;
@@ -467,7 +372,6 @@ export interface Database {
           pet_id?: number;
           walked_at?: string;
           walker_id?: string | null;
-          end_at?: string | null;
         };
         Relationships: [
           {
@@ -531,61 +435,6 @@ export interface Database {
         Relationships: [];
       };
       profiles: {
-      calendar_events: {
-        Row: {
-          created_at: string;
-          description: string;
-          ends_at: string | null;
-          event_type:
-            | "open_day"
-            | "food_drive"
-            | "volunteer_training"
-            | "community_event"
-            | "other";
-          id: number;
-          is_public: boolean;
-          location: string;
-          starts_at: string;
-          title: string;
-          updated_at: string;
-        };
-        Insert: {
-          created_at?: string;
-          description: string;
-          ends_at?: string | null;
-          event_type?:
-            | "open_day"
-            | "food_drive"
-            | "volunteer_training"
-            | "community_event"
-            | "other";
-          id?: number;
-          is_public?: boolean;
-          location: string;
-          starts_at: string;
-          title: string;
-          updated_at?: string;
-        };
-        Update: {
-          created_at?: string;
-          description?: string;
-          ends_at?: string | null;
-          event_type?:
-            | "open_day"
-            | "food_drive"
-            | "volunteer_training"
-            | "community_event"
-            | "other";
-          id?: number;
-          is_public?: boolean;
-          location?: string;
-          starts_at?: string;
-          title?: string;
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
-      users: {
         Row: {
           created_at: string | null;
           email: string | null;
