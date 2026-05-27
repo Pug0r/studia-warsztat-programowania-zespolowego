@@ -1,6 +1,15 @@
 import "./HomePage.css";
 
 import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { useUpcomingEvents } from "@/modules/events/hooks/useUpcomingEvents";
+import { useEventCalendar } from "@/modules/events/hooks/useEventCalendar";
+import {
+  CALENDAR_DAYS,
+  formatEventCardDay,
+  formatEventCardMonth,
+  formatEventDateTime,
+  getEventTypeLabel,
+} from "@/modules/events/utils/calendar";
 
 const STATS = [
   {
@@ -16,42 +25,6 @@ const STATS = [
   },
   { value: "98%", label: "Post-adoption check-ins", delta: "First 90 days" },
 ] as const;
-
-const EVENTS = [
-  {
-    day: "28",
-    month: "Mar",
-    title: "Weekend adoption fair",
-    desc: "Meet dogs and cats, speak with matchmakers, same-day applications.",
-    tags: ["Open house", "Family-friendly"],
-  },
-  {
-    day: "05",
-    month: "Apr",
-    title: "Volunteer orientation",
-    desc: "New volunteer onboarding, shelter tour, and role sign-up.",
-    tags: ["Volunteers", "RSVP"],
-  },
-  {
-    day: "12",
-    month: "Apr",
-    title: "Kitten foster info session",
-    desc: "Learn how fostering works and take home a starter kit.",
-    tags: ["Foster", "Education"],
-  },
-] as const;
-
-/** March 2026 demo grid: Sun=empty leading, 1 Sat = Mar 1... */
-const CAL_WEEKS: (number | null)[][] = [
-  [null, null, null, null, null, null, 1],
-  [2, 3, 4, 5, 6, 7, 8],
-  [9, 10, 11, 12, 13, 14, 15],
-  [16, 17, 18, 19, 20, 21, 22],
-  [23, 24, 25, 26, 27, 28, 29],
-  [30, 31, null, null, null, null, null],
-];
-
-const EVENT_DAYS = new Set([5, 12, 28]);
 
 const ADOPTION_STEPS = [
   {
@@ -264,6 +237,10 @@ function StatsSection() {
 }
 
 function EventsAndCalendar() {
+  const eventsQuery = useUpcomingEvents();
+  const events = eventsQuery.data ?? [];
+  const calendar = useEventCalendar(events);
+
   return (
     <section
       className="hp-section"
@@ -275,55 +252,95 @@ function EventsAndCalendar() {
           <h2 id="events-heading">Upcoming events</h2>
           <p>Fairs, training, and community days—join us on site or online.</p>
         </div>
-        <a className="hp-link" href="#calendar">
-          Full calendar →
-        </a>
       </div>
       <div className="hp-events-layout">
         <div className="hp-card-list">
-          {EVENTS.map((e) => (
-            <article key={e.title} className="hp-event-card">
-              <div className="hp-event-card__date" aria-hidden>
-                <span className="d">{e.day}</span>
-                <span className="m">{e.month}</span>
-              </div>
+          {eventsQuery.isPending ? (
+            <div className="hp-event-card">
               <div className="hp-event-card__body">
-                <h3>{e.title}</h3>
-                <p>{e.desc}</p>
-                <div className="hp-event-card__meta">
-                  {e.tags.map((t) => (
-                    <span key={t} className="hp-badge hp-badge--neutral">
-                      {t}
-                    </span>
-                  ))}
-                </div>
+                <h3>Loading public events...</h3>
+                <p>Please wait while we fetch the latest shelter calendar.</p>
               </div>
-            </article>
-          ))}
+            </div>
+          ) : eventsQuery.error ? (
+            <div className="hp-event-card">
+              <div className="hp-event-card__body">
+                <h3>Unable to load events</h3>
+                <p>{eventsQuery.error.message}</p>
+              </div>
+            </div>
+          ) : events.length === 0 ? (
+            <div className="hp-event-card">
+              <div className="hp-event-card__body">
+                <h3>No upcoming events yet</h3>
+                <p>The shelter calendar is currently empty.</p>
+              </div>
+            </div>
+          ) : (
+            events.map((event) => {
+              const typeLabel = getEventTypeLabel(event.event_type);
+
+              return (
+                <article key={event.id} className="hp-event-card">
+                  <div className="hp-event-card__date" aria-hidden>
+                    <span className="d">
+                      {formatEventCardDay(event.starts_at)}
+                    </span>
+                    <span className="m">
+                      {formatEventCardMonth(event.starts_at)}
+                    </span>
+                  </div>
+                  <div className="hp-event-card__body">
+                    <h3>{event.title}</h3>
+                    <p>{event.description}</p>
+                    <div className="hp-event-card__meta">
+                      <span className="hp-badge hp-badge--neutral">
+                        {typeLabel}
+                      </span>
+                      <span className="hp-badge hp-badge--neutral">
+                        {formatEventDateTime(event.starts_at)}
+                      </span>
+                      <span className="hp-badge hp-badge--neutral">
+                        {event.location}
+                      </span>
+                    </div>
+                  </div>
+                </article>
+              );
+            })
+          )}
         </div>
         <div
           className="hp-calendar"
           id="calendar"
-          aria-label="March 2026 calendar with event days highlighted"
+          aria-label="Upcoming events calendar with highlighted dates"
         >
           <div className="hp-calendar__top">
-            <h3>March 2026</h3>
+            <h3>{calendar.monthLabel}</h3>
             <div className="hp-calendar__nav">
-              <button type="button" aria-label="Previous month (demo)">
+              <button
+                type="button"
+                aria-label="Previous month"
+                onClick={calendar.goToPreviousMonth}
+              >
                 ‹
               </button>
-              <button type="button" aria-label="Next month (demo)">
+              <button
+                type="button"
+                aria-label="Next month"
+                onClick={calendar.goToNextMonth}
+              >
                 ›
               </button>
             </div>
           </div>
           <div className="hp-calendar__dow">
-            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+            {CALENDAR_DAYS.map((d) => (
               <span key={d}>{d}</span>
             ))}
           </div>
           <div className="hp-calendar__days">
-            {CAL_WEEKS.flatMap((week, wi) =>
+            {calendar.calendarWeeks.flatMap((week, wi) =>
               week.map((day, di) => {
                 if (day === null) {
                   return (
@@ -334,13 +351,9 @@ function EventsAndCalendar() {
                     />
                   );
                 }
-                const isEvent = EVENT_DAYS.has(day);
-                const isToday = day === 24;
-                const cls = [
-                  "hp-cal-day",
-                  isEvent && "hp-cal-day--event",
-                  isToday && "hp-cal-day--today",
-                ]
+                const eventsOnDay = calendar.eventsByDay.get(day) ?? [];
+                const isEvent = eventsOnDay.length > 0;
+                const cls = ["hp-cal-day", isEvent && "hp-cal-day--event"]
                   .filter(Boolean)
                   .join(" ");
                 if (isEvent) {
@@ -349,9 +362,14 @@ function EventsAndCalendar() {
                       key={`${wi}-${di}-${day}`}
                       type="button"
                       className={cls}
-                      aria-label={`March ${day}, event scheduled`}
+                      aria-label={`${calendar.monthLabel} ${day}, ${eventsOnDay.length} event${eventsOnDay.length === 1 ? "" : "s"} scheduled`}
                     >
                       {day}
+                      {eventsOnDay.length > 1 ? (
+                        <span className="sr-only">
+                          {eventsOnDay.length} events
+                        </span>
+                      ) : null}
                     </button>
                   );
                 }
@@ -365,7 +383,7 @@ function EventsAndCalendar() {
           </div>
           <div className="hp-calendar__legend">
             <span className="hp-calendar__dot" aria-hidden />
-            Green days have a listed event (demo).
+            Highlighted days have a public event.
           </div>
         </div>
       </div>
