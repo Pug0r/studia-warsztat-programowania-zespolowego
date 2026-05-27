@@ -19,6 +19,7 @@ import {
 import { MedicalReminderBanner } from "@/modules/medicalSchedule/MedicalReminderBanner";
 import { UpcomingMedicalEventsPanel } from "@/modules/medicalSchedule/UpcomingMedicalEventsPanel";
 import { WalkMonitoringPanel } from "@/modules/volunteers/components/WalkMonitoringPanel";
+import { MyWalksPanel } from "./MyWalksPanel";
 
 export function DashboardPage() {
   const eventsQuery = useUpcomingEvents();
@@ -82,142 +83,146 @@ export function DashboardPage() {
 
         <UpcomingMedicalEventsPanel />
 
-        <div className="grid gap-4 xl:grid-cols-[1.3fr_1fr]">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CalendarDays className="size-5" />
-                Shelter calendar
-              </CardTitle>
-              <CardDescription>
-                Public upcoming events and open days
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {eventsQuery.isPending ? (
-                <p className="text-sm text-slate-600">
-                  Loading public events...
-                </p>
-              ) : eventsQuery.error ? (
-                <p className="text-sm text-red-600">
-                  {eventsQuery.error.message || "Unable to load events."}
-                </p>
-              ) : events.length === 0 ? (
-                <p className="text-sm text-slate-600">
-                  No upcoming public events yet.
-                </p>
-              ) : (
-                <div className="space-y-4">
-                  <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-[1.1fr_0.9fr]">
-                    <div className="space-y-3">
-                      {events.slice(0, 4).map((event) => (
-                        <div
-                          key={event.id}
-                          className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
-                        >
-                          <div className="flex items-start justify-between gap-3">
-                            <div>
-                              <p className="font-medium text-slate-900">
-                                {event.title}
-                              </p>
-                              <p className="text-sm text-slate-600">
-                                {event.location}
-                              </p>
+        <div className="space-y-4">
+          <MyWalksPanel />
+
+          <div className="grid gap-4 xl:grid-cols-[1.3fr_1fr]">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CalendarDays className="size-5" />
+                  Shelter calendar
+                </CardTitle>
+                <CardDescription>
+                  Public upcoming events and open days
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {eventsQuery.isPending ? (
+                  <p className="text-sm text-slate-600">
+                    Loading public events...
+                  </p>
+                ) : eventsQuery.error ? (
+                  <p className="text-sm text-red-600">
+                    {eventsQuery.error.message || "Unable to load events."}
+                  </p>
+                ) : events.length === 0 ? (
+                  <p className="text-sm text-slate-600">
+                    No upcoming public events yet.
+                  </p>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-[1.1fr_0.9fr]">
+                      <div className="space-y-3">
+                        {events.slice(0, 4).map((event) => (
+                          <div
+                            key={event.id}
+                            className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
+                          >
+                            <div className="flex items-start justify-between gap-3">
+                              <div>
+                                <p className="font-medium text-slate-900">
+                                  {event.title}
+                                </p>
+                                <p className="text-sm text-slate-600">
+                                  {event.location}
+                                </p>
+                              </div>
+                              <Badge variant="outline">
+                                {getEventTypeLabel(event.event_type)}
+                              </Badge>
                             </div>
-                            <Badge variant="outline">
-                              {getEventTypeLabel(event.event_type)}
-                            </Badge>
+                            <p className="mt-2 text-xs text-slate-500">
+                              {formatEventDateTime(event.starts_at)}
+                            </p>
                           </div>
-                          <p className="mt-2 text-xs text-slate-500">
-                            {formatEventDateTime(event.starts_at)}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="rounded-2xl border border-slate-200 bg-white p-4">
-                      <div className="mb-3 flex items-center justify-between gap-3">
-                        <div>
-                          <h3 className="text-sm font-medium text-slate-900">
-                            {calendar.monthLabel}
-                          </h3>
-                          <p className="text-xs text-slate-500">
-                            Highlighted days have public events.
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <button
-                            type="button"
-                            className="rounded-full border border-slate-200 px-2 py-1 text-sm text-slate-700 transition hover:bg-slate-100"
-                            aria-label="Previous month"
-                            onClick={calendar.goToPreviousMonth}
-                          >
-                            ‹
-                          </button>
-                          <button
-                            type="button"
-                            className="rounded-full border border-slate-200 px-2 py-1 text-sm text-slate-700 transition hover:bg-slate-100"
-                            aria-label="Next month"
-                            onClick={calendar.goToNextMonth}
-                          >
-                            ›
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-medium uppercase tracking-wide text-slate-500">
-                        {CALENDAR_DAYS.map((day) => (
-                          <span key={day}>{day}</span>
                         ))}
                       </div>
 
-                      <div className="mt-2 grid grid-cols-7 gap-1">
-                        {calendar.calendarWeeks.flatMap((week, wi) =>
-                          week.map((day, di) => {
-                            if (day === null) {
+                      <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                        <div className="mb-3 flex items-center justify-between gap-3">
+                          <div>
+                            <h3 className="text-sm font-medium text-slate-900">
+                              {calendar.monthLabel}
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              Highlighted days have public events.
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              className="rounded-full border border-slate-200 px-2 py-1 text-sm text-slate-700 transition hover:bg-slate-100"
+                              aria-label="Previous month"
+                              onClick={calendar.goToPreviousMonth}
+                            >
+                              ‹
+                            </button>
+                            <button
+                              type="button"
+                              className="rounded-full border border-slate-200 px-2 py-1 text-sm text-slate-700 transition hover:bg-slate-100"
+                              aria-label="Next month"
+                              onClick={calendar.goToNextMonth}
+                            >
+                              ›
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-medium uppercase tracking-wide text-slate-500">
+                          {CALENDAR_DAYS.map((day) => (
+                            <span key={day}>{day}</span>
+                          ))}
+                        </div>
+
+                        <div className="mt-2 grid grid-cols-7 gap-1">
+                          {calendar.calendarWeeks.flatMap((week, wi) =>
+                            week.map((day, di) => {
+                              if (day === null) {
+                                return (
+                                  <span
+                                    key={`empty-${wi}-${di}`}
+                                    className="aspect-square rounded-lg bg-slate-50"
+                                  />
+                                );
+                              }
+
+                              const eventsOnDay =
+                                calendar.eventsByDay.get(day) ?? [];
+                              const isEvent = eventsOnDay.length > 0;
+
                               return (
-                                <span
-                                  key={`empty-${wi}-${di}`}
-                                  className="aspect-square rounded-lg bg-slate-50"
-                                />
+                                <button
+                                  key={`${wi}-${di}-${day}`}
+                                  type="button"
+                                  className={`aspect-square rounded-lg border text-sm font-medium transition ${
+                                    isEvent
+                                      ? "border-emerald-300 bg-emerald-50 text-emerald-900"
+                                      : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
+                                  }`}
+                                  aria-label={`${calendar.monthLabel} ${day}${
+                                    isEvent
+                                      ? `, ${eventsOnDay.length} event${
+                                          eventsOnDay.length === 1 ? "" : "s"
+                                        } scheduled`
+                                      : ""
+                                  }`}
+                                >
+                                  {day}
+                                </button>
                               );
-                            }
-
-                            const eventsOnDay =
-                              calendar.eventsByDay.get(day) ?? [];
-                            const isEvent = eventsOnDay.length > 0;
-
-                            return (
-                              <button
-                                key={`${wi}-${di}-${day}`}
-                                type="button"
-                                className={`aspect-square rounded-lg border text-sm font-medium transition ${
-                                  isEvent
-                                    ? "border-emerald-300 bg-emerald-50 text-emerald-900"
-                                    : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
-                                }`}
-                                aria-label={`${calendar.monthLabel} ${day}${
-                                  isEvent
-                                    ? `, ${eventsOnDay.length} event${
-                                        eventsOnDay.length === 1 ? "" : "s"
-                                      } scheduled`
-                                    : ""
-                                }`}
-                              >
-                                {day}
-                              </button>
-                            );
-                          }),
-                        )}
+                            }),
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                )}
+              </CardContent>
+            </Card>
 
-          <WalkMonitoringPanel />
+            <WalkMonitoringPanel />
+          </div>
         </div>
       </section>
     </main>

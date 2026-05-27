@@ -142,3 +142,16 @@ export const validateCreatePetWalkPayload = (
 
   return walkPayload;
 };
+
+export const validateWalkId = (id: unknown): number => {
+  if (typeof id !== "string" || !id.trim()) {
+    throw new Error("Parameter 'walkId' is required.");
+  }
+
+  const n = Number(id);
+  if (!Number.isInteger(n) || n <= 0) {
+    throw new Error("Parameter 'walkId' must be a positive integer.");
+  }
+
+  return n;
+};
