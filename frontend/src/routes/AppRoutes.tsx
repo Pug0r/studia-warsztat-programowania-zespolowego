@@ -89,7 +89,7 @@ export const AppRoutes = () => {
           <AdminRoute>
             <AdminPanelPage />
           </AdminRoute>
-          }
+        }
       />
       <Route
         path="/medical-schedule"

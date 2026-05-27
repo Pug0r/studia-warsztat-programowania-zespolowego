@@ -1,7 +1,7 @@
 // index.ts
 import express from "express";
 import "dotenv/config";
-import { middleware } from "#middlewares/middlewares.js";
+import { authMiddleware, middleware } from "#middlewares/middlewares.js";
 import { auditRouteRules } from "#modules/audit/audit.config.js";
 import { createAuditMiddleware } from "#modules/audit/audit.service.js";
 import itemRouter from "#api/initial-example/itemRoutes.js";

@@ -1,4 +1,5 @@
 import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { useUserProfile } from "@/modules/auth/hooks/useUserProfile";
 import type { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 
@@ -7,7 +8,8 @@ type Props = {
 };
 
 export function CoordinatorRoute({ children }: Props) {
-  const { session, isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const { role, isLoading, error } = useUserProfile();
 
   if (isLoading) {
     return (
@@ -17,12 +19,11 @@ export function CoordinatorRoute({ children }: Props) {
     );
   }
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || error) {
     return <Navigate to="/login" replace />;
   }
 
-  const role = session?.user?.user_metadata?.role as string | undefined;
-  if (role !== "coordinator") {
+  if (role !== "coordinator" && role !== "admin") {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-2 bg-slate-50 p-6 text-center">
         <h1 className="text-xl font-semibold text-slate-900">Access denied</h1>
