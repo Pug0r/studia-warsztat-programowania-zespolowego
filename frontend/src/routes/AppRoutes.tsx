@@ -5,6 +5,7 @@ import { AdoptionApplicationPage } from "@/pages/adoption/AdoptionApplicationPag
 import { AdoptionsDashboardPage } from "@/pages/dashboard/AdoptionsDashboardPage";
 import { VolunteersDashboardPage } from "@/pages/dashboard/VolunteersDashboardPage";
 import { VolunteerWalksPage } from "@/pages/volunteer/VolunteerWalksPage";
+import { EventsManagementPage } from "@/pages/dashboard/EventsManagementPage";
 import { HomePage } from "@/pages/public/HomePage";
 import { DashboardPage } from "@/pages/dashboard/DashboardPage";
 import { PetsPage } from "@/pages/pets/PetsPage";
@@ -53,6 +54,14 @@ export const AppRoutes = () => {
           <VolunteerRoute>
             <VolunteerWalksPage />
           </VolunteerRoute>
+        }
+      />
+      <Route
+        path="/dashboard/manage-events"
+        element={
+          <CoordinatorRoute>
+            <EventsManagementPage />
+          </CoordinatorRoute>
         }
       />
       <Route
