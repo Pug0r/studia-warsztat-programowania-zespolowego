@@ -143,6 +143,60 @@ export interface Database {
         };
         Relationships: [];
       };
+      calendar_events: {
+        Row: {
+          created_at: string;
+          description: string;
+          ends_at: string | null;
+          event_type:
+            | "open_day"
+            | "food_drive"
+            | "volunteer_training"
+            | "community_event"
+            | "other";
+          id: number;
+          is_public: boolean;
+          location: string;
+          starts_at: string;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          description: string;
+          ends_at?: string | null;
+          event_type?:
+            | "open_day"
+            | "food_drive"
+            | "volunteer_training"
+            | "community_event"
+            | "other";
+          id?: number;
+          is_public?: boolean;
+          location: string;
+          starts_at: string;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          description?: string;
+          ends_at?: string | null;
+          event_type?:
+            | "open_day"
+            | "food_drive"
+            | "volunteer_training"
+            | "community_event"
+            | "other";
+          id?: number;
+          is_public?: boolean;
+          location?: string;
+          starts_at?: string;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       users: {
         Row: {
           created_at: string;
