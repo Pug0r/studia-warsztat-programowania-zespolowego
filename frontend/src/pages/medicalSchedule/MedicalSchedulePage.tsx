@@ -129,7 +129,7 @@ export function MedicalSchedulePage() {
 
         <div className="grid gap-4 xl:grid-cols-[0.95fr_1.35fr]">
           <form
-            className="space-y-4 rounded-md border border-slate-200 bg-white p-4"
+            className="space-y-4 rounded-md border border-slate-200 bg-white p-4 self-start"
             onSubmit={handleSubmit}
           >
             <div>

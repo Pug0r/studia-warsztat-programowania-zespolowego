@@ -68,10 +68,24 @@ export const recordPetWalkRequest = async (
   petId: number,
   payload: CreatePetWalkDTO,
 ): Promise<PetWalkRow> => {
+  if (!supabase) {
+    throw new Error("Supabase client is not initialized");
+  }
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const token = session?.access_token;
+
+  if (!token) {
+    console.warn(
+      "No active session found - requesting walks anyway (will likely 401)",
+    );
+  }
   const response = await fetch(`/api/pets/${petId}/walks`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(payload),
   });

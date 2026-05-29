@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import React, { useMemo, useState, type FormEvent } from "react";
 import { Dog } from "lucide-react";
 
 import { useAuth } from "@/modules/auth/hooks/useAuth";
@@ -59,306 +59,304 @@ const formatWalkAge = (daysSinceLastWalk: number | null) => {
   return `${daysSinceLastWalk} days since the last walk.`;
 };
 
-const formatWalkDateQuery = (date: Date | undefined) => {
-  if (!date) {
-    return undefined;
+type WalkEvent = {
+  pet_id: number;
+  walker_id: string | null;
+  walked_at: string;
+  end_at: string | null;
+};
+
+function getWalkEnd(walk: WalkEvent) {
+  const start = new Date(walk.walked_at);
+
+  return walk.end_at
+    ? new Date(walk.end_at)
+    : new Date(start.getTime() + 60 * 60 * 1000);
+}
+
+function hasOverlap(
+  startTime: Date,
+  endTime: Date,
+  walk: WalkEvent,
+  matchPetId: number | null,
+  matchWalkerId?: string,
+) {
+  if (matchPetId && walk.pet_id === matchPetId) {
+    const walkStart = new Date(walk.walked_at);
+    const walkEnd = getWalkEnd(walk);
+
+    if (startTime < walkEnd && endTime > walkStart) return true;
   }
 
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+  if (matchWalkerId && walk.walker_id === matchWalkerId) {
+    const walkStart = new Date(walk.walked_at);
+    const walkEnd = getWalkEnd(walk);
 
-  return `${year}-${month}-${day}`;
-};
+    if (startTime < walkEnd && endTime > walkStart) return true;
+  }
+
+  return false;
+}
+
+function generateTimeSlots(): string[] {
+  const slots: string[] = [];
+
+  for (let hour = 8; hour < 20; hour++) {
+    for (let minute = 0; minute < 60; minute += 30) {
+      slots.push(
+        `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`,
+      );
+    }
+  }
+
+  return slots;
+}
+
+const TIME_SLOTS = generateTimeSlots();
 
 type VolunteerPriorityQueueCardProps = {
   selectedDate?: Date | undefined;
   onSelectedDateChange?: (value: Date | undefined) => void;
 };
 
-export function VolunteerPriorityQueueCard({
-  selectedDate: selectedDateProp,
-  //   onSelectedDateChange,
-}: VolunteerPriorityQueueCardProps) {
-  const { session } = useAuth();
-  const [selectedDogId, setSelectedDogId] = useState<number | null>(null);
-  const [selectedTime, setSelectedTime] = useState("08:00");
+export const VolunteerPriorityQueueCard = React.memo(
+  ({
+    selectedDate: selectedDateProp, //   onSelectedDateChange,
+  }: VolunteerPriorityQueueCardProps) => {
+    const { session } = useAuth();
+    const [selectedDogId, setSelectedDogId] = useState<number | null>(null);
+    const [selectedTime, setSelectedTime] = useState("08:00");
 
-  const [durationMinutes, setDurationMinutes] = useState(60);
-  const [notes, setNotes] = useState("");
+    const [durationMinutes, setDurationMinutes] = useState(60);
+    const [notes, setNotes] = useState("");
 
-  const selectedDate = selectedDateProp;
-  const selectedDateQuery = formatWalkDateQuery(selectedDate);
+    const selectedDate = selectedDateProp;
+    // const selectedDateQuery = formatWalkDateQuery(selectedDate);
 
-  const priorityQuery = useWalkPriorityDogs({ date: selectedDateQuery });
-  const walkEventsQuery = useWalkEvents();
-  const recordWalkMutation = useRecordPetWalk();
+    const priorityQuery = useWalkPriorityDogs();
+    const walkEventsQuery = useWalkEvents();
+    const recordWalkMutation = useRecordPetWalk();
 
-  const priorityDogs = priorityQuery.data ?? [];
-  const walkEvents = walkEventsQuery.data ?? [];
+    const priorityDogs = priorityQuery.data ?? [];
 
-  const selectedDog =
-    priorityDogs.find((dog) => dog.id === selectedDogId) ??
-    priorityDogs[0] ??
-    null;
+    const walkEvents = useMemo(
+      () => walkEventsQuery.data ?? [],
+      [walkEventsQuery.data],
+    );
 
-  type WalkEvent = {
-    pet_id: number;
-    walker_id: string | null;
-    walked_at: string;
-    end_at: string | null;
-  };
+    const selectedDog =
+      priorityDogs.find((dog) => dog.id === selectedDogId) ??
+      priorityDogs[0] ??
+      null;
 
-  function getWalkEnd(walk: WalkEvent) {
-    const start = new Date(walk.walked_at);
+    const selectedDogId_stable = selectedDog?.id ?? null;
 
-    return walk.end_at
-      ? new Date(walk.end_at)
-      : new Date(start.getTime() + 60 * 60 * 1000);
-  }
+    // Generate available time slots (30-minute intervals)
+    const availableTimeSlots = !selectedDate
+      ? []
+      : TIME_SLOTS.filter((timeSlot) => {
+          const [hour, minute] = timeSlot.split(":").map(Number);
+          const startTime = new Date(selectedDate);
+          startTime.setHours(hour, minute, 0, 0);
+          const endTime = new Date(
+            startTime.getTime() + durationMinutes * 60 * 1000,
+          );
+          const userId = session?.user.id;
+          const petId = selectedDog?.id ?? null;
 
-  function hasOverlap(
-    startTime: Date,
-    endTime: Date,
-    walk: WalkEvent,
-    matchPetId: number | null,
-    matchWalkerId?: string,
-  ) {
-    if (matchPetId && walk.pet_id === matchPetId) {
-      const walkStart = new Date(walk.walked_at);
-      const walkEnd = getWalkEnd(walk);
+          for (const walk of walkEvents) {
+            if (hasOverlap(startTime, endTime, walk, petId, userId))
+              return false;
+          }
+          return true;
+        });
 
-      if (startTime < walkEnd && endTime > walkStart) return true;
-    }
+    const safeSelectedTime = availableTimeSlots.includes(selectedTime)
+      ? selectedTime
+      : (availableTimeSlots[0] ?? "08:00");
 
-    if (matchWalkerId && walk.walker_id === matchWalkerId) {
-      const walkStart = new Date(walk.walked_at);
-      const walkEnd = getWalkEnd(walk);
+    async function handleWalkSubmit(event: FormEvent<HTMLFormElement>) {
+      event.preventDefault();
 
-      if (startTime < walkEnd && endTime > walkStart) return true;
-    }
+      if (!selectedDog || !selectedDate) {
+        showToast("Choose a pet and date before recording a walk.", "warning");
+        return;
+      }
 
-    return false;
-  }
+      const [hour, minute] = safeSelectedTime.split(":").map(Number);
+      const walkDate = new Date(selectedDate);
+      walkDate.setHours(hour, minute, 0, 0);
 
-  function generateTimeSlots(): string[] {
-    const slots: string[] = [];
-
-    for (let hour = 8; hour < 20; hour++) {
-      for (let minute = 0; minute < 60; minute += 30) {
-        slots.push(
-          `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`,
+      try {
+        const endDate = new Date(
+          walkDate.getTime() + durationMinutes * 60 * 1000,
         );
+        await recordWalkMutation.mutateAsync({
+          petId: selectedDog.id,
+          payload: {
+            walked_at: walkDate.toISOString(),
+            end_at: endDate.toISOString(),
+            walker_id: session?.user.id,
+            ...(notes.trim() ? { notes: notes.trim() } : {}),
+          },
+        });
+
+        showToast(`Walk recorded for ${selectedDog.name}.`, "success");
+        setNotes("");
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : "Failed to record the walk.";
+        showToast(message, "error");
       }
     }
 
-    return slots;
-  }
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Dog className="size-5" />
+            Volunteer priority queue
+          </CardTitle>
+          <CardDescription>
+            Pets that have waited the longest are listed first. Select one to
+            log a new outing.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {priorityQuery.isPending ? (
+            <p className="text-sm text-slate-600">Loading priority pets...</p>
+          ) : priorityQuery.error ? (
+            <p className="text-sm text-red-600">
+              {priorityQuery.error.message ||
+                "Unable to load the walk priority queue."}
+            </p>
+          ) : priorityDogs.length === 0 ? (
+            <p className="text-sm text-slate-600">
+              No pets are available for walk prioritization.
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {priorityDogs.slice(0, 5).map((dog) => {
+                const status = getWalkStatus(dog.days_since_last_walk);
 
-  // Generate available time slots (30-minute intervals)
-  const availableTimeSlots = selectedDate
-    ? generateTimeSlots().filter((timeSlot) => {
-        const [hour, minute] = timeSlot.split(":").map(Number);
-
-        const startTime = new Date(selectedDate);
-        startTime.setHours(hour, minute, 0, 0);
-
-        const endTime = new Date(
-          startTime.getTime() + durationMinutes * 60 * 1000,
-        );
-
-        const userId = session?.user.id;
-        const petId = selectedDog?.id ?? null;
-
-        for (const walk of walkEvents) {
-          if (hasOverlap(startTime, endTime, walk, petId, userId)) {
-            return false;
-          }
-        }
-
-        return true;
-      })
-    : [];
-
-  const safeSelectedTime = availableTimeSlots.includes(selectedTime)
-    ? selectedTime
-    : (availableTimeSlots[0] ?? "08:00");
-
-  async function handleWalkSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    if (!selectedDog || !selectedDate) {
-      showToast("Choose a pet and date before recording a walk.", "warning");
-      return;
-    }
-
-    const [hour, minute] = safeSelectedTime.split(":").map(Number);
-    const walkDate = new Date(selectedDate);
-    walkDate.setHours(hour, minute, 0, 0);
-
-    try {
-      const endDate = new Date(
-        walkDate.getTime() + durationMinutes * 60 * 1000,
-      );
-      await recordWalkMutation.mutateAsync({
-        petId: selectedDog.id,
-        payload: {
-          walked_at: walkDate.toISOString(),
-          end_at: endDate.toISOString(),
-          walker_id: session?.user.id,
-          ...(notes.trim() ? { notes: notes.trim() } : {}),
-        },
-      });
-
-      showToast(`Walk recorded for ${selectedDog.name}.`, "success");
-      setNotes("");
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Failed to record the walk.";
-      showToast(message, "error");
-    }
-  }
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Dog className="size-5" />
-          Volunteer priority queue
-        </CardTitle>
-        <CardDescription>
-          Pets that have waited the longest are listed first. Select one to log
-          a new outing.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {priorityQuery.isPending ? (
-          <p className="text-sm text-slate-600">Loading priority pets...</p>
-        ) : priorityQuery.error ? (
-          <p className="text-sm text-red-600">
-            {priorityQuery.error.message ||
-              "Unable to load the walk priority queue."}
-          </p>
-        ) : priorityDogs.length === 0 ? (
-          <p className="text-sm text-slate-600">
-            No pets are available for walk prioritization.
-          </p>
-        ) : (
-          <div className="space-y-3">
-            {priorityDogs.slice(0, 5).map((dog) => {
-              const status = getWalkStatus(dog.days_since_last_walk);
-
-              return (
-                <div
-                  key={dog.id}
-                  className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <p className="font-medium text-slate-900">{dog.name}</p>
-                        <Badge variant="outline">#{dog.priority_rank}</Badge>
+                return (
+                  <div
+                    key={dog.id}
+                    className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium text-slate-900">
+                            {dog.name}
+                          </p>
+                          <Badge variant="outline">#{dog.priority_rank}</Badge>
+                        </div>
+                        <p className="mt-1 text-sm text-slate-600">
+                          Last walk: {formatLastWalk(dog.last_walk_at)}
+                        </p>
                       </div>
-                      <p className="mt-1 text-sm text-slate-600">
-                        Last walk: {formatLastWalk(dog.last_walk_at)}
-                      </p>
+                      <Badge variant={status.variant}>{status.label}</Badge>
                     </div>
-                    <Badge variant={status.variant}>{status.label}</Badge>
+                    <p className="mt-2 text-xs text-slate-500">
+                      {formatWalkAge(dog.days_since_last_walk)}
+                    </p>
                   </div>
-                  <p className="mt-2 text-xs text-slate-500">
-                    {formatWalkAge(dog.days_since_last_walk)}
+                );
+              })}
+            </div>
+          )}
+
+          <form
+            className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-4"
+            onSubmit={handleWalkSubmit}
+          >
+            <div className="space-y-2">
+              <Label htmlFor="walk-pet-select">Choose a pet</Label>
+              <select
+                id="walk-pet-select"
+                className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-slate-950 focus-visible:ring-[3px] focus-visible:ring-slate-950/50"
+                value={selectedDog?.id?.toString() ?? ""}
+                onChange={(event) =>
+                  setSelectedDogId(Number(event.target.value))
+                }
+                disabled={priorityQuery.isPending || priorityDogs.length === 0}
+              >
+                {priorityDogs.map((dog) => (
+                  <option key={dog.id} value={dog.id}>
+                    {dog.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="grid gap-4 items-stretch sm:grid-cols-2">
+              <div className="space-y-2">
+                <div>
+                  <Label htmlFor="walk-date-select">Selected date: </Label>
+                  <p className="px-3 py-3 text-center font-medium text-slate-600 ">
+                    {selectedDate
+                      ? selectedDate.toLocaleDateString()
+                      : "No date selected"}
                   </p>
                 </div>
-              );
-            })}
-          </div>
-        )}
-
-        <form
-          className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-4"
-          onSubmit={handleWalkSubmit}
-        >
-          <div className="space-y-2">
-            <Label htmlFor="walk-pet-select">Choose a pet</Label>
-            <select
-              id="walk-pet-select"
-              className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-slate-950 focus-visible:ring-[3px] focus-visible:ring-slate-950/50"
-              value={selectedDog?.id?.toString() ?? ""}
-              onChange={(event) => setSelectedDogId(Number(event.target.value))}
-              disabled={priorityQuery.isPending || priorityDogs.length === 0}
-            >
-              {priorityDogs.map((dog) => (
-                <option key={dog.id} value={dog.id}>
-                  {dog.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="grid gap-4 items-stretch sm:grid-cols-2">
-            <div className="space-y-2">
-              <div>
-                <Label htmlFor="walk-date-select">Selected date: </Label>
-                <p className="px-3 py-3 text-center font-medium text-slate-600 ">
-                  {selectedDate
-                    ? selectedDate.toLocaleDateString()
-                    : "No date selected"}
-                </p>
+                <Label htmlFor="walk-duration-select">Walk duration</Label>
+                <select
+                  id="walk-duration-select"
+                  value={durationMinutes}
+                  onChange={(event) =>
+                    setDurationMinutes(Number(event.target.value))
+                  }
+                  className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-slate-950 focus-visible:ring-[3px] focus-visible:ring-slate-950/50"
+                >
+                  <option value={30}>30 minutes</option>
+                  <option value={60}>1 hour</option>
+                  <option value={90}>1 hour 30 minutes</option>
+                  <option value={120}>2 hours</option>
+                </select>
+                <Label htmlFor="walk-time-select">Choose time</Label>
+                <select
+                  id="walk-time-select"
+                  value={safeSelectedTime}
+                  onChange={(event) => setSelectedTime(event.target.value)}
+                  className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-slate-950 focus-visible:ring-[3px] focus-visible:ring-slate-950/50"
+                >
+                  {availableTimeSlots.length > 0 ? (
+                    availableTimeSlots.map((time) => (
+                      <option key={time} value={time}>
+                        {time}
+                      </option>
+                    ))
+                  ) : (
+                    <option disabled>No available times</option>
+                  )}
+                </select>
               </div>
-              <Label htmlFor="walk-duration-select">Walk duration</Label>
-              <select
-                id="walk-duration-select"
-                value={durationMinutes}
-                onChange={(event) =>
-                  setDurationMinutes(Number(event.target.value))
-                }
-                className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-slate-950 focus-visible:ring-[3px] focus-visible:ring-slate-950/50"
-              >
-                <option value={30}>30 minutes</option>
-                <option value={60}>1 hour</option>
-                <option value={90}>1 hour 30 minutes</option>
-                <option value={120}>2 hours</option>
-              </select>
-              <Label htmlFor="walk-time-select">Choose time</Label>
-              <select
-                id="walk-time-select"
-                value={safeSelectedTime}
-                onChange={(event) => setSelectedTime(event.target.value)}
-                className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-slate-950 focus-visible:ring-[3px] focus-visible:ring-slate-950/50"
-              >
-                {availableTimeSlots.length > 0 ? (
-                  availableTimeSlots.map((time) => (
-                    <option key={time} value={time}>
-                      {time}
-                    </option>
-                  ))
-                ) : (
-                  <option disabled>No available times</option>
-                )}
-              </select>
+
+              <div className="flex h-full flex-col space-y-2">
+                <Label htmlFor="walk-notes">Walk notes</Label>
+                <textarea
+                  id="walk-notes"
+                  value={notes}
+                  onChange={(event) => setNotes(event.target.value)}
+                  placeholder="Optional notes for the coordinator"
+                  className="w-full flex-1 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-xs outline-none transition-[color,box-shadow] placeholder:text-slate-500 focus-visible:border-slate-950 focus-visible:ring-[3px] focus-visible:ring-slate-950/50"
+                />
+              </div>
             </div>
 
-            <div className="flex h-full flex-col space-y-2">
-              <Label htmlFor="walk-notes">Walk notes</Label>
-              <textarea
-                id="walk-notes"
-                value={notes}
-                onChange={(event) => setNotes(event.target.value)}
-                placeholder="Optional notes for the coordinator"
-                className="w-full flex-1 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-xs outline-none transition-[color,box-shadow] placeholder:text-slate-500 focus-visible:border-slate-950 focus-visible:ring-[3px] focus-visible:ring-slate-950/50"
-              />
-            </div>
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={!selectedDog || recordWalkMutation.isPending}
-          >
-            {recordWalkMutation.isPending ? "Recording walk..." : "Record walk"}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
-  );
-}
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={!selectedDog || recordWalkMutation.isPending}
+            >
+              {recordWalkMutation.isPending
+                ? "Recording walk..."
+                : "Record walk"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    );
+  },
+);
