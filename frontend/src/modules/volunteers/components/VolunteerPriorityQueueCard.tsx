@@ -149,8 +149,6 @@ export const VolunteerPriorityQueueCard = React.memo(
       priorityDogs[0] ??
       null;
 
-    const selectedDogId_stable = selectedDog?.id ?? null;
-
     // Generate available time slots (30-minute intervals)
     const availableTimeSlots = !selectedDate
       ? []
