@@ -2,6 +2,7 @@ import type {
   CreatePetWalkDTO,
   PetWalkPriorityItem,
   PetWalkRow,
+  PetWalkUpdate,
   PetWithWalkSummary,
   Pet,
 } from "@repo/types";
@@ -126,6 +127,38 @@ export const getPetWalksRequest = async (): Promise<PetWalkRow[]> => {
   }
 
   return response.json();
+};
+
+export const updatePetWalkRequest = async (
+  walkId: number,
+  payload: PetWalkUpdate,
+): Promise<PetWalkRow> => {
+  const response = await fetch(`/api/pets/walks/${walkId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Walk update error: ${response.status} - ${errorText}`);
+  }
+
+  const data = await response.json();
+  return data;
+};
+
+export const deletePetWalkRequest = async (walkId: number): Promise<void> => {
+  const response = await fetch(`/api/pets/walks/${walkId}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Walk delete error: ${response.status} - ${errorText}`);
+  }
 };
 
 export const uploadPetPhotoRequest = async (

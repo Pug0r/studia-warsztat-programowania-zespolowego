@@ -4,6 +4,7 @@ import { RegisterPage } from "@/pages/auth/RegisterPage";
 import { AdoptionApplicationPage } from "@/pages/adoption/AdoptionApplicationPage";
 import { AdoptionsDashboardPage } from "@/pages/dashboard/AdoptionsDashboardPage";
 import { VolunteersDashboardPage } from "@/pages/dashboard/VolunteersDashboardPage";
+import { CoordinatorWalkCalendarPage } from "@/pages/dashboard/CoordinatorWalkCalendarPage";
 import { VolunteerWalksPage } from "@/pages/volunteer/VolunteerWalksPage";
 import { EventsManagementPage } from "@/pages/dashboard/EventsManagementPage";
 import { HomePage } from "@/pages/public/HomePage";
@@ -16,6 +17,8 @@ import { ProtectedRoute } from "@/routes/ProtectedRoute";
 import { CoordinatorRoute } from "@/routes/CoordinatorRoute";
 import { VolunteerRoute } from "@/routes/VolunteerRoute";
 import { VetRoute } from "@/routes/VetRoute";
+import { AdminRoute } from "@/routes/AdminRoute";
+import { AdminPanelPage } from "@/pages/admin/AdminPanelPage";
 
 export const AppRoutes = () => {
   return (
@@ -58,6 +61,14 @@ export const AppRoutes = () => {
         }
       />
       <Route
+        path="/dashboard/walk-calendar"
+        element={
+          <CoordinatorRoute>
+            <CoordinatorWalkCalendarPage />
+          </CoordinatorRoute>
+        }
+      />
+      <Route
         path="/dashboard/manage-events"
         element={
           <CoordinatorRoute>
@@ -79,6 +90,14 @@ export const AppRoutes = () => {
           <VetRoute>
             <HealthCardPage />
           </VetRoute>
+        }
+      />
+      <Route
+        path="/dashboard/admin"
+        element={
+          <AdminRoute>
+            <AdminPanelPage />
+          </AdminRoute>
         }
       />
       <Route

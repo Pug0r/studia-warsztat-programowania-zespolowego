@@ -1,7 +1,7 @@
 // index.ts
 import express from "express";
 import "dotenv/config";
-import { middleware, authMiddleware } from "#middlewares/middlewares.js";
+import { authMiddleware, middleware } from "#middlewares/middlewares.js";
 import { auditRouteRules } from "#modules/audit/audit.config.js";
 import { createAuditMiddleware } from "#modules/audit/audit.service.js";
 import itemRouter from "#api/initial-example/itemRoutes.js";
@@ -11,6 +11,7 @@ import healthCardsRouter from "#modules/healthCards/healthCards.routes.js";
 import medicalScheduleRouter from "#modules/medicalSchedule/medicalSchedule.routes.js";
 import petsRouter from "#modules/pets/pets.routes.js";
 import volunteersRouter from "#modules/volunteers/volunteers.routes.js";
+import adminRoute from "#modules/administration/administration.routes.js";
 
 const app = express();
 const { PORT } = process.env;
@@ -32,6 +33,8 @@ app.use("/api/pets", petsRouter);
 app.use("/api/pets/:id", petsRouter);
 app.use("/api/volunteers", authMiddleware, volunteersRouter);
 app.use("/api/health-cards", healthCardsRouter);
+
+app.use("/api/administration", adminRoute);
 app.use("/api/medical-schedule", medicalScheduleRouter);
 
 app.get("/", middleware);

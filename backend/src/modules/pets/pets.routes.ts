@@ -14,6 +14,8 @@ router.get("/walk-summary", petsController.listWithWalkSummary);
 router.get("/walk-priority", petsController.listWalkPriorityDogs);
 router.get("/walks", petsController.listWalks);
 router.get("/my-walks", authMiddleware, petsController.listUpcomingWalks);
+router.patch("/walks/:walkId", petsController.updateWalk);
+router.delete("/walks/:walkId", petsController.deleteWalk);
 router.get("/", petsController.list);
 router.delete("/walks/:walkId", authMiddleware, petsController.cancelWalk);
 

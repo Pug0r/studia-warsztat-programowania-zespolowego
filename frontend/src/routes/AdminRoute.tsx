@@ -7,7 +7,7 @@ type Props = {
   children: ReactNode;
 };
 
-export function VetRoute({ children }: Props) {
+export function AdminRoute({ children }: Props) {
   const { isAuthenticated } = useAuth();
   const { role, isLoading, error } = useUserProfile();
 
@@ -19,16 +19,27 @@ export function VetRoute({ children }: Props) {
     );
   }
 
-  if (!isAuthenticated || error) {
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
-  if (role !== "vet" && role !== "admin" && role !== "coordinator") {
+  if (error) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-2 bg-slate-50 p-6 text-center">
         <h1 className="text-xl font-semibold text-slate-900">Access denied</h1>
         <p className="text-sm text-slate-600">
-          This section is only available to vets.
+          Could not verify your account role.
+        </p>
+      </div>
+    );
+  }
+
+  if (role !== "admin") {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-2 bg-slate-50 p-6 text-center">
+        <h1 className="text-xl font-semibold text-slate-900">Access denied</h1>
+        <p className="text-sm text-slate-600">
+          This page is only available to administrators.
         </p>
       </div>
     );

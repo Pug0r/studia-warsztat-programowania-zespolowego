@@ -3,22 +3,26 @@ import type {
   CreatePetWalkDTO,
   PetWalkPriorityItem,
   PetWalkRow,
+  PetWalkUpdate,
   PetWithWalkSummary,
 } from "@repo/types";
 
 import {
   cancelWalkRequest,
   getMyWalksRequest,
+  deletePetWalkRequest,
   getPetWalkPriorityRequest,
   getPetWalkSummaryRequest,
   getPetWalksRequest,
   recordPetWalkRequest,
+  updatePetWalkRequest,
 } from "../api/petsApi";
 import {
   WALK_PRIORITY_QUERY_KEY,
   WALK_SUMMARY_QUERY_KEY,
   MY_WALKS_QUERY_KEY,
   PET_WALKS_QUERY_KEY,
+  WALK_EVENTS_QUERY_KEY,
 } from "../constants/walkMonitoringConstants";
 
 export const useWalkPriorityDogs = (options?: {
@@ -94,6 +98,40 @@ export const useCancelWalk = () => {
         queryClient.invalidateQueries({ queryKey: MY_WALKS_QUERY_KEY }),
         queryClient.invalidateQueries({ queryKey: WALK_PRIORITY_QUERY_KEY }),
         queryClient.invalidateQueries({ queryKey: WALK_SUMMARY_QUERY_KEY }),
+      ]);
+    },
+  });
+};
+
+export const useUpdatePetWalk = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    PetWalkRow,
+    Error,
+    { walkId: number; payload: PetWalkUpdate }
+  >({
+    mutationFn: ({ payload, walkId }) => updatePetWalkRequest(walkId, payload),
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: WALK_PRIORITY_QUERY_KEY }),
+        queryClient.invalidateQueries({ queryKey: WALK_SUMMARY_QUERY_KEY }),
+        queryClient.invalidateQueries({ queryKey: WALK_EVENTS_QUERY_KEY }),
+      ]);
+    },
+  });
+};
+
+export const useDeletePetWalk = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, number>({
+    mutationFn: deletePetWalkRequest,
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: WALK_PRIORITY_QUERY_KEY }),
+        queryClient.invalidateQueries({ queryKey: WALK_SUMMARY_QUERY_KEY }),
+        queryClient.invalidateQueries({ queryKey: WALK_EVENTS_QUERY_KEY }),
       ]);
     },
   });

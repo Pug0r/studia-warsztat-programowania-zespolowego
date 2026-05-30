@@ -1,12 +1,14 @@
 import {
   CalendarCheck,
   CalendarClock,
+  CalendarDays,
   Dog,
   HeartHandshake,
   Home,
   LifeBuoy,
   LogOut,
   PawPrint,
+  ShieldCheck,
   Stethoscope,
   Users,
 } from "lucide-react";
@@ -16,22 +18,31 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { useUserProfile } from "@/modules/auth/hooks/useUserProfile";
 
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { session, signOut } = useAuth();
+  const { role } = useUserProfile();
   const email = session?.user.email ?? "staff@haven-shelter.org";
 
   const isDashboardOverview = location.pathname === "/dashboard";
   const isDashboardAdoptions = location.pathname === "/dashboard/adoptions";
   const isDashboardVolunteers = location.pathname === "/dashboard/volunteers";
   const isDashboardVolunteerWalks = location.pathname === "/dashboard/walks";
+  const isDashboardAdmin = location.pathname === "/dashboard/admin";
+  const isCoordinatorWalkCalendar =
+    location.pathname === "/dashboard/walk-calendar";
   const isManageEvents = location.pathname === "/dashboard/manage-events";
   const isHealthCards = location.pathname.startsWith("/health-cards");
   const isMedicalSchedule = location.pathname.startsWith("/medical-schedule");
+  const isCoordinator =
+    (session?.user?.user_metadata?.role as string | undefined) ===
+    "coordinator";
   const isVet =
     (session?.user?.user_metadata?.role as string | undefined) === "vet";
+  const isAdmin = role === "admin";
 
   async function handleSignOut() {
     await signOut();
@@ -95,6 +106,18 @@ const Sidebar = () => {
               My walks
             </Link>
           </Button>
+          {isCoordinator && (
+            <Button
+              asChild
+              variant={isCoordinatorWalkCalendar ? "secondary" : "ghost"}
+              className="w-full justify-start gap-2"
+            >
+              <Link to="/dashboard/walk-calendar">
+                <CalendarDays className="size-4" />
+                Walk calendar
+              </Link>
+            </Button>
+          )}
           <Button
             asChild
             variant={isDashboardAdoptions ? "secondary" : "ghost"}
@@ -142,6 +165,18 @@ const Sidebar = () => {
                 </Link>
               </Button>
             </>
+          )}
+          {isAdmin && (
+            <Button
+              asChild
+              variant={isDashboardAdmin ? "secondary" : "ghost"}
+              className="w-full justify-start gap-2"
+            >
+              <Link to="/dashboard/admin">
+                <ShieldCheck className="size-4" />
+                Admin panel
+              </Link>
+            </Button>
           )}
         </nav>
 
