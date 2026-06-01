@@ -8,6 +8,8 @@ import type {
 } from "@repo/types";
 
 import {
+  cancelWalkRequest,
+  getMyWalksRequest,
   deletePetWalkRequest,
   getPetWalkPriorityRequest,
   getPetWalkSummaryRequest,
@@ -15,10 +17,13 @@ import {
   recordPetWalkRequest,
   updatePetWalkRequest,
 } from "../api/petsApi";
-
-export const WALK_PRIORITY_QUERY_KEY = ["pet_walk_priority"] as const;
-export const WALK_SUMMARY_QUERY_KEY = ["pet_walk_summary"] as const;
-export const WALK_EVENTS_QUERY_KEY = ["pet_walk_events"] as const;
+import {
+  WALK_PRIORITY_QUERY_KEY,
+  WALK_SUMMARY_QUERY_KEY,
+  MY_WALKS_QUERY_KEY,
+  PET_WALKS_QUERY_KEY,
+  WALK_EVENTS_QUERY_KEY,
+} from "../constants/walkMonitoringConstants";
 
 export const useWalkPriorityDogs = (options?: {
   date?: string;
@@ -45,7 +50,7 @@ export const useWalkSummary = (options?: { enabled?: boolean }) => {
 
 export const useWalkEvents = (options?: { enabled?: boolean }) => {
   return useQuery<PetWalkRow[], Error>({
-    queryKey: WALK_EVENTS_QUERY_KEY,
+    queryKey: PET_WALKS_QUERY_KEY,
     queryFn: getPetWalksRequest,
     staleTime: 30 * 1000,
     refetchInterval: 1000 * 60 * 15,
@@ -66,7 +71,33 @@ export const useRecordPetWalk = () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: WALK_PRIORITY_QUERY_KEY }),
         queryClient.invalidateQueries({ queryKey: WALK_SUMMARY_QUERY_KEY }),
-        queryClient.invalidateQueries({ queryKey: WALK_EVENTS_QUERY_KEY }),
+        queryClient.invalidateQueries({ queryKey: MY_WALKS_QUERY_KEY }),
+        queryClient.invalidateQueries({ queryKey: PET_WALKS_QUERY_KEY }),
+      ]);
+    },
+  });
+};
+
+export const useMyWalks = (options?: { enabled?: boolean }) => {
+  return useQuery<PetWalkRow[], Error>({
+    queryKey: MY_WALKS_QUERY_KEY,
+    queryFn: getMyWalksRequest,
+    staleTime: 30 * 1000,
+    refetchInterval: 1000 * 60 * 5,
+    enabled: options?.enabled ?? true,
+  });
+};
+
+export const useCancelWalk = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, number>({
+    mutationFn: cancelWalkRequest,
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: MY_WALKS_QUERY_KEY }),
+        queryClient.invalidateQueries({ queryKey: WALK_PRIORITY_QUERY_KEY }),
+        queryClient.invalidateQueries({ queryKey: WALK_SUMMARY_QUERY_KEY }),
       ]);
     },
   });

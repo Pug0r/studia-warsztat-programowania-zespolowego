@@ -23,14 +23,17 @@ if (!PORT) {
 app.use(express.json());
 app.use(createAuditMiddleware(auditRouteRules));
 app.use("/api", itemRouter);
-app.use("/api/adoption-applications", adoptionApplicationsRouter);
+app.use(
+  "/api/adoption-applications",
+  authMiddleware,
+  adoptionApplicationsRouter,
+);
 app.use("/api/audit-logs", auditRouter);
 app.use("/api/pets", petsRouter);
 app.use("/api/pets/:id", petsRouter);
-app.use("/api/volunteers", volunteersRouter);
+app.use("/api/volunteers", authMiddleware, volunteersRouter);
 app.use("/api/health-cards", healthCardsRouter);
 
-app.use("/api/volunteers", authMiddleware, volunteersRouter);
 app.use("/api/administration", adminRoute);
 app.use("/api/medical-schedule", medicalScheduleRouter);
 

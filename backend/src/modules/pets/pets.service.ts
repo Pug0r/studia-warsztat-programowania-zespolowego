@@ -344,6 +344,38 @@ export const getWalkById = async (id: number): Promise<PetWalkRow | null> => {
   return data;
 };
 
+export const cancelWalk = async (walkId: number): Promise<void> => {
+  const { error } = await supabase.from("pet_walks").delete().eq("id", walkId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const listUpcomingWalks = async (
+  walkerId: string,
+): Promise<PetWalkRow[]> => {
+  const now = new Date().toISOString();
+
+  const { data, error } = await supabase
+    .from("pet_walks")
+    .select("*, pets (name)")
+    .eq("walker_id", walkerId)
+    .gt("walked_at", now)
+    .order("walked_at", { ascending: true });
+
+  console.log("Query result:", {
+    count: data?.length,
+    data: data?.map((d) => ({
+      id: d.id,
+      walked_at: d.walked_at,
+      walker_id: d.walker_id,
+    })),
+    error: error?.message,
+  });
+  return data ?? [];
+};
+
 export const updateWalk = async (
   id: number,
   payload: PetWalkUpdate,

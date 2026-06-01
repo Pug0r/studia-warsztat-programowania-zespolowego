@@ -6,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[];
 
-export interface Database {
+export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
@@ -66,6 +66,27 @@ export interface Database {
             referencedColumns: ["id"];
           },
         ];
+      };
+      audit_action_settings: {
+        Row: {
+          action: string;
+          created_at: string;
+          enabled: boolean;
+          updated_at: string;
+        };
+        Insert: {
+          action: string;
+          created_at?: string;
+          enabled?: boolean;
+          updated_at?: string;
+        };
+        Update: {
+          action?: string;
+          created_at?: string;
+          enabled?: boolean;
+          updated_at?: string;
+        };
+        Relationships: [];
       };
       audit_logs: {
         Row: {
@@ -480,14 +501,20 @@ export interface Database {
         Relationships: [];
       };
     };
-    Views: Record<never, never>;
-    Functions: Record<never, never>;
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      [_ in never]: never;
+    };
     Enums: {
       user_role: "user" | "admin" | "vet" | "coordinator" | "volunteer";
     };
-    CompositeTypes: Record<never, never>;
+    CompositeTypes: {
+      [_ in never]: never;
+    };
   };
-}
+};
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">;
 
@@ -594,9 +621,8 @@ export type Enums<
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-      | keyof DefaultSchema["CompositeTypes"]
-      | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
