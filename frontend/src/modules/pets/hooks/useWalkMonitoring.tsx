@@ -52,8 +52,9 @@ export const useWalkEvents = (options?: { enabled?: boolean }) => {
   return useQuery<PetWalkRow[], Error>({
     queryKey: PET_WALKS_QUERY_KEY,
     queryFn: getPetWalksRequest,
-    staleTime: 30 * 1000,
-    refetchInterval: 1000 * 60 * 15,
+    staleTime: 15 * 1000,
+    refetchInterval: 1000 * 30,
+    refetchOnWindowFocus: true,
     enabled: options?.enabled ?? true,
   });
 };
@@ -98,6 +99,7 @@ export const useCancelWalk = () => {
         queryClient.invalidateQueries({ queryKey: MY_WALKS_QUERY_KEY }),
         queryClient.invalidateQueries({ queryKey: WALK_PRIORITY_QUERY_KEY }),
         queryClient.invalidateQueries({ queryKey: WALK_SUMMARY_QUERY_KEY }),
+        queryClient.invalidateQueries({ queryKey: PET_WALKS_QUERY_KEY }),
       ]);
     },
   });

@@ -15,7 +15,9 @@ import { showToast } from "@/lib/toast";
 import {
   useCancelWalk,
   useMyWalks,
+  useWalkEvents,
 } from "@/modules/pets/hooks/useWalkMonitoring";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { usePetList } from "@/modules/pets/hooks/usePetList";
 import {
   addMonths,
@@ -42,11 +44,17 @@ const canCancelWalk = (walkedAt: string, now: number): boolean => {
 };
 
 export function VolunteerWalksPage() {
+  const { session } = useAuth();
   const walksQuery = useMyWalks();
+  const allWalksQuery = useWalkEvents();
   const petsQuery = usePetList();
   const cancelWalk = useCancelWalk();
 
   const walks = useMemo(() => walksQuery.data ?? [], [walksQuery.data]);
+  const allWalks = useMemo(
+    () => allWalksQuery.data ?? [],
+    [allWalksQuery.data],
+  );
   const pets = petsQuery.data ?? [];
 
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
@@ -97,6 +105,23 @@ export function VolunteerWalksPage() {
     });
     return map;
   }, [walks]);
+
+  const reservedByDay = useMemo(() => {
+    const map = new Map<number, number>();
+    allWalks.forEach((walk) => {
+      if (walk.walker_id === session?.user.id) {
+        return;
+      }
+      const date = new Date(walk.walked_at);
+      const dayKey = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+      ).getTime();
+      map.set(dayKey, (map.get(dayKey) ?? 0) + 1);
+    });
+    return map;
+  }, [allWalks, session?.user.id]);
 
   const handleCancel = (walkId: number, walkedAt: string) => {
     const confirmed = window.confirm(
@@ -149,7 +174,7 @@ export function VolunteerWalksPage() {
                         {monthLabel}
                       </h3>
                       <p className="text-xs text-slate-500">
-                        Highlighted days have walks.
+                        Green: your walks. Amber: reserved by others.
                       </p>
                     </div>
                     <div className="flex items-center gap-1">
@@ -202,6 +227,8 @@ export function VolunteerWalksPage() {
                         const dayKey = dayStart.getTime();
                         const walksOnDay = walksByDay.get(dayKey) ?? [];
                         const hasWalks = walksOnDay.length > 0;
+                        const reservedCount = reservedByDay.get(dayKey) ?? 0;
+                        const hasReserved = reservedCount > 0;
 
                         const isPast = dayStart < today;
 
@@ -211,11 +238,13 @@ export function VolunteerWalksPage() {
                             type="button"
                             disabled={isPast}
                             className={`aspect-square rounded-lg border text-sm font-medium transition ${
-                              isPast && !hasWalks
+                              isPast && !hasWalks && !hasReserved
                                 ? "border-slate-100 bg-slate-50 text-slate-300 cursor-not-allowed"
                                 : hasWalks
                                   ? "border-emerald-300 bg-emerald-50 text-emerald-900"
-                                  : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
+                                  : hasReserved
+                                    ? "border-amber-300 bg-amber-50 text-amber-900"
+                                    : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
                             }`}
                             onClick={() => setSelectedDate(dayStart)}
                             aria-label={`${monthLabel} ${day}${
@@ -223,7 +252,9 @@ export function VolunteerWalksPage() {
                                 ? `, ${walksOnDay.length} walk${
                                     walksOnDay.length === 1 ? "" : "s"
                                   }`
-                                : ""
+                                : hasReserved
+                                  ? `, ${reservedCount} reserved`
+                                  : ""
                             }`}
                           >
                             {day}

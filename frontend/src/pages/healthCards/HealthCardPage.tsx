@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useMemo, useState } from "react";
 import type { MedicalEventType } from "@repo/types";
@@ -19,6 +18,7 @@ import type {
   HealthCardEntry,
   HealthCardEntryPayload,
 } from "@/modules/healthCards/types/HealthCard";
+import {
   formatMedicalEventDate,
   MEDICAL_EVENT_TYPE_LABELS,
 } from "@/modules/medicalSchedule/format";
