@@ -29,3 +29,22 @@ create policy "health_card_entries read for authenticated"
   on public.health_card_entries for select
   to authenticated
   using (true);
+
+drop policy if exists "health_card_entries insert for authenticated" on public.health_card_entries;
+create policy "health_card_entries insert for authenticated"
+  on public.health_card_entries for insert
+  to authenticated
+  with check (true);
+
+drop policy if exists "health_card_entries update for authenticated" on public.health_card_entries;
+create policy "health_card_entries update for authenticated"
+  on public.health_card_entries for update
+  to authenticated
+  using (true)
+  with check (true);
+
+drop policy if exists "health_card_entries delete for authenticated" on public.health_card_entries;
+create policy "health_card_entries delete for authenticated"
+  on public.health_card_entries for delete
+  to authenticated
+  using (true);

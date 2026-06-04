@@ -22,3 +22,13 @@ export interface HealthCardEntryRow {
   created_at: string;
   updated_at: string;
 }
+
+export interface CreateHealthCardEntryDTO {
+  entry_type: HealthCardEntryType;
+  title: string;
+  description: string | null;
+  medication: string | null;
+  treatment_date: string;
+}
+
+export type UpdateHealthCardEntryDTO = Partial<CreateHealthCardEntryDTO>;

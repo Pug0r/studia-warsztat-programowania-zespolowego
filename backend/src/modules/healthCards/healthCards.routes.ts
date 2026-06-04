@@ -9,5 +9,13 @@ router.get(
   authMiddleware,
   healthCardsController.listByPet,
 );
+router.post(
+  "/pets/:petId/entries",
+  authMiddleware,
+  healthCardsController.create,
+);
+router.patch("/entries/:entryId", authMiddleware, healthCardsController.update);
+router.delete("/entries/:entryId", authMiddleware, healthCardsController.remove);
+);
 
 export default router;

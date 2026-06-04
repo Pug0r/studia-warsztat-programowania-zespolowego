@@ -1,6 +1,10 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { supabase } from "#config/supabaseClient.js";
-import type { HealthCardEntryRow } from "./healthCards.types.js";
+import type {
+  CreateHealthCardEntryDTO,
+  HealthCardEntryRow,
+  UpdateHealthCardEntryDTO,
+} from "./healthCards.types.js";
 
 // The `health_card_entries` table is not yet in the generated `Database`
 // type from `@repo/types`. We define a local schema fragment and cast the
@@ -40,4 +44,72 @@ export const listByPet = async (
   }
 
   return data;
+};
+
+export const getById = async (
+  id: number,
+): Promise<HealthCardEntryRow | null> => {
+  const { data, error } = await sb
+    .from("health_card_entries")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+export const create = async (
+  petId: number,
+  payload: CreateHealthCardEntryDTO,
+  vet: { id: string; email: string | null },
+): Promise<HealthCardEntryRow> => {
+  const { data, error } = await sb
+    .from("health_card_entries")
+    .insert({
+      ...payload,
+      pet_id: petId,
+      vet_id: vet.id,
+      vet_email: vet.email,
+    } as HealthCardEntryRow)
+    .select("*")
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+export const update = async (
+  id: number,
+  payload: UpdateHealthCardEntryDTO,
+): Promise<HealthCardEntryRow> => {
+  const { data, error } = await sb
+    .from("health_card_entries")
+    .update({ ...payload, updated_at: new Date().toISOString() })
+    .eq("id", id)
+    .select("*")
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+export const remove = async (id: number): Promise<void> => {
+  const { error } = await sb
+    .from("health_card_entries")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
 };

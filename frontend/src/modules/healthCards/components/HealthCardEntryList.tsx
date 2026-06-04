@@ -5,6 +5,8 @@ import {
 
 type Props = {
   entries: HealthCardEntry[];
+  onEdit?: (entry: HealthCardEntry) => void;
+  onDelete?: (entry: HealthCardEntry) => void;
 };
 
 const formatDate = (iso: string): string => {
@@ -19,7 +21,7 @@ const formatDate = (iso: string): string => {
   }
 };
 
-export const HealthCardEntryList = ({ entries }: Props) => {
+export const HealthCardEntryList = ({ entries, onEdit, onDelete }: Props) => {
   if (entries.length === 0) {
     return (
       <p className="hc-empty">No entries in this animal's health card yet.</p>
@@ -37,6 +39,24 @@ export const HealthCardEntryList = ({ entries }: Props) => {
             <span className="hc-entry__type">
               {HEALTH_CARD_ENTRY_TYPE_LABELS[entry.entry_type]}
             </span>
+            {onEdit && (
+              <button
+                type="button"
+                className="hp-btn hp-btn--secondary hc-entry__edit"
+                onClick={() => onEdit(entry)}
+              >
+                Edit
+              </button>
+            )}
+            {onDelete && (
+              <button
+                type="button"
+                className="hp-btn hp-btn--secondary hc-entry__delete"
+                onClick={() => onDelete(entry)}
+              >
+                Delete
+              </button>
+            )}
           </div>
 
           <h3 className="hc-entry__title">{entry.title}</h3>
