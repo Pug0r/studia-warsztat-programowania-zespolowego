@@ -186,9 +186,7 @@ export function HealthCardPage() {
 
           {form.mode !== "idle" && (
             <div className="hc-section">
-              {saveError && (
-                <p className="hc-form__error">{saveError}</p>
-              )}
+              {saveError && <p className="hc-form__error">{saveError}</p>}
               <HealthCardEntryForm
                 entry={form.mode === "edit" ? form.entry : undefined}
                 isSaving={createEntry.isPending || updateEntry.isPending}
