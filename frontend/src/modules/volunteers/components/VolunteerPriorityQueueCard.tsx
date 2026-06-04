@@ -24,6 +24,17 @@ const lastWalkFormatter = new Intl.DateTimeFormat("en-US", {
   timeStyle: "short",
 });
 
+const scheduledWalkFormatter = new Intl.DateTimeFormat("en-US", {
+  weekday: "short",
+  day: "numeric",
+  month: "short",
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
+const formatScheduledWalk = (value: string) =>
+  scheduledWalkFormatter.format(new Date(value));
+
 const getWalkStatus = (daysSinceLastWalk: number | null) => {
   if (daysSinceLastWalk === null) {
     return { label: "No walks yet", variant: "destructive" as const };
@@ -149,6 +160,24 @@ export const VolunteerPriorityQueueCard = React.memo(
       priorityDogs[0] ??
       null;
 
+    const scheduledWalks = useMemo(() => {
+      if (!selectedDog) {
+        return [];
+      }
+
+      const now = Date.now();
+      return walkEvents
+        .filter(
+          (walk) =>
+            walk.pet_id === selectedDog.id &&
+            new Date(walk.walked_at).getTime() >= now,
+        )
+        .sort(
+          (a, b) =>
+            new Date(a.walked_at).getTime() - new Date(b.walked_at).getTime(),
+        );
+    }, [walkEvents, selectedDog]);
+
     // Generate available time slots (30-minute intervals)
     const availableTimeSlots = !selectedDate
       ? []
@@ -262,6 +291,39 @@ export const VolunteerPriorityQueueCard = React.memo(
                   </div>
                 );
               })}
+            </div>
+          )}
+
+          {selectedDog && (
+            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <h3 className="text-sm font-medium text-slate-900">
+                Scheduled walks for {selectedDog.name}
+              </h3>
+              {scheduledWalks.length === 0 ? (
+                <p className="mt-2 text-sm text-slate-500">
+                  No upcoming walks scheduled for this pet.
+                </p>
+              ) : (
+                <ul className="mt-3 space-y-2">
+                  {scheduledWalks.map((walk) => {
+                    const isOwn = walk.walker_id === session?.user.id;
+
+                    return (
+                      <li
+                        key={walk.id}
+                        className="flex items-center justify-between gap-3 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2"
+                      >
+                        <span className="text-sm text-slate-700">
+                          {formatScheduledWalk(walk.walked_at)}
+                        </span>
+                        <Badge variant={isOwn ? "secondary" : "outline"}>
+                          {isOwn ? "Yours" : "Reserved"}
+                        </Badge>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </div>
           )}
 

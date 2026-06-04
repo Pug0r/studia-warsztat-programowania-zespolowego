@@ -103,24 +103,7 @@ export const recordPetWalkRequest = async (
 };
 
 export const getPetWalksRequest = async (): Promise<PetWalkRow[]> => {
-  if (!supabase) {
-    throw new Error("Supabase client is not initialized");
-  }
-
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  const token = session?.access_token;
-
-  if (!token) {
-    console.warn(
-      "No active session found - requesting walks anyway (will likely 401)",
-    );
-  }
-
-  const response = await fetch("/api/pets/my-walks", {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  });
+  const response = await fetch("/api/pets/walks");
 
   if (!response.ok) {
     throw new Error(`Walks error: ${response.status}`);
@@ -210,6 +193,22 @@ export const cancelWalkRequest = async (walkId: number): Promise<void> => {
 };
 
 export const getMyWalksRequest = async (): Promise<PetWalkRow[]> => {
-  // Consolidated: now same as getPetWalksRequest
-  return getPetWalksRequest();
+  if (!supabase) {
+    throw new Error("Supabase client is not initialized");
+  }
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const token = session?.access_token;
+
+  const response = await fetch("/api/pets/my-walks", {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+
+  if (!response.ok) {
+    throw new Error(`Walks error: ${response.status}`);
+  }
+
+  return response.json();
 };
