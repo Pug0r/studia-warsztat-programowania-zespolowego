@@ -16,6 +16,7 @@ export const availableAuditActions = [
   "pet.delete",
   "pet.photo_upload",
   "pet.walk_record",
+  "pet.walk_update",
   "pet.walk_cancel",
   "medical_event.create",
   "medical_event.update",

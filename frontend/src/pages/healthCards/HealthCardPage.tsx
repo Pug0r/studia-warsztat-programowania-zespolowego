@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useMemo, useState } from "react";
+import type { MedicalEventType } from "@repo/types";
 
 import Sidebar from "@/components/Sidebar";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +19,10 @@ import type {
   HealthCardEntry,
   HealthCardEntryPayload,
 } from "@/modules/healthCards/types/HealthCard";
+  formatMedicalEventDate,
+  MEDICAL_EVENT_TYPE_LABELS,
+} from "@/modules/medicalSchedule/format";
+import { useMedicalEvents } from "@/modules/medicalSchedule/hooks";
 import "@/modules/healthCards/components/healthCards.css";
 
 type FormState =
@@ -34,6 +40,23 @@ export function HealthCardPage() {
 
   const pet = usePet(petId, { enabled: isValidPetId });
   const entries = useHealthCardEntries(petId, { enabled: isValidPetId });
+  const medicalEvents = useMedicalEvents();
+  const [filterType, setFilterType] = useState<MedicalEventType | "">("");
+  const [includeScheduled, setIncludeScheduled] = useState(false);
+
+  const petMedicalEvents = useMemo(
+    () => (medicalEvents.data ?? []).filter((event) => event.pet_id === petId),
+    [medicalEvents.data, petId],
+  );
+
+  const historyEvents = includeScheduled
+    ? petMedicalEvents
+    : petMedicalEvents.filter((event) => event.status === "completed");
+
+  const filteredHistoryEvents =
+    filterType === ""
+      ? historyEvents
+      : historyEvents.filter((event) => event.type === filterType);
 
   const createEntry = useCreateHealthCardEntry(petId);
   const updateEntry = useUpdateHealthCardEntry(petId);
@@ -200,6 +223,110 @@ export function HealthCardPage() {
               onDelete={isVet ? handleDelete : undefined}
             />
           )}
+        </section>
+
+        <section className="space-y-4">
+          <div className="rounded-md border border-slate-200 bg-white">
+            <div className="border-b border-slate-200 p-4">
+              <div className="space-y-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <h2 className="font-semibold text-slate-900">
+                    Medical procedures
+                  </h2>
+                  <label className="flex items-center gap-2 text-sm">
+                    <span className="font-medium text-slate-700">Filter:</span>
+                    <select
+                      className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm"
+                      value={filterType}
+                      onChange={(event) =>
+                        setFilterType(
+                          event.target.value as MedicalEventType | "",
+                        )
+                      }
+                    >
+                      <option value="">All treatments</option>
+                      {Object.entries(MEDICAL_EVENT_TYPE_LABELS).map(
+                        ([value, label]) => (
+                          <option key={value} value={value}>
+                            {label}
+                          </option>
+                        ),
+                      )}
+                    </select>
+                  </label>
+                </div>
+                <label className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={includeScheduled}
+                    onChange={(event) =>
+                      setIncludeScheduled(event.target.checked)
+                    }
+                    className="rounded border border-slate-300 cursor-pointer"
+                  />
+                  <span className="font-medium text-slate-700">
+                    Include scheduled procedures
+                  </span>
+                </label>
+              </div>
+            </div>
+            <div className="divide-y divide-slate-100">
+              {medicalEvents.isPending && (
+                <p className="p-4 text-sm text-slate-600">
+                  Loading procedures...
+                </p>
+              )}
+              {medicalEvents.error && (
+                <p className="p-4 text-sm text-red-600">
+                  {medicalEvents.error.message}
+                </p>
+              )}
+              {filteredHistoryEvents.length === 0 &&
+                !medicalEvents.isPending && (
+                  <p className="p-4 text-sm text-slate-600">
+                    {petMedicalEvents.length === 0
+                      ? "No medical procedures recorded."
+                      : "No procedures match the selected filter."}
+                  </p>
+                )}
+              {filteredHistoryEvents.map((event) => (
+                <article
+                  key={event.id}
+                  className="flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between"
+                >
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-medium text-slate-900">
+                        {event.title}
+                      </p>
+                      <span
+                        className={`rounded-full px-2 py-1 text-xs ${
+                          event.status === "completed"
+                            ? "bg-emerald-100 text-emerald-800"
+                            : event.status === "scheduled"
+                              ? "bg-blue-100 text-blue-800"
+                              : "bg-slate-100 text-slate-700"
+                        }`}
+                      >
+                        {event.status}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-sm text-slate-600">
+                      {MEDICAL_EVENT_TYPE_LABELS[event.type]}
+                    </p>
+                    <p className="text-sm text-slate-500">
+                      {formatMedicalEventDate(event.scheduled_at)}
+                    </p>
+                    {event.notes && (
+                      <p className="mt-2 text-sm text-slate-500">
+                        {event.notes}
+                      </p>
+                    )}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
         </section>
       </section>
     </main>

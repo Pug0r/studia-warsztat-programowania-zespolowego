@@ -35,6 +35,13 @@ export const auditRouteRules: AuditRouteRule[] = [
     path: "/api/pets/:id/photo",
   },
   {
+    action: "pet.walk_update",
+    entityIdParam: "walkId",
+    entityType: "pet_walk",
+    method: "PATCH",
+    path: "/api/pets/walks/:walkId",
+  },
+  {
     action: "pet.walk_cancel",
     entityIdParam: "walkId",
     entityType: "pet_walk",

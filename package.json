@@ -1,6 +1,7 @@
 {
   "name": "my-monorepo",
   "private": true,
+  "type": "module",
   "workspaces": [
     "backend",
     "frontend",
@@ -18,10 +19,12 @@
     "prepare": "husky"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "husky": "^9.1.7",
-    "lint-staged": "^16.4.0"
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.8.3"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
@@ -33,7 +36,11 @@
     ]
   },
   "dependencies": {
+    "express": "^5.2.1",
+    "lucide-react": "^1.17.0",
+    "multer": "^2.1.1",
     "react": "^19.2.5",
-    "react-dom": "^19.2.5"
+    "react-dom": "^19.2.5",
+    "react-router-dom": "^7.16.0"
   }
 }
