@@ -1,8 +1,18 @@
-import type { CreatePetWalkDTO, PetInsert, PetWalkUpdate } from "@repo/types";
+import type {
+  CreatePetWalkDTO,
+  PetInsert,
+  PetUpdate,
+  PetWalkUpdate,
+} from "@repo/types";
 
 export type CreatePetDTO = Pick<
   PetInsert,
-  "name" | "age" | "weight" | "description"
+  "age" | "breed" | "description" | "name" | "size" | "species" | "weight"
+>;
+
+export type UpdatePetDTO = Pick<
+  PetUpdate,
+  "age" | "breed" | "description" | "name" | "size" | "species" | "weight"
 >;
 
 const isNonEmptyString = (value: unknown): value is string =>
@@ -11,15 +21,44 @@ const isNonEmptyString = (value: unknown): value is string =>
 const isPositiveNumber = (value: unknown): value is number =>
   typeof value === "number" && Number.isFinite(value) && value > 0;
 
+const ALLOWED_SIZES = ["small", "medium", "large"];
+
+const parseOptionalSize = (value: unknown): string | undefined => {
+  if (value === undefined || value === null || value === "") {
+    return undefined;
+  }
+  if (typeof value !== "string" || !ALLOWED_SIZES.includes(value)) {
+    throw new Error("Field 'size' must be one of: small, medium, large.");
+  }
+  return value;
+};
+
+const parseOptionalBreed = (value: unknown): string | undefined => {
+  if (value === undefined || value === null || value === "") {
+    return undefined;
+  }
+  if (typeof value !== "string") {
+    throw new Error("Field 'breed' must be a string.");
+  }
+  return value.trim();
+};
+
 export const validateCreatePetPayload = (payload: unknown): CreatePetDTO => {
   if (!payload || typeof payload !== "object") {
     throw new Error("Payload must be an object.");
   }
 
-  const { age, description, name, weight } = payload as Record<string, unknown>;
+  const { age, breed, description, name, size, species, weight } =
+    payload as Record<string, unknown>;
 
   if (!isNonEmptyString(name)) {
     throw new Error("Field 'name' is required and must be a non-empty string.");
+  }
+
+  if (!isNonEmptyString(species)) {
+    throw new Error(
+      "Field 'species' is required and must be a non-empty string.",
+    );
   }
 
   if (!isPositiveNumber(age)) {
@@ -40,10 +79,73 @@ export const validateCreatePetPayload = (payload: unknown): CreatePetDTO => {
 
   return {
     age,
+    breed: parseOptionalBreed(breed) ?? null,
     description: description.trim(),
     name: name.trim(),
+    size: parseOptionalSize(size) ?? null,
+    species: species.trim(),
     weight,
   };
+};
+
+export const validateUpdatePetPayload = (payload: unknown): UpdatePetDTO => {
+  if (!payload || typeof payload !== "object") {
+    throw new Error("Payload must be an object.");
+  }
+
+  const { age, breed, description, name, size, species, weight } =
+    payload as Record<string, unknown>;
+
+  const dto: UpdatePetDTO = {};
+
+  if (name !== undefined) {
+    if (!isNonEmptyString(name)) {
+      throw new Error("Field 'name' must be a non-empty string.");
+    }
+    dto.name = name.trim();
+  }
+
+  if (species !== undefined) {
+    if (!isNonEmptyString(species)) {
+      throw new Error("Field 'species' must be a non-empty string.");
+    }
+    dto.species = species.trim();
+  }
+
+  if (age !== undefined) {
+    if (!isPositiveNumber(age)) {
+      throw new Error("Field 'age' must be a positive number.");
+    }
+    dto.age = age;
+  }
+
+  if (weight !== undefined) {
+    if (!isPositiveNumber(weight)) {
+      throw new Error("Field 'weight' must be a positive number.");
+    }
+    dto.weight = weight;
+  }
+
+  if (description !== undefined) {
+    if (!isNonEmptyString(description)) {
+      throw new Error("Field 'description' must be a non-empty string.");
+    }
+    dto.description = description.trim();
+  }
+
+  if (breed !== undefined) {
+    dto.breed = parseOptionalBreed(breed) ?? null;
+  }
+
+  if (size !== undefined) {
+    dto.size = parseOptionalSize(size) ?? null;
+  }
+
+  if (Object.keys(dto).length === 0) {
+    throw new Error("At least one field must be provided for update.");
+  }
+
+  return dto;
 };
 
 export const validatePetId = (id: unknown): number => {

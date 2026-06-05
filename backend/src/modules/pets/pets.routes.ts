@@ -29,6 +29,7 @@ router.post(
   petsController.uploadPhoto,
 );
 router.get("/:id", petsController.getById);
+router.patch("/:id", authMiddleware, petsController.update);
 router.delete("/:id", authMiddleware, petsController.delete);
 
 export default router;

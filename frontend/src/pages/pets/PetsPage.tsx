@@ -1,13 +1,33 @@
-import type { Pet } from "@/modules/pets/types/Pets";
+import type {
+  CreatePetPayload,
+  Pet,
+  UpdatePetPayload,
+} from "@/modules/pets/types/Pets";
 import { usePetList } from "@/modules/pets/hooks/usePetList"; // <-- Czeka na bazę danych
+import {
+  useCreatePet,
+  useDeletePet,
+  useUpdatePet,
+} from "@/modules/pets/hooks/usePetMutations";
 import { PetCard } from "@/modules/pets/components/PetCard";
+import { PetForm } from "@/modules/pets/components/PetForm";
 import { useState } from "react";
 import { PetDetailModal } from "@/modules/pets/components/PetDetailModal";
+import { useUserProfile } from "@/modules/auth/hooks/useUserProfile";
+import { showToast } from "@/lib/toast";
 import "./PetsPage.css";
 import Sidebar from "@/components/Sidebar";
 
+type FormMode = { kind: "idle" } | { kind: "create" } | { kind: "edit"; pet: Pet };
+
 export const PetsPage: React.FC = () => {
   const { data, error, isPending } = usePetList();
+  const { role } = useUserProfile();
+  const isAdmin = role === "admin";
+
+  const createPet = useCreatePet();
+  const updatePet = useUpdatePet();
+  const deletePet = useDeletePet();
 
   const [selectedSpecies, setSelectedSpecies] = useState<string>("all");
   const [selectedSize, setSelectedSize] = useState<string>("all");
@@ -15,6 +35,8 @@ export const PetsPage: React.FC = () => {
   const [maxAge, setMaxAge] = useState<string>("");
   const [maxWeight, setMaxWeight] = useState<string>("");
   const [searchName, setSearchName] = useState<string>("");
+
+  const [formMode, setFormMode] = useState<FormMode>({ kind: "idle" });
 
   const [selectedPetId, setSelectedPetId] = useState<string | number | null>(
     null,
@@ -40,14 +62,46 @@ export const PetsPage: React.FC = () => {
     );
   }
 
-  if (!data || data.length === 0) {
-    return (
-      <div className="p-6">
-        <p>No pets found.</p>
-      </div>
+  const petsData = data ?? [];
+
+  const handleCreate = (payload: CreatePetPayload | UpdatePetPayload) => {
+    createPet.mutate(payload as CreatePetPayload, {
+      onSuccess: () => {
+        showToast("Pet added.", "success");
+        setFormMode({ kind: "idle" });
+      },
+      onError: () => showToast("Failed to add pet.", "error"),
+    });
+  };
+
+  const handleUpdate = (
+    id: number,
+    payload: CreatePetPayload | UpdatePetPayload,
+  ) => {
+    updatePet.mutate(
+      { id, payload },
+      {
+        onSuccess: () => {
+          showToast("Pet updated.", "success");
+          setFormMode({ kind: "idle" });
+        },
+        onError: () => showToast("Failed to update pet.", "error"),
+      },
     );
-  }
-  const petsData = data || [];
+  };
+
+  const handleDelete = (pet: Pet) => {
+    const confirmed = window.confirm(
+      `Delete ${pet.name}? This cannot be undone.`,
+    );
+    if (!confirmed) {
+      return;
+    }
+    deletePet.mutate(pet.id, {
+      onSuccess: () => showToast("Pet removed.", "success"),
+      onError: () => showToast("Failed to delete pet.", "error"),
+    });
+  };
 
   const clearAllFilters = () => {
     setSelectedSpecies("all");
@@ -94,14 +148,47 @@ export const PetsPage: React.FC = () => {
     <main className="grid min-h-screen grid-cols-1 bg-slate-50 lg:grid-cols-[260px_1fr]">
       <Sidebar />
       <section className="shelter-public hp-pets-page ">
-        <div className="flex flex-col space-y-2 mb-6 ">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-            Find your friend!
-          </h1>
-          <p className="text-sm font-semibold text-slate-600">
-            It's the best place to find one!
-          </p>
+        <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
+          <div className="flex flex-col space-y-2">
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+              Find your friend!
+            </h1>
+            <p className="text-sm font-semibold text-slate-600">
+              It's the best place to find one!
+            </p>
+          </div>
+          {isAdmin && formMode.kind === "idle" && (
+            <button
+              type="button"
+              className="hp-btn hp-btn--primary"
+              onClick={() => setFormMode({ kind: "create" })}
+            >
+              Add pet
+            </button>
+          )}
         </div>
+
+        {isAdmin && formMode.kind !== "idle" && (
+          <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-5">
+            <h2 className="mb-4 text-lg font-semibold text-slate-900">
+              {formMode.kind === "create"
+                ? "New pet"
+                : `Edit ${formMode.pet.name}`}
+            </h2>
+            <PetForm
+              pet={formMode.kind === "edit" ? formMode.pet : undefined}
+              onSubmit={(payload) => {
+                if (formMode.kind === "create") {
+                  handleCreate(payload);
+                } else {
+                  handleUpdate(formMode.pet.id, payload);
+                }
+              }}
+              onCancel={() => setFormMode({ kind: "idle" })}
+              isSubmitting={createPet.isPending || updatePet.isPending}
+            />
+          </div>
+        )}
 
         <div className="hp-filters">
           <div className="hp-filter-group">
@@ -188,7 +275,27 @@ export const PetsPage: React.FC = () => {
         ) : (
           <div className="hp-pets-grid">
             {filteredPets.map((pet) => (
-              <PetCard key={pet.id} pet={pet} onPetClick={setSelectedPetId} />
+              <div key={pet.id}>
+                <PetCard pet={pet} onPetClick={setSelectedPetId} />
+                {isAdmin && (
+                  <div className="mt-2 flex gap-2">
+                    <button
+                      type="button"
+                      className="hp-btn hp-btn--secondary flex-1"
+                      onClick={() => setFormMode({ kind: "edit", pet })}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      className="hp-btn hp-btn--secondary flex-1"
+                      onClick={() => handleDelete(pet)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         )}
