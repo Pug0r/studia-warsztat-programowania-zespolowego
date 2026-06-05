@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PetPhotoUpload } from "./PetPhotoUpload";
 import type {
   CreatePetPayload,
   Pet,
@@ -15,6 +16,8 @@ type PetFormState = {
   age: string;
   weight: string;
   description: string;
+  breed: string;
+  size: string;
 };
 
 const emptyForm: PetFormState = {
@@ -23,6 +26,8 @@ const emptyForm: PetFormState = {
   age: "",
   weight: "",
   description: "",
+  breed: "",
+  size: "",
 };
 
 const toFormState = (pet: Pet): PetFormState => ({
@@ -31,6 +36,8 @@ const toFormState = (pet: Pet): PetFormState => ({
   age: pet.age !== null ? String(pet.age) : "",
   weight: pet.weight !== null ? String(pet.weight) : "",
   description: pet.description,
+  breed: pet.breed ?? "",
+  size: pet.size ?? "",
 });
 
 type Props = {
@@ -60,7 +67,11 @@ export const PetForm: React.FC<Props> = ({
 
   const handleChange =
     (field: keyof PetFormState) =>
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    (
+      event: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >,
+    ) => {
       setForm((prev) => ({ ...prev, [field]: event.target.value }));
     };
 
@@ -89,7 +100,15 @@ export const PetForm: React.FC<Props> = ({
       return;
     }
 
-    onSubmit({ name, species, age, weight, description });
+    onSubmit({
+      name,
+      species,
+      age,
+      weight,
+      description,
+      breed: form.breed.trim() || null,
+      size: form.size || null,
+    });
   };
 
   return (
@@ -142,6 +161,31 @@ export const PetForm: React.FC<Props> = ({
             required
           />
         </div>
+
+        <div className="space-y-1">
+          <Label htmlFor="pet-breed">Breed</Label>
+          <Input
+            id="pet-breed"
+            value={form.breed}
+            onChange={handleChange("breed")}
+            placeholder="e.g. Labrador"
+          />
+        </div>
+
+        <div className="space-y-1">
+          <Label htmlFor="pet-size">Size</Label>
+          <select
+            id="pet-size"
+            value={form.size}
+            onChange={handleChange("size")}
+            className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-slate-950 focus-visible:ring-[3px] focus-visible:ring-slate-950/50"
+          >
+            <option value="">Not specified</option>
+            <option value="small">Small</option>
+            <option value="medium">Medium</option>
+            <option value="large">Large</option>
+          </select>
+        </div>
       </div>
 
       <div className="space-y-1">
@@ -155,6 +199,24 @@ export const PetForm: React.FC<Props> = ({
           required
         />
       </div>
+
+      {pet ? (
+        <div className="space-y-1">
+          <Label>Photo</Label>
+          {pet.image_url && (
+            <img
+              src={pet.image_url}
+              alt={pet.name}
+              className="h-24 w-24 rounded-md object-cover"
+            />
+          )}
+          <PetPhotoUpload petId={pet.id} />
+        </div>
+      ) : (
+        <p className="text-xs text-slate-500">
+          Save the pet first, then edit it to add a photo.
+        </p>
+      )}
 
       {error && <p className="text-sm text-red-500">{error}</p>}
 

@@ -6,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[];
 
-export interface Database {
+export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
@@ -14,41 +14,6 @@ export interface Database {
   };
   public: {
     Tables: {
-      pets: {
-        Row: {
-          age: number | null;
-          created_at: string;
-          description: string;
-          id: number;
-          image_url: string | null;
-          name: string;
-          species: string;
-          weight: number | null;
-          breed: string | null;
-          size: string | null;
-        };
-        Insert: {
-          age?: number | null;
-          created_at?: string;
-          description: string;
-          id?: number;
-          image_url?: string | null;
-          name: string;
-          species: string;
-          weight?: number | null;
-        };
-        Update: {
-          age?: number | null;
-          created_at?: string;
-          description?: string;
-          id?: number;
-          image_url?: string | null;
-          name?: string;
-          species?: string;
-          weight?: number | null;
-        };
-        Relationships: [];
-      };
       adoption_applications: {
         Row: {
           city: string | null;
@@ -61,7 +26,7 @@ export interface Database {
           message: string;
           pet_id: number;
           phone: string | null;
-          status: "new" | "reviewing" | "accepted" | "rejected";
+          status: string;
           user_id: string | null;
         };
         Insert: {
@@ -75,7 +40,7 @@ export interface Database {
           message: string;
           pet_id: number;
           phone?: string | null;
-          status?: "new" | "reviewing" | "accepted" | "rejected";
+          status?: string;
           user_id?: string | null;
         };
         Update: {
@@ -89,39 +54,467 @@ export interface Database {
           message?: string;
           pet_id?: number;
           phone?: string | null;
-          status?: "new" | "reviewing" | "accepted" | "rejected";
+          status?: string;
           user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "adoption_applications_pet_id_fkey";
+            columns: ["pet_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      audit_action_settings: {
+        Row: {
+          action: string;
+          created_at: string;
+          enabled: boolean;
+          updated_at: string;
+        };
+        Insert: {
+          action: string;
+          created_at?: string;
+          enabled?: boolean;
+          updated_at?: string;
+        };
+        Update: {
+          action?: string;
+          created_at?: string;
+          enabled?: boolean;
+          updated_at?: string;
         };
         Relationships: [];
       };
-      users: {
+      audit_logs: {
+        Row: {
+          action: string;
+          actor_email: string | null;
+          actor_user_id: string | null;
+          created_at: string;
+          entity_id: string | null;
+          entity_type: string;
+          id: number;
+          ip_address: string | null;
+          metadata: Json;
+          method: string;
+          new_data: Json | null;
+          old_data: Json | null;
+          route: string;
+          user_agent: string | null;
+        };
+        Insert: {
+          action: string;
+          actor_email?: string | null;
+          actor_user_id?: string | null;
+          created_at?: string;
+          entity_id?: string | null;
+          entity_type: string;
+          id?: number;
+          ip_address?: string | null;
+          metadata?: Json;
+          method: string;
+          new_data?: Json | null;
+          old_data?: Json | null;
+          route: string;
+          user_agent?: string | null;
+        };
+        Update: {
+          action?: string;
+          actor_email?: string | null;
+          actor_user_id?: string | null;
+          created_at?: string;
+          entity_id?: string | null;
+          entity_type?: string;
+          id?: number;
+          ip_address?: string | null;
+          metadata?: Json;
+          method?: string;
+          new_data?: Json | null;
+          old_data?: Json | null;
+          route?: string;
+          user_agent?: string | null;
+        };
+        Relationships: [];
+      };
+      calendar_events: {
+        Row: {
+          created_at: string;
+          description: string;
+          ends_at: string | null;
+          event_type: string;
+          id: number;
+          is_public: boolean;
+          location: string;
+          starts_at: string;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          description: string;
+          ends_at?: string | null;
+          event_type?: string;
+          id?: number;
+          is_public?: boolean;
+          location: string;
+          starts_at: string;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          description?: string;
+          ends_at?: string | null;
+          event_type?: string;
+          id?: number;
+          is_public?: boolean;
+          location?: string;
+          starts_at?: string;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      health_card_entries: {
+        Row: {
+          created_at: string;
+          description: string | null;
+          entry_type: string;
+          id: number;
+          medication: string | null;
+          pet_id: number;
+          title: string;
+          treatment_date: string;
+          updated_at: string;
+          vet_email: string | null;
+          vet_id: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          description?: string | null;
+          entry_type?: string;
+          id?: number;
+          medication?: string | null;
+          pet_id: number;
+          title: string;
+          treatment_date?: string;
+          updated_at?: string;
+          vet_email?: string | null;
+          vet_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          description?: string | null;
+          entry_type?: string;
+          id?: number;
+          medication?: string | null;
+          pet_id?: number;
+          title?: string;
+          treatment_date?: string;
+          updated_at?: string;
+          vet_email?: string | null;
+          vet_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "health_card_entries_pet_id_fkey";
+            columns: ["pet_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      medical_event_reminders: {
+        Row: {
+          audience_role: string;
+          created_at: string;
+          due_at: string;
+          id: number;
+          medical_event_id: number;
+          read_at: string | null;
+        };
+        Insert: {
+          audience_role: string;
+          created_at?: string;
+          due_at: string;
+          id?: number;
+          medical_event_id: number;
+          read_at?: string | null;
+        };
+        Update: {
+          audience_role?: string;
+          created_at?: string;
+          due_at?: string;
+          id?: number;
+          medical_event_id?: number;
+          read_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "medical_event_reminders_medical_event_id_fkey";
+            columns: ["medical_event_id"];
+            isOneToOne: false;
+            referencedRelation: "medical_events";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      medical_events: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          created_by_email: string | null;
+          id: number;
+          notes: string | null;
+          pet_id: number;
+          reminder_sent_at: string | null;
+          scheduled_at: string;
+          status: string;
+          title: string;
+          type: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          created_by_email?: string | null;
+          id?: number;
+          notes?: string | null;
+          pet_id: number;
+          reminder_sent_at?: string | null;
+          scheduled_at: string;
+          status?: string;
+          title: string;
+          type: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          created_by_email?: string | null;
+          id?: number;
+          notes?: string | null;
+          pet_id?: number;
+          reminder_sent_at?: string | null;
+          scheduled_at?: string;
+          status?: string;
+          title?: string;
+          type?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "medical_events_pet_id_fkey";
+            columns: ["pet_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      pet_health_entries: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          description: string | null;
+          end_date: string | null;
+          id: number;
+          notes: string | null;
+          pet_id: number;
+          start_date: string | null;
+          title: string;
+          type: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          description?: string | null;
+          end_date?: string | null;
+          id?: number;
+          notes?: string | null;
+          pet_id: number;
+          start_date?: string | null;
+          title: string;
+          type: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          description?: string | null;
+          end_date?: string | null;
+          id?: number;
+          notes?: string | null;
+          pet_id?: number;
+          start_date?: string | null;
+          title?: string;
+          type?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pet_health_entries_pet_id_fkey";
+            columns: ["pet_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      pet_walks: {
+        Row: {
+          created_at: string;
+          end_at: string | null;
+          id: number;
+          notes: string | null;
+          pet_id: number;
+          walked_at: string;
+          walker_id: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          end_at?: string | null;
+          id?: number;
+          notes?: string | null;
+          pet_id: number;
+          walked_at?: string;
+          walker_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          end_at?: string | null;
+          id?: number;
+          notes?: string | null;
+          pet_id?: number;
+          walked_at?: string;
+          walker_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pet_walks_pet_id_fkey";
+            columns: ["pet_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      pets: {
+        Row: {
+          age: number | null;
+          breed: string | null;
+          created_at: string;
+          description: string;
+          id: number;
+          ideal_home: string | null;
+          image_url: string | null;
+          image_urls: string[] | null;
+          name: string;
+          personality: string | null;
+          size: string | null;
+          special_needs: string | null;
+          species: string;
+          weight: number | null;
+        };
+        Insert: {
+          age?: number | null;
+          breed?: string | null;
+          created_at?: string;
+          description: string;
+          id?: number;
+          ideal_home?: string | null;
+          image_url?: string | null;
+          image_urls?: string[] | null;
+          name: string;
+          personality?: string | null;
+          size?: string | null;
+          special_needs?: string | null;
+          species: string;
+          weight?: number | null;
+        };
+        Update: {
+          age?: number | null;
+          breed?: string | null;
+          created_at?: string;
+          description?: string;
+          id?: number;
+          ideal_home?: string | null;
+          image_url?: string | null;
+          image_urls?: string[] | null;
+          name?: string;
+          personality?: string | null;
+          size?: string | null;
+          special_needs?: string | null;
+          species?: string;
+          weight?: number | null;
+        };
+        Relationships: [];
+      };
+      profiles: {
+        Row: {
+          created_at: string | null;
+          email: string | null;
+          id: string;
+          role: Database["public"]["Enums"]["user_role"];
+        };
+        Insert: {
+          created_at?: string | null;
+          email?: string | null;
+          id: string;
+          role?: Database["public"]["Enums"]["user_role"];
+        };
+        Update: {
+          created_at?: string | null;
+          email?: string | null;
+          id?: string;
+          role?: Database["public"]["Enums"]["user_role"];
+        };
+        Relationships: [];
+      };
+      volunteers: {
         Row: {
           created_at: string;
           email: string;
-          id: string;
-          name: string;
+          full_name: string;
+          id: number;
+          phone: string | null;
         };
         Insert: {
           created_at?: string;
           email: string;
-          id?: string;
-          name: string;
+          full_name: string;
+          id?: number;
+          phone?: string | null;
         };
         Update: {
           created_at?: string;
           email?: string;
-          id?: string;
-          name?: string;
+          full_name?: string;
+          id?: number;
+          phone?: string | null;
         };
         Relationships: [];
       };
     };
-    Views: Record<never, never>;
-    Functions: Record<never, never>;
-    Enums: Record<never, never>;
-    CompositeTypes: Record<never, never>;
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      [_ in never]: never;
+    };
+    Enums: {
+      user_role: "user" | "admin" | "vet" | "coordinator" | "volunteer";
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
   };
-}
+};
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">;
 
@@ -245,6 +638,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_role: ["user", "admin", "vet", "coordinator", "volunteer"],
+    },
   },
 } as const;

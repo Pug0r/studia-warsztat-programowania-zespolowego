@@ -2,9 +2,16 @@ import type { Request, Response } from "express";
 import * as petsService from "./pets.service.js";
 import {
   validateCreatePetPayload,
+  validateCreatePetWalkPayload,
+  validateOptionalDate,
   validatePetId,
+  validateSize,
   validateUpdatePetPayload,
+  validateUpdatePetWalkPayload,
+  validateWalkId,
 } from "./pets.validation.js";
+
+const CANCELLATION_WINDOW_MS = 24 * 60 * 60 * 1000;
 
 type MulterRequest = Request & { file?: Express.Multer.File };
 
@@ -14,10 +21,45 @@ const sendBadRequest = (res: Response, message: string) =>
 const sendServerError = (res: Response, message = "Internal server error.") =>
   res.status(500).json({ error: message });
 
-export const list = async (_req: Request, res: Response) => {
+export const list = async (req: Request, res: Response) => {
   try {
-    const pets = await petsService.list();
+    const size = validateSize(req.query.size);
+    const pets = await petsService.list(size);
     return res.json(pets);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : undefined;
+    return sendServerError(res, message);
+  }
+};
+
+export const listWithWalkSummary = async (_req: Request, res: Response) => {
+  try {
+    const pets = await petsService.listWithWalkSummary();
+    return res.json(pets);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : undefined;
+    return sendServerError(res, message);
+  }
+};
+
+export const listWalkPriorityDogs = async (req: Request, res: Response) => {
+  try {
+    const walkDate = validateOptionalDate(req.query.date);
+    const pets = await petsService.listWalkPriorityDogs(walkDate);
+    return res.json(pets);
+  } catch (error) {
+    if (error instanceof Error) {
+      return sendBadRequest(res, error.message);
+    }
+
+    return sendServerError(res);
+  }
+};
+
+export const listWalks = async (_req: Request, res: Response) => {
+  try {
+    const walks = await petsService.listWalks();
+    return res.json(walks);
   } catch (error) {
     const message = error instanceof Error ? error.message : undefined;
     return sendServerError(res, message);
@@ -79,6 +121,77 @@ export const update = async (req: Request, res: Response) => {
   }
 };
 
+export const recordWalk = async (req: Request, res: Response) => {
+  try {
+    const petId = validatePetId(req.params.id);
+    const pet = await petsService.getById(petId);
+
+    if (!pet) {
+      return res.status(404).json({ error: "Pet not found." });
+    }
+
+    const payload = validateCreatePetWalkPayload(req.body);
+    const walk = await petsService.recordWalk(petId, payload);
+
+    return res.status(201).json(walk);
+  } catch (error) {
+    if (error instanceof Error) {
+      return sendBadRequest(res, error.message);
+    }
+
+    return sendServerError(res);
+  }
+};
+
+export const updateWalk = async (req: Request, res: Response) => {
+  try {
+    const walkId = validateWalkId(req.params.walkId);
+    const payload = validateUpdatePetWalkPayload(req.body);
+
+    if (payload.pet_id !== undefined) {
+      const pet = await petsService.getById(payload.pet_id);
+
+      if (!pet) {
+        return res.status(404).json({ error: "Pet not found." });
+      }
+    }
+
+    const walk = await petsService.updateWalk(walkId, payload);
+
+    if (!walk) {
+      return res.status(404).json({ error: "Walk not found." });
+    }
+
+    return res.json(walk);
+  } catch (error) {
+    if (error instanceof Error) {
+      return sendBadRequest(res, error.message);
+    }
+
+    return sendServerError(res);
+  }
+};
+
+export const deleteWalk = async (req: Request, res: Response) => {
+  try {
+    const walkId = validateWalkId(req.params.walkId);
+    const walk = await petsService.getWalkById(walkId);
+
+    if (!walk) {
+      return res.status(404).json({ error: "Walk not found." });
+    }
+
+    await petsService.deleteWalk(walkId);
+    return res.status(204).send();
+  } catch (error) {
+    if (error instanceof Error) {
+      return sendBadRequest(res, error.message);
+    }
+
+    return sendServerError(res);
+  }
+};
+
 const deleteById = async (req: Request, res: Response) => {
   try {
     const id = validatePetId(req.params.id);
@@ -131,5 +244,63 @@ export const uploadPhoto = async (req: MulterRequest, res: Response) => {
       return sendBadRequest(res, error.message);
     }
     return sendServerError(res);
+  }
+};
+
+export const cancelWalk = async (req: Request, res: Response) => {
+  try {
+    const walkerId = req.user?.id;
+    if (!walkerId) {
+      return res.status(401).json({ error: "Walker ID not found in token" });
+    }
+
+    const walkId = validateWalkId(req.params.walkId);
+    const walk = await petsService.getWalkById(walkId);
+
+    if (!walk) {
+      return res.status(404).json({ error: "Walk not found." });
+    }
+
+    if (walk.walker_id !== walkerId) {
+      return res
+        .status(403)
+        .json({ error: "You can only cancel your own walks." });
+    }
+
+    const msUntilWalk = new Date(walk.walked_at).getTime() - Date.now();
+    if (msUntilWalk <= CANCELLATION_WINDOW_MS) {
+      return res.status(400).json({
+        error: "Walks can only be cancelled at least 24 hours in advance.",
+      });
+    }
+
+    await petsService.cancelWalk(walkId);
+    return res.status(204).send();
+  } catch (error) {
+    if (error instanceof Error) {
+      return sendBadRequest(res, error.message);
+    }
+
+    return sendServerError(res);
+  }
+};
+
+export const listUpcomingWalks = async (req: Request, res: Response) => {
+  try {
+    const walkerId = req.user?.id;
+
+    if (!walkerId) {
+      return res.status(401).json({ error: "Walker ID not found in token" });
+    }
+
+    console.log("Controller: Fetching walks for walker:", walkerId);
+
+    const walks = await petsService.listUpcomingWalks(walkerId);
+
+    console.log("Controller: Found walks:", walks.length);
+    res.json(walks);
+  } catch (error) {
+    console.error("Controller Error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };

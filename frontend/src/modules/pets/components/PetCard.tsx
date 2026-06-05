@@ -4,11 +4,18 @@ import { PetPhotoUpload } from "./PetPhotoUpload";
 
 type Props = {
   pet: Pet;
+  onPetClick: (petId: string | number) => void;
 };
 
-export const PetCard: React.FC<Props> = ({ pet }) => {
+export const PetCard: React.FC<Props> = ({ pet, onPetClick }) => {
+  const normalizedSize = pet.size?.toLowerCase();
+
   return (
-    <div className="hp-pet-card">
+    <div
+      className="hp-pet-card"
+      onClick={() => onPetClick(pet.id)}
+      style={{ cursor: "pointer" }}
+    >
       {pet.image_url ? (
         <img
           src={pet.image_url}
@@ -54,11 +61,13 @@ export const PetCard: React.FC<Props> = ({ pet }) => {
         </p>
         <p>
           <strong>Size:</strong>{" "}
-          {pet.size === "small"
+          {normalizedSize === "small"
             ? "Small"
-            : pet.size === "medium"
+            : normalizedSize === "medium"
               ? "Medium"
-              : "Large"}
+              : normalizedSize === "large"
+                ? "Large"
+                : "Unknown"}
         </p>
       </div>
 

@@ -1,5 +1,6 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -52,9 +53,15 @@ const initialFormState: FormState = {
 };
 
 export function AdoptionApplicationPage() {
+  const [searchParams] = useSearchParams();
+  const petIdFromUrl = searchParams.get("petId") ?? "";
+
   const { session } = useAuth();
   const { data: pets = [], isPending: petsLoading } = usePetList();
-  const [form, setForm] = useState<FormState>(initialFormState);
+  const [form, setForm] = useState<FormState>({
+    ...initialFormState,
+    pet_id: petIdFromUrl,
+  });
   const [submissionSummary, setSubmissionSummary] =
     useState<SubmissionSummary | null>(null);
 

@@ -1,21 +1,19 @@
 # Warsztat programowania zespołowego
 
-## phase 0 TODO:
-
-- [x] create working alpha version (repo structure, first controller, dockerfiles) - AP
-- [x] add shared structures - AP
-- [x] setup github actions lint and typecheck - AP
-- [x] setup precommit hooks with husky and lint-staged - AP
-- [x] write a semi-decent readme with setup instructions - AP
-- [ ] setup database and add connection to it - MK
-- [ ] clear not needed templates code - AP
-- [x] meeting with intro on how the structure works - AP&MK
-
 ## How to run:
 
 You need Docker installed. To run without it see below. With docker installed, use the provided docker-compose file. Go to root folder and use
 `docker-compose up -d`
 Application frontend started on port **3000** and backend on port **5000**
+
+### Environment variables
+
+Both services expect environment variables. Copy the example files and fill in real values:
+
+- backend: `backend/.env.example` -> `backend/.env`
+- frontend: `frontend/.env.example` -> `frontend/.env`
+
+Backend must receive `PORT` from the environment in production (e.g., Render).
 
 You can also run locally but the app assumes docker-network, so without it backend won't recognise fronted. If you want to run without docker, you have to change the address (from ex. http://backend to localhost).
 

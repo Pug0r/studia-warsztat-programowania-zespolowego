@@ -1,3 +1,7 @@
+import type {
+  AdoptionApplicationWithPetSummary,
+  AdoptionStatus,
+} from "@repo/types";
 import api from "../../api/api";
 
 export type CreateAdoptionApplicationRequest = {
@@ -16,5 +20,23 @@ export const submitAdoptionApplication = async (
   payload: CreateAdoptionApplicationRequest,
 ) => {
   const response = await api.post("adoption-applications/", payload);
+  return response.data;
+};
+
+export const getAdoptionApplications = async () => {
+  const response = await api.get<AdoptionApplicationWithPetSummary[]>(
+    "adoption-applications/",
+  );
+  return response.data;
+};
+
+export const updateAdoptionStatus = async (
+  id: number,
+  status: AdoptionStatus,
+) => {
+  const response = await api.patch<AdoptionApplicationWithPetSummary>(
+    `adoption-applications/${id}/status`,
+    { status },
+  );
   return response.data;
 };

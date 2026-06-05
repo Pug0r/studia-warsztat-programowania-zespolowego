@@ -4,9 +4,6 @@
 !.env.example
 
 # Dependencies
-
-package-lock.json
-
 /node_modules
 /frontend/node_modules
 /backend/node_modules
@@ -20,3 +17,9 @@ package-lock.json
 # Test coverage
 /coverage
 .vite
+
+# Intellij IDEA
+/.idea
+
+# Supabase
+/supabase/.temp

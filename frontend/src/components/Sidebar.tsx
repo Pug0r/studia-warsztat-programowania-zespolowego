@@ -1,22 +1,48 @@
 import {
+  CalendarCheck,
+  CalendarClock,
+  CalendarDays,
+  Dog,
   HeartHandshake,
   Home,
   LifeBuoy,
   LogOut,
   PawPrint,
+  ShieldCheck,
+  Stethoscope,
   Users,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { useUserProfile } from "@/modules/auth/hooks/useUserProfile";
 
 const Sidebar = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const { session, signOut } = useAuth();
+  const { role } = useUserProfile();
   const email = session?.user.email ?? "staff@haven-shelter.org";
+
+  const isDashboardOverview = location.pathname === "/dashboard";
+  const isDashboardAdoptions = location.pathname === "/dashboard/adoptions";
+  const isDashboardVolunteers = location.pathname === "/dashboard/volunteers";
+  const isDashboardVolunteerWalks = location.pathname === "/dashboard/walks";
+  const isDashboardAdmin = location.pathname === "/dashboard/admin";
+  const isCoordinatorWalkCalendar =
+    location.pathname === "/dashboard/walk-calendar";
+  const isManageEvents = location.pathname === "/dashboard/manage-events";
+  const isHealthCards = location.pathname.startsWith("/health-cards");
+  const isMedicalSchedule = location.pathname.startsWith("/medical-schedule");
+  const isCoordinator =
+    (session?.user?.user_metadata?.role as string | undefined) ===
+    "coordinator";
+  const isVet =
+    (session?.user?.user_metadata?.role as string | undefined) === "vet";
+  const isAdmin = role === "admin";
 
   async function handleSignOut() {
     await signOut();
@@ -41,32 +67,117 @@ const Sidebar = () => {
         <Separator />
 
         <nav className="space-y-2" aria-label="Sidebar">
-          <Button variant="secondary" className="w-full justify-start gap-2">
-            <Home className="size-4" />
-            Overview
-          </Button>
           <Button
             asChild
-            variant="ghost"
+            variant={isDashboardOverview ? "secondary" : "ghost"}
             className="w-full justify-start gap-2"
           >
-            <Link to="/dashboard/pets">
+            <Link to="/dashboard">
+              <Home className="size-4" />
+              Overview
+            </Link>
+          </Button>
+          <Button variant="ghost" className="w-full p-0">
+            <Link
+              to="/pets"
+              className="w-full flex items-center gap-2 justify-start px-3 py-2"
+            >
               <PawPrint className="size-4" />
               Animals
             </Link>
           </Button>
-          <Button variant="ghost" className="w-full justify-start gap-2">
-            <Users className="size-4" />
-            Volunteers
+          <Button
+            asChild
+            variant={isDashboardVolunteers ? "secondary" : "ghost"}
+            className="w-full justify-start gap-2"
+          >
+            <Link to="/dashboard/volunteers">
+              <Users className="size-4" />
+              Volunteers
+            </Link>
           </Button>
-          <Button variant="ghost" className="w-full justify-start gap-2">
-            <HeartHandshake className="size-4" />
-            Adoptions
+          <Button
+            asChild
+            variant={isDashboardVolunteerWalks ? "secondary" : "ghost"}
+            className="w-full justify-start gap-2"
+          >
+            <Link to="/dashboard/walks">
+              <Dog className="size-4" />
+              My walks
+            </Link>
+          </Button>
+          {isCoordinator && (
+            <Button
+              asChild
+              variant={isCoordinatorWalkCalendar ? "secondary" : "ghost"}
+              className="w-full justify-start gap-2"
+            >
+              <Link to="/dashboard/walk-calendar">
+                <CalendarDays className="size-4" />
+                Walk calendar
+              </Link>
+            </Button>
+          )}
+          <Button
+            asChild
+            variant={isDashboardAdoptions ? "secondary" : "ghost"}
+            className="w-full justify-start gap-2"
+          >
+            <Link to="/dashboard/adoptions">
+              <HeartHandshake className="size-4" />
+              Adoptions
+            </Link>
           </Button>
           <Button variant="ghost" className="w-full justify-start gap-2">
             <LifeBuoy className="size-4" />
             Support cases
           </Button>
+          <Button
+            asChild
+            variant={isManageEvents ? "secondary" : "ghost"}
+            className="w-full justify-start gap-2"
+          >
+            <Link to="/dashboard/manage-events">
+              <CalendarCheck className="size-4" />
+              Manage events
+            </Link>
+          </Button>
+          {isVet && (
+            <>
+              <Button
+                asChild
+                variant={isHealthCards ? "secondary" : "ghost"}
+                className="w-full justify-start gap-2"
+              >
+                <Link to="/health-cards">
+                  <Stethoscope className="size-4" />
+                  Health cards
+                </Link>
+              </Button>
+              <Button
+                asChild
+                variant={isMedicalSchedule ? "secondary" : "ghost"}
+                className="w-full justify-start gap-2"
+              >
+                <Link to="/medical-schedule">
+                  <CalendarClock className="size-4" />
+                  Medical calendar
+                </Link>
+              </Button>
+            </>
+          )}
+          {isAdmin && (
+            <Button
+              asChild
+              variant={isDashboardAdmin ? "secondary" : "ghost"}
+              className="w-full justify-start gap-2"
+            >
+              <Link to="/dashboard/admin">
+                <ShieldCheck className="size-4" />
+                Admin panel
+              </Link>
+            </Button>
+          )}
         </nav>
 
         <Separator />

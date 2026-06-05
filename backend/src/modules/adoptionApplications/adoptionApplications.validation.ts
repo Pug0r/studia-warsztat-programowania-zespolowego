@@ -1,4 +1,9 @@
-import type { CreateAdoptionApplicationDTO } from "@repo/types";
+import {
+  ADOPTION_STATUSES,
+  type AdoptionStatus,
+  type CreateAdoptionApplicationDTO,
+  type UpdateAdoptionApplicationStatusDTO,
+} from "@repo/types";
 
 const isNonEmptyString = (value: unknown): value is string =>
   typeof value === "string" && value.trim().length > 0;
@@ -116,4 +121,28 @@ export const validateCreateAdoptionApplicationPayload = (
   }
 
   return dto;
+};
+
+export const validateAdoptionApplicationId = (value: unknown): number =>
+  parsePositiveInteger(value, "id");
+
+export const validateUpdateAdoptionStatusPayload = (
+  payload: unknown,
+): UpdateAdoptionApplicationStatusDTO => {
+  if (!payload || typeof payload !== "object") {
+    throw new Error("Payload must be an object.");
+  }
+
+  const { status } = payload as Record<string, unknown>;
+
+  if (
+    typeof status !== "string" ||
+    !ADOPTION_STATUSES.includes(status as AdoptionStatus)
+  ) {
+    throw new Error(
+      `Field 'status' is required and must be one of: ${ADOPTION_STATUSES.join(", ")}.`,
+    );
+  }
+
+  return { status: status as AdoptionStatus };
 };

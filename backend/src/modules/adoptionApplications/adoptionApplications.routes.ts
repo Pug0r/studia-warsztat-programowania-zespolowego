@@ -3,6 +3,8 @@ import * as adoptionApplicationsController from "./adoptionApplications.controll
 
 const router = express.Router();
 
+router.get("/", adoptionApplicationsController.get);
 router.post("/", adoptionApplicationsController.create);
+router.patch("/:id/status", adoptionApplicationsController.updateStatus);
 
 export default router;
