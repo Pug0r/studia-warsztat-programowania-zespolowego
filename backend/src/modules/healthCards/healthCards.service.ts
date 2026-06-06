@@ -104,10 +104,7 @@ export const update = async (
 };
 
 export const remove = async (id: number): Promise<void> => {
-  const { error } = await sb
-    .from("health_card_entries")
-    .delete()
-    .eq("id", id);
+  const { error } = await sb.from("health_card_entries").delete().eq("id", id);
 
   if (error) {
     throw new Error(error.message);

@@ -18,7 +18,7 @@ import {
 } from "@/modules/events/utils/calendar";
 import { MedicalReminderBanner } from "@/modules/medicalSchedule/MedicalReminderBanner";
 import { UpcomingMedicalEventsPanel } from "@/modules/medicalSchedule/UpcomingMedicalEventsPanel";
-import { WalkMonitoringPanel } from "@/modules/volunteers/components/WalkMonitoringPanel";
+import { WalkPriorityQueue } from "@/modules/volunteers/components/WalkPriorityQueue";
 import { MyWalksPanel } from "./MyWalksPanel";
 
 export function DashboardPage() {
@@ -37,49 +37,13 @@ export function DashboardPage() {
           </h1>
           <p className="text-sm text-slate-600">
             Track adoptions, volunteers, and daily medical work in one place.
+            You need to have permissions to access all sections of the
+            dashboard. If you think you should have access, please contact your
+            administrator.
           </p>
         </header>
 
         <MedicalReminderBanner />
-
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <Card>
-            <CardHeader>
-              <CardDescription>Animals in care</CardDescription>
-              <CardTitle className="text-2xl">86</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-slate-600">
-              32 ready for adoption this week
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardDescription>Open adoptions</CardDescription>
-              <CardTitle className="text-2xl">14</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-slate-600">
-              5 home visits scheduled
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardDescription>Active volunteers</CardDescription>
-              <CardTitle className="text-2xl">42</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-slate-600">
-              12 currently on shift
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardDescription>Medical alerts</CardDescription>
-              <CardTitle className="text-2xl">3</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-slate-600">
-              2 require follow-up today
-            </CardContent>
-          </Card>
-        </div>
 
         <UpcomingMedicalEventsPanel />
 
@@ -221,7 +185,7 @@ export function DashboardPage() {
               </CardContent>
             </Card>
 
-            <WalkMonitoringPanel />
+            <WalkPriorityQueue />
           </div>
         </div>
       </section>
