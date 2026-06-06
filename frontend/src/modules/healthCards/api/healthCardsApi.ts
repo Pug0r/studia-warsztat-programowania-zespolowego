@@ -1,5 +1,8 @@
 import { supabase } from "@/lib/supabaseClient";
-import type { HealthCardEntry, HealthCardEntryPayload } from "../types/HealthCard";
+import type {
+  HealthCardEntry,
+  HealthCardEntryPayload,
+} from "../types/HealthCard";
 
 const getAuthHeaders = async (): Promise<Record<string, string>> => {
   if (!supabase) {

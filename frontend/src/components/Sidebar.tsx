@@ -128,10 +128,6 @@ const Sidebar = () => {
               Adoptions
             </Link>
           </Button>
-          <Button variant="ghost" className="w-full justify-start gap-2">
-            <LifeBuoy className="size-4" />
-            Support cases
-          </Button>
           <Button
             asChild
             variant={isManageEvents ? "secondary" : "ghost"}
