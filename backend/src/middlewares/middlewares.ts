@@ -1,15 +1,19 @@
 // middlewares.ts
 import { RequestHandler as ExpressRequestHandler } from "express";
 import { createClient } from "@supabase/supabase-js";
+import { supabase } from "#config/supabaseClient.js";
 
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+const supabaseAuthKey =
+  process.env.SUPABASE_ANON_KEY ??
+  process.env.SUPABASE_KEY ??
+  process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error("Missing SUPABASE_URL or SUPABASE_ANON_KEY");
+if (!supabaseUrl || !supabaseAuthKey) {
+  throw new Error("Missing SUPABASE_URL and a Supabase auth key");
 }
 
-const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey);
+const supabaseAuth = createClient(supabaseUrl, supabaseAuthKey);
 
 declare module "express-serve-static-core" {
   interface Request {
@@ -59,6 +63,45 @@ export const authMiddleware: ExpressRequestHandler = async (req, res, next) => {
     };
 
     console.log("User authenticated:", req.user.id);
+    next();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Auth error";
+    console.error("Auth middleware error:", message);
+    return res.status(500).json({ error: message });
+  }
+};
+
+export const adminMiddleware: ExpressRequestHandler = async (
+  req,
+  res,
+  next,
+) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({
+        error: "Unauthorized",
+      });
+    }
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", userId)
+      .single();
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (error || !data) {
+      return res.status(403).json({
+        error: "Forbidden",
+      });
+    }
+
+    if (data.role !== "admin") {
+      return res.status(403).json({
+        error: "Forbidden",
+      });
+    }
+
     next();
   } catch (error) {
     const message = error instanceof Error ? error.message : "Auth error";

@@ -2,7 +2,7 @@
 
 .shelter-public {
   --hp-surface: #ffffff;
-  --hp-bg: #f4f5f7;
+  /* --hp-bg: #f4f5f7; */
   --hp-text: #3f3f46;
   --hp-text-muted: #71717a;
   --hp-heading: #18181b;

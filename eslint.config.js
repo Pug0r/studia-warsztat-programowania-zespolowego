@@ -11,7 +11,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default tseslint.config(
   {
-    ignores: ["**/*.js"],
+    ignores: ["**/*.js", "**/database.types.ts"],
   },
   eslint.configs.recommended,
   tseslint.configs.strictTypeChecked,

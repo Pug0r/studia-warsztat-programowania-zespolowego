@@ -1,6 +1,8 @@
 import { type Session } from "@supabase/supabase-js";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 
+import { logAuthAuditEventBestEffort } from "@/modules/audit/api";
+import { queryClient } from "@/app/queryClient";
 import { supabase } from "@/lib/supabaseClient";
 import type { AuthContextValue } from "./types";
 import { AuthContext } from "./hooks/AuthContext";
@@ -47,9 +49,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAuthenticated: Boolean(session),
       isLoading,
       signOut: async () => {
+        if (session?.user) {
+          logAuthAuditEventBestEffort("auth.sign_out", {
+            email: session.user.email ?? null,
+          });
+        }
+
         if (supabase) {
           await supabase.auth.signOut();
         }
+
+        queryClient.clear();
       },
     }),
     [isLoading, session],
