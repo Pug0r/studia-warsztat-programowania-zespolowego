@@ -68,7 +68,9 @@ export const HealthCardEntryForm = ({
             id="hc-entry-type"
             className="hc-form__select"
             value={entryType}
-            onChange={(e) => setEntryType(e.target.value as HealthCardEntryType)}
+            onChange={(e) =>
+              setEntryType(e.target.value as HealthCardEntryType)
+            }
           >
             {HEALTH_CARD_ENTRY_TYPES.map((type) => (
               <option key={type} value={type}>

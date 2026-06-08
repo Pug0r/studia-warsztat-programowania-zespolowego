@@ -11,33 +11,18 @@ import {
   getEventTypeLabel,
 } from "@/modules/events/utils/calendar";
 
-const STATS = [
-  {
-    value: "1,240+",
-    label: "Animals adopted since 2018",
-    delta: "+12% vs last year",
-  },
-  { value: "86", label: "In our care today", delta: "32 ready to adopt" },
-  {
-    value: "420",
-    label: "Active volunteers",
-    delta: "Orientation every month",
-  },
-  { value: "98%", label: "Post-adoption check-ins", delta: "First 90 days" },
-] as const;
-
 const ADOPTION_STEPS = [
   {
     title: "Browse & filter",
-    body: "Search by species, age, energy level, and home type. Save favorites to your shortlist.",
-  },
-  {
-    title: "Meet & match",
-    body: "Book a visit or video call. Our staff helps ensure a good fit for your household.",
+    body: "Search by species, age, size, and weight. Read the detailed descriptions and find your pet.",
   },
   {
     title: "Apply & review",
     body: "Submit a short application. We verify references and answer your questions promptly.",
+  },
+  {
+    title: "Meet & match",
+    body: "Take your future pet for a walk to know them better. Our staff helps ensure a good fit for your household. Don't hesitate to ask questions.",
   },
   {
     title: "Go home together",
@@ -54,30 +39,23 @@ const STAFF_PORTALS = [
     current: true as const,
   },
   {
-    role: "Admin",
-    name: "Operations",
-    hint: "Users, settings, reports",
-    href: "#admin",
-    current: false as const,
-  },
-  {
     role: "Volunteer",
     name: "My shifts",
-    hint: "Schedule & tasks",
+    hint: "Schedule walks",
     href: "#volunteer",
     current: false as const,
   },
   {
     role: "Coordinator",
     name: "Teams",
-    hint: "Rosters & approvals",
+    hint: "Manage volunteers & events",
     href: "#coordinator",
     current: false as const,
   },
   {
     role: "Veterinarian",
     name: "Clinical",
-    hint: "Records & rounds",
+    hint: "Take care of our animals' health",
     href: "#vet",
     current: false as const,
   },
@@ -103,7 +81,6 @@ function Header() {
           Haven Shelter
         </a>
         <nav className="hp-nav" aria-label="Primary">
-          <a href="#adopt">Adopt</a>
           <a href="#events">Events</a>
           <a href="#how-it-works">How it works</a>
           <a href="#portals">Staff</a>
@@ -205,32 +182,6 @@ function Hero() {
             />
           </div>
         </div>
-        <div className="hp-hero__float-card">
-          <span className="hp-badge hp-badge--info">Live</span>
-          <div>
-            <strong>12 meet-and-greets</strong>
-            <span>scheduled this week</span>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function StatsSection() {
-  return (
-    <section className="hp-stats" aria-labelledby="stats-heading">
-      <h2 id="stats-heading" className="visually-hidden">
-        Shelter impact statistics
-      </h2>
-      <div className="hp-stats__grid">
-        {STATS.map((s) => (
-          <article key={s.label} className="hp-stat-card">
-            <div className="hp-stat-card__value">{s.value}</div>
-            <div className="hp-stat-card__label">{s.label}</div>
-            <div className="hp-stat-card__delta">{s.delta}</div>
-          </article>
-        ))}
       </div>
     </section>
   );
@@ -429,11 +380,13 @@ function StaffPortals() {
       aria-labelledby="portals-heading"
     >
       <div className="hp-portals__inner">
-        <h2 id="portals-heading">Role-based workspaces</h2>
+        <h2 id="portals-heading">Join us!</h2>
         <p>
-          Staff and volunteers use dedicated panels (sidebar navigation, tables,
-          and calendars) separate from this public site—tiles below map the
-          future app shell.
+          Do you want to contribute to our mission and make a difference in the
+          lives of animals? You can help as a volunteer, coordinator, or
+          veterinarian. Explore the portals below to see how you can get
+          involved and support our shelter community. We can't wait to welcome
+          you to the Haven family!
         </p>
         <div className="hp-portals__grid">
           {STAFF_PORTALS.map((p) =>
@@ -469,9 +422,7 @@ function Footer() {
           © {new Date().getFullYear()} Haven Shelter. A demo UI for coursework.
         </p>
         <nav className="hp-footer__links" aria-label="Footer">
-          <a href="#top">Privacy</a>
-          <a href="#top">Contact</a>
-          <a href="#top">Donate</a>
+          <a href="#top">Contact us: info@haven-shelter.org +1 123 456 789</a>
         </nav>
       </div>
     </footer>
@@ -487,7 +438,6 @@ export function HomePage() {
       <Header />
       <main id="main-content">
         <Hero />
-        <StatsSection />
         <EventsAndCalendar />
         <AdoptionHowItWorks />
         <StaffPortals />
