@@ -36,7 +36,7 @@ const Sidebar = () => {
   const isManageEvents = location.pathname === "/dashboard/manage-events";
   const isHealthCards = location.pathname.startsWith("/health-cards");
   const isMedicalSchedule = location.pathname.startsWith("/medical-schedule");
-  const canManageWalkCalendar = role === "coordinator" || role === "admin";
+  const canManageCoordinatorPages = role === "coordinator" || role === "admin";
   const isVet = role === "vet";
   const isAdmin = role === "admin";
 
@@ -82,16 +82,18 @@ const Sidebar = () => {
               Animals
             </Link>
           </Button>
-          <Button
-            asChild
-            variant={isDashboardVolunteers ? "secondary" : "ghost"}
-            className="w-full justify-start gap-2"
-          >
-            <Link to="/dashboard/volunteers">
-              <Users className="size-4" />
-              Volunteers
-            </Link>
-          </Button>
+          {canManageCoordinatorPages && (
+            <Button
+              asChild
+              variant={isDashboardVolunteers ? "secondary" : "ghost"}
+              className="w-full justify-start gap-2"
+            >
+              <Link to="/dashboard/volunteers">
+                <Users className="size-4" />
+                Volunteers
+              </Link>
+            </Button>
+          )}
           <Button
             asChild
             variant={isDashboardVolunteerWalks ? "secondary" : "ghost"}
@@ -102,7 +104,7 @@ const Sidebar = () => {
               My walks
             </Link>
           </Button>
-          {canManageWalkCalendar && (
+          {canManageCoordinatorPages && (
             <Button
               asChild
               variant={isCoordinatorWalkCalendar ? "secondary" : "ghost"}
@@ -114,26 +116,30 @@ const Sidebar = () => {
               </Link>
             </Button>
           )}
-          <Button
-            asChild
-            variant={isDashboardAdoptions ? "secondary" : "ghost"}
-            className="w-full justify-start gap-2"
-          >
-            <Link to="/dashboard/adoptions">
-              <HeartHandshake className="size-4" />
-              Adoptions
-            </Link>
-          </Button>
-          <Button
-            asChild
-            variant={isManageEvents ? "secondary" : "ghost"}
-            className="w-full justify-start gap-2"
-          >
-            <Link to="/dashboard/manage-events">
-              <CalendarCheck className="size-4" />
-              Manage events
-            </Link>
-          </Button>
+          {canManageCoordinatorPages && (
+            <Button
+              asChild
+              variant={isDashboardAdoptions ? "secondary" : "ghost"}
+              className="w-full justify-start gap-2"
+            >
+              <Link to="/dashboard/adoptions">
+                <HeartHandshake className="size-4" />
+                Adoptions
+              </Link>
+            </Button>
+          )}
+          {canManageCoordinatorPages && (
+            <Button
+              asChild
+              variant={isManageEvents ? "secondary" : "ghost"}
+              className="w-full justify-start gap-2"
+            >
+              <Link to="/dashboard/manage-events">
+                <CalendarCheck className="size-4" />
+                Manage events
+              </Link>
+            </Button>
+          )}
           {isVet && (
             <>
               <Button
