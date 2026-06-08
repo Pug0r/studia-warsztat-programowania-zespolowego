@@ -39,9 +39,9 @@ export const AppRoutes = () => {
       <Route
         path="/dashboard/adoptions"
         element={
-          <ProtectedRoute>
+          <CoordinatorRoute>
             <AdoptionsDashboardPage />
-          </ProtectedRoute>
+          </CoordinatorRoute>
         }
       />
       <Route
