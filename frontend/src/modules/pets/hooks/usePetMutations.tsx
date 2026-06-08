@@ -4,7 +4,11 @@ import {
   deletePetRequest,
   updatePetRequest,
 } from "../api/petsApi";
-import type { CreatePetPayload, Pet, UpdatePetPayload } from "../types/Pets";
+import type {
+  CreatePetPayload,
+  Pet,
+  UpdatePetPayload,
+} from "../types/Pets";
 
 const PET_LIST_KEY = ["get_pet_list"];
 

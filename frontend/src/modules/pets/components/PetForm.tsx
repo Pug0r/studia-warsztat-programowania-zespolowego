@@ -4,7 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PetPhotoUpload } from "./PetPhotoUpload";
-import type { CreatePetPayload, Pet, UpdatePetPayload } from "../types/Pets";
+import type {
+  CreatePetPayload,
+  Pet,
+  UpdatePetPayload,
+} from "../types/Pets";
 
 type PetFormState = {
   name: string;

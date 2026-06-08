@@ -18,10 +18,7 @@ import { showToast } from "@/lib/toast";
 import "./PetsPage.css";
 import Sidebar from "@/components/Sidebar";
 
-type FormMode =
-  | { kind: "idle" }
-  | { kind: "create" }
-  | { kind: "edit"; pet: Pet };
+type FormMode = { kind: "idle" } | { kind: "create" } | { kind: "edit"; pet: Pet };
 
 export const PetsPage: React.FC = () => {
   const { data, error, isPending } = usePetList();

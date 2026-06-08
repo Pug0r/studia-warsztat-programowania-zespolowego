@@ -1,6 +1,7 @@
 import React from "react";
 import type { Pet } from "../types/Pets";
 import { PetPhotoUpload } from "./PetPhotoUpload";
+import { useUserProfile } from "@/modules/auth/hooks/useUserProfile";
 
 type Props = {
   pet: Pet;
@@ -8,6 +9,8 @@ type Props = {
 };
 
 export const PetCard: React.FC<Props> = ({ pet, onPetClick }) => {
+  const { role } = useUserProfile();
+  const isAdmin = role === "admin";
   const normalizedSize = pet.size?.toLowerCase();
 
   return (
@@ -77,7 +80,7 @@ export const PetCard: React.FC<Props> = ({ pet, onPetClick }) => {
         Adopt {pet.name}
       </button>
 
-      <PetPhotoUpload petId={pet.id} />
+      {isAdmin && <PetPhotoUpload petId={pet.id} />}
     </div>
   );
 };
