@@ -93,7 +93,11 @@ export const listWithWalkSummary = async (): Promise<PetWithWalkSummary[]> => {
   const now = new Date().toISOString();
   const [{ data: pets, error: petsError }, { data: walks, error: walksError }] =
     await Promise.all([
-      supabase.from("pets").select("*").order("name", { ascending: true }),
+      supabase
+        .from("pets")
+        .select("*")
+        .eq("species", "dog")
+        .order("name", { ascending: true }),
       supabase
         .from("pet_walks")
         .select("pet_id, walked_at")
