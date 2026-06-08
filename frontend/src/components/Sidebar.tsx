@@ -5,7 +5,6 @@ import {
   Dog,
   HeartHandshake,
   Home,
-  LifeBuoy,
   LogOut,
   PawPrint,
   ShieldCheck,
@@ -25,7 +24,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const { session, signOut } = useAuth();
   const { role } = useUserProfile();
-  const email = session?.user.email ?? "staff@haven-shelter.org";
+  const email = session?.user.email ?? "Haven Guest";
 
   const isDashboardOverview = location.pathname === "/dashboard";
   const isDashboardAdoptions = location.pathname === "/dashboard/adoptions";
@@ -37,11 +36,8 @@ const Sidebar = () => {
   const isManageEvents = location.pathname === "/dashboard/manage-events";
   const isHealthCards = location.pathname.startsWith("/health-cards");
   const isMedicalSchedule = location.pathname.startsWith("/medical-schedule");
-  const isCoordinator =
-    (session?.user?.user_metadata?.role as string | undefined) ===
-    "coordinator";
-  const isVet =
-    (session?.user?.user_metadata?.role as string | undefined) === "vet";
+  const canManageWalkCalendar = role === "coordinator" || role === "admin";
+  const isVet = role === "vet";
   const isAdmin = role === "admin";
 
   async function handleSignOut() {
@@ -106,7 +102,7 @@ const Sidebar = () => {
               My walks
             </Link>
           </Button>
-          {isCoordinator && (
+          {canManageWalkCalendar && (
             <Button
               asChild
               variant={isCoordinatorWalkCalendar ? "secondary" : "ghost"}

@@ -26,12 +26,17 @@ export function RegisterPage() {
       title="Register"
       description="Create an account with Supabase Authentication."
       footer={
-        <>
-          Already have an account?{" "}
-          <Link className="font-medium text-slate-900 underline" to="/login">
-            Sign in
+        <div className="space-y-2">
+          <p>
+            Already have an account?{" "}
+            <Link className="font-medium text-slate-900 underline" to="/login">
+              Sign in
+            </Link>
+          </p>
+          <Link className="font-medium text-slate-900 underline" to="/">
+            Back to Main Page
           </Link>
-        </>
+        </div>
       }
     >
       <AuthForm
