@@ -1,4 +1,4 @@
-import React, { useMemo, useState, type FormEvent } from "react";
+import React, { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Dog } from "lucide-react";
 
 import { useAuth } from "@/modules/auth/hooks/useAuth";
@@ -140,6 +140,13 @@ export const VolunteerPriorityQueueCard = React.memo(
 
     const [durationMinutes, setDurationMinutes] = useState(60);
     const [notes, setNotes] = useState("");
+    const [now, setNow] = useState(() => Date.now());
+
+    useEffect(() => {
+      const interval = setInterval(() => setNow(Date.now()), 60 * 1000);
+
+      return () => clearInterval(interval);
+    }, []);
 
     const selectedDate = selectedDateProp;
     // const selectedDateQuery = formatWalkDateQuery(selectedDate);
@@ -160,23 +167,18 @@ export const VolunteerPriorityQueueCard = React.memo(
       priorityDogs[0] ??
       null;
 
-    const scheduledWalks = useMemo(() => {
-      if (!selectedDog) {
-        return [];
-      }
-
-      const now = Date.now();
-      return walkEvents
-        .filter(
-          (walk) =>
-            walk.pet_id === selectedDog.id &&
-            new Date(walk.walked_at).getTime() >= now,
-        )
-        .sort(
-          (a, b) =>
-            new Date(a.walked_at).getTime() - new Date(b.walked_at).getTime(),
-        );
-    }, [walkEvents, selectedDog]);
+    const scheduledWalks = selectedDog
+      ? walkEvents
+          .filter(
+            (walk) =>
+              walk.pet_id === selectedDog.id &&
+              new Date(walk.walked_at).getTime() >= now,
+          )
+          .sort(
+            (a, b) =>
+              new Date(a.walked_at).getTime() - new Date(b.walked_at).getTime(),
+          )
+      : [];
 
     // Generate available time slots (30-minute intervals)
     const availableTimeSlots = !selectedDate

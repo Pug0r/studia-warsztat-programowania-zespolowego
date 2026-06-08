@@ -23,12 +23,20 @@ export function LoginPage() {
       title="Login"
       description="Sign in with your Supabase account."
       footer={
-        <>
-          Do not have an account?{" "}
-          <Link className="font-medium text-slate-900 underline" to="/register">
-            Register
+        <div className="space-y-2">
+          <p>
+            Do not have an account?{" "}
+            <Link
+              className="font-medium text-slate-900 underline"
+              to="/register"
+            >
+              Register
+            </Link>
+          </p>
+          <Link className="font-medium text-slate-900 underline" to="/">
+            Back to Main Page
           </Link>
-        </>
+        </div>
       }
     >
       <AuthForm

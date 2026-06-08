@@ -30,7 +30,7 @@ export function AuthLayout({
           <p className="text-sm text-slate-500">{description}</p>
         </div>
         {children}
-        <p className="text-center text-sm text-slate-600">{footer}</p>
+        <div className="text-center text-sm text-slate-600">{footer}</div>
       </div>
     </main>
   );

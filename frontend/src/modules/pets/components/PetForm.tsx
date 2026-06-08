@@ -1,14 +1,10 @@
-import type React from "react";
-import { useEffect, useState } from "react";
+import type { ChangeEvent, FC, SyntheticEvent } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PetPhotoUpload } from "./PetPhotoUpload";
-import type {
-  CreatePetPayload,
-  Pet,
-  UpdatePetPayload,
-} from "../types/Pets";
+import type { CreatePetPayload, Pet, UpdatePetPayload } from "../types/Pets";
 
 type PetFormState = {
   name: string;
@@ -48,7 +44,24 @@ type Props = {
   submitLabel?: string;
 };
 
-export const PetForm: React.FC<Props> = ({
+const getPetFormKey = (pet?: Pet) => {
+  if (!pet) {
+    return "new";
+  }
+
+  return [
+    pet.id,
+    pet.name,
+    pet.species,
+    pet.age,
+    pet.weight,
+    pet.description,
+    pet.breed,
+    pet.size,
+  ].join(":");
+};
+
+const PetFormFields: FC<Props> = ({
   pet,
   onSubmit,
   onCancel,
@@ -60,22 +73,19 @@ export const PetForm: React.FC<Props> = ({
   );
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    setForm(pet ? toFormState(pet) : emptyForm);
-    setError(null);
-  }, [pet]);
-
   const handleChange =
     (field: keyof PetFormState) =>
     (
-      event: React.ChangeEvent<
+      event: ChangeEvent<
         HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
       >,
     ) => {
       setForm((prev) => ({ ...prev, [field]: event.target.value }));
     };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = (
+    event: SyntheticEvent<HTMLFormElement, SubmitEvent>,
+  ) => {
     event.preventDefault();
     setError(null);
 
@@ -236,3 +246,7 @@ export const PetForm: React.FC<Props> = ({
     </form>
   );
 };
+
+export const PetForm: FC<Props> = (props) => (
+  <PetFormFields key={getPetFormKey(props.pet)} {...props} />
+);

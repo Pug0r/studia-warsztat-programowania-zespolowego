@@ -28,7 +28,7 @@ export function CoordinatorRoute({ children }: Props) {
       <div className="flex min-h-screen flex-col items-center justify-center gap-2 bg-slate-50 p-6 text-center">
         <h1 className="text-xl font-semibold text-slate-900">Access denied</h1>
         <p className="text-sm text-slate-600">
-          This page is only available to coordinators.
+          This page is only available to coordinators and administrators.
         </p>
       </div>
     );
