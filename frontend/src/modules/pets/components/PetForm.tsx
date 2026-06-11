@@ -14,6 +14,9 @@ type PetFormState = {
   description: string;
   breed: string;
   size: string;
+  ideal_home: string;
+  personality: string;
+  special_needs: string;
 };
 
 const emptyForm: PetFormState = {
@@ -24,6 +27,9 @@ const emptyForm: PetFormState = {
   description: "",
   breed: "",
   size: "",
+  ideal_home: "",
+  personality: "",
+  special_needs: "",
 };
 
 const toFormState = (pet: Pet): PetFormState => ({
@@ -34,6 +40,9 @@ const toFormState = (pet: Pet): PetFormState => ({
   description: pet.description,
   breed: pet.breed ?? "",
   size: pet.size ?? "",
+  ideal_home: pet.ideal_home ?? "",
+  personality: pet.personality ?? "",
+  special_needs: pet.special_needs ?? "",
 });
 
 type Props = {
@@ -118,6 +127,9 @@ const PetFormFields: FC<Props> = ({
       description,
       breed: form.breed.trim() || null,
       size: form.size || null,
+      ideal_home: form.ideal_home.trim() || null,
+      personality: form.personality.trim() || null,
+      special_needs: form.special_needs.trim() || null,
     });
   };
 
@@ -208,6 +220,44 @@ const PetFormFields: FC<Props> = ({
           className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-slate-950 focus-visible:ring-[3px] focus-visible:ring-slate-950/50"
           required
         />
+      </div>
+
+      <div className="space-y-1">
+        <Label htmlFor="pet-ideal-home">Ideal Home</Label>
+        <textarea
+          id="pet-ideal-home"
+          value={form.ideal_home}
+          onChange={handleChange("ideal_home")}
+          rows={3}
+          className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-slate-950 focus-visible:ring-[3px] focus-visible:ring-slate-950/50"
+          placeholder="Describe the ideal home for this pet"
+        />
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="space-y-1">
+          <Label htmlFor="pet-personality">Personality</Label>
+          <textarea
+            id="pet-personality"
+            value={form.personality}
+            onChange={handleChange("personality")}
+            rows={3}
+            className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-slate-950 focus-visible:ring-[3px] focus-visible:ring-slate-950/50"
+            placeholder="Describe the pet's personality"
+          />
+        </div>
+
+        <div className="space-y-1">
+          <Label htmlFor="pet-special-needs">Special Needs</Label>
+          <textarea
+            id="pet-special-needs"
+            value={form.special_needs}
+            onChange={handleChange("special_needs")}
+            rows={3}
+            className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-slate-950 focus-visible:ring-[3px] focus-visible:ring-slate-950/50"
+            placeholder="Any special care requirements"
+          />
+        </div>
       </div>
 
       {pet ? (

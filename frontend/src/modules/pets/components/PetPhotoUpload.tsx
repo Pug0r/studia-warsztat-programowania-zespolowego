@@ -24,11 +24,15 @@ export const PetPhotoUpload: React.FC<Props> = ({ petId }) => {
         accept="image/jpeg,image/png,image/webp"
         className="hidden"
         onChange={handleChange}
+        onClick={(e) => e.stopPropagation()}
       />
       <button
         type="button"
         disabled={isPending}
-        onClick={() => inputRef.current?.click()}
+        onClick={(e) => {
+          e.stopPropagation();
+          inputRef.current?.click();
+        }}
         className="text-sm px-3 py-1 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 transition"
       >
         {isPending ? "Uploading..." : "Upload photo"}

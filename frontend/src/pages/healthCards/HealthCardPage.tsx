@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom";
-import { useMemo, useState } from "react";
-import type { MedicalEventType } from "@repo/types";
+import { useState } from "react";
+// import type { MedicalEventType } from "@repo/types";
 
 import Sidebar from "@/components/Sidebar";
 import { Badge } from "@/components/ui/badge";
@@ -18,11 +18,11 @@ import type {
   HealthCardEntry,
   HealthCardEntryPayload,
 } from "@/modules/healthCards/types/HealthCard";
-import {
-  formatMedicalEventDate,
-  MEDICAL_EVENT_TYPE_LABELS,
-} from "@/modules/medicalSchedule/format";
-import { useMedicalEvents } from "@/modules/medicalSchedule/hooks";
+// import {
+//   formatMedicalEventDate,
+//   MEDICAL_EVENT_TYPE_LABELS,
+// } from "@/modules/medicalSchedule/format";
+// import { useMedicalEvents } from "@/modules/medicalSchedule/hooks";
 import "@/modules/healthCards/components/healthCards.css";
 
 type FormState =
@@ -40,23 +40,23 @@ export function HealthCardPage() {
 
   const pet = usePet(petId, { enabled: isValidPetId });
   const entries = useHealthCardEntries(petId, { enabled: isValidPetId });
-  const medicalEvents = useMedicalEvents();
-  const [filterType, setFilterType] = useState<MedicalEventType | "">("");
-  const [includeScheduled, setIncludeScheduled] = useState(false);
+  //   const medicalEvents = useMedicalEvents();
+  //   const [filterType, setFilterType] = useState<MedicalEventType | "">("");
+  //   const [includeScheduled, setIncludeScheduled] = useState(false);
 
-  const petMedicalEvents = useMemo(
-    () => (medicalEvents.data ?? []).filter((event) => event.pet_id === petId),
-    [medicalEvents.data, petId],
-  );
+  //   const petMedicalEvents = useMemo(
+  //     () => (medicalEvents.data ?? []).filter((event) => event.pet_id === petId),
+  //     [medicalEvents.data, petId],
+  //   );
 
-  const historyEvents = includeScheduled
-    ? petMedicalEvents
-    : petMedicalEvents.filter((event) => event.status === "completed");
+  //   const historyEvents = includeScheduled
+  //     ? petMedicalEvents
+  //     : petMedicalEvents.filter((event) => event.status === "completed");
 
-  const filteredHistoryEvents =
-    filterType === ""
-      ? historyEvents
-      : historyEvents.filter((event) => event.type === filterType);
+  //   const filteredHistoryEvents =
+  //     filterType === ""
+  //       ? historyEvents
+  //       : historyEvents.filter((event) => event.type === filterType);
 
   const createEntry = useCreateHealthCardEntry(petId);
   const updateEntry = useUpdateHealthCardEntry(petId);
@@ -223,7 +223,7 @@ export function HealthCardPage() {
           )}
         </section>
 
-        <section className="space-y-4">
+        {/* <section className="space-y-4">
           <div className="rounded-md border border-slate-200 bg-white">
             <div className="border-b border-slate-200 p-4">
               <div className="space-y-3">
@@ -325,7 +325,7 @@ export function HealthCardPage() {
               ))}
             </div>
           </div>
-        </section>
+        </section> */}
       </section>
     </main>
   );
