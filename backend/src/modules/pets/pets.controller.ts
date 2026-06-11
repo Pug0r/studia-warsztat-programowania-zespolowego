@@ -232,13 +232,51 @@ export const uploadPhoto = async (req: MulterRequest, res: Response) => {
       return sendBadRequest(res, "Only JPEG, PNG and WebP images are allowed.");
     }
 
-    const imageUrl = await petsService.uploadPhoto(
+    const petRow = await petsService.uploadPhoto(
       id,
       req.file.buffer,
       req.file.mimetype,
     );
 
-    return res.json({ image_url: imageUrl });
+    return res.json(petRow);
+  } catch (error) {
+    if (error instanceof Error) {
+      return sendBadRequest(res, error.message);
+    }
+    return sendServerError(res);
+  }
+};
+
+export const setMainPhoto = async (req: Request, res: Response) => {
+  try {
+    const id = validatePetId(req.params.id);
+    const { image_url } = req.body as Record<string, unknown>;
+
+    if (typeof image_url !== "string" || !image_url.trim()) {
+      return sendBadRequest(res, "Field 'image_url' is required.");
+    }
+
+    const pet = await petsService.setMainPhoto(id, image_url.trim());
+    return res.json(pet);
+  } catch (error) {
+    if (error instanceof Error) {
+      return sendBadRequest(res, error.message);
+    }
+    return sendServerError(res);
+  }
+};
+
+export const deletePhoto = async (req: Request, res: Response) => {
+  try {
+    const id = validatePetId(req.params.id);
+    const { image_url } = req.body as Record<string, unknown>;
+
+    if (typeof image_url !== "string" || !image_url.trim()) {
+      return sendBadRequest(res, "Field 'image_url' is required.");
+    }
+
+    const pet = await petsService.deletePhoto(id, image_url.trim());
+    return res.json(pet);
   } catch (error) {
     if (error instanceof Error) {
       return sendBadRequest(res, error.message);

@@ -28,6 +28,8 @@ router.post(
   authMiddleware,
   petsController.uploadPhoto,
 );
+router.post("/:id/photo/main", authMiddleware, petsController.setMainPhoto);
+router.delete("/:id/photo", authMiddleware, petsController.deletePhoto);
 router.get("/:id", petsController.getById);
 router.patch("/:id", authMiddleware, petsController.update);
 router.delete("/:id", authMiddleware, petsController.delete);
