@@ -7,12 +7,30 @@ import type {
 
 export type CreatePetDTO = Pick<
   PetInsert,
-  "age" | "breed" | "description" | "name" | "size" | "species" | "weight"
+  | "age"
+  | "breed"
+  | "description"
+  | "ideal_home"
+  | "name"
+  | "personality"
+  | "size"
+  | "species"
+  | "special_needs"
+  | "weight"
 >;
 
 export type UpdatePetDTO = Pick<
   PetUpdate,
-  "age" | "breed" | "description" | "name" | "size" | "species" | "weight"
+  | "age"
+  | "breed"
+  | "description"
+  | "ideal_home"
+  | "name"
+  | "personality"
+  | "size"
+  | "species"
+  | "special_needs"
+  | "weight"
 >;
 
 const isNonEmptyString = (value: unknown): value is string =>
@@ -48,8 +66,18 @@ export const validateCreatePetPayload = (payload: unknown): CreatePetDTO => {
     throw new Error("Payload must be an object.");
   }
 
-  const { age, breed, description, name, size, species, weight } =
-    payload as Record<string, unknown>;
+  const {
+    age,
+    breed,
+    description,
+    ideal_home,
+    name,
+    personality,
+    size,
+    species,
+    special_needs,
+    weight,
+  } = payload as Record<string, unknown>;
 
   if (!isNonEmptyString(name)) {
     throw new Error("Field 'name' is required and must be a non-empty string.");
@@ -81,9 +109,17 @@ export const validateCreatePetPayload = (payload: unknown): CreatePetDTO => {
     age,
     breed: parseOptionalBreed(breed) ?? null,
     description: description.trim(),
+    ideal_home:
+      typeof ideal_home === "string" ? ideal_home.trim() || null : undefined,
     name: name.trim(),
+    personality:
+      typeof personality === "string" ? personality.trim() || null : undefined,
     size: parseOptionalSize(size) ?? null,
     species: species.trim(),
+    special_needs:
+      typeof special_needs === "string"
+        ? special_needs.trim() || null
+        : undefined,
     weight,
   };
 };
@@ -93,8 +129,18 @@ export const validateUpdatePetPayload = (payload: unknown): UpdatePetDTO => {
     throw new Error("Payload must be an object.");
   }
 
-  const { age, breed, description, name, size, species, weight } =
-    payload as Record<string, unknown>;
+  const {
+    age,
+    breed,
+    description,
+    ideal_home,
+    name,
+    personality,
+    size,
+    species,
+    special_needs,
+    weight,
+  } = payload as Record<string, unknown>;
 
   const dto: UpdatePetDTO = {};
 
@@ -135,6 +181,27 @@ export const validateUpdatePetPayload = (payload: unknown): UpdatePetDTO => {
 
   if (breed !== undefined) {
     dto.breed = parseOptionalBreed(breed) ?? null;
+  }
+
+  if (ideal_home !== undefined) {
+    if (ideal_home !== null && typeof ideal_home !== "string") {
+      throw new Error("Field 'ideal_home' must be a string or null.");
+    }
+    dto.ideal_home = ideal_home === null ? null : ideal_home.trim();
+  }
+
+  if (personality !== undefined) {
+    if (personality !== null && typeof personality !== "string") {
+      throw new Error("Field 'personality' must be a string or null.");
+    }
+    dto.personality = personality === null ? null : personality.trim();
+  }
+
+  if (special_needs !== undefined) {
+    if (special_needs !== null && typeof special_needs !== "string") {
+      throw new Error("Field 'special_needs' must be a string or null.");
+    }
+    dto.special_needs = special_needs === null ? null : special_needs.trim();
   }
 
   if (size !== undefined) {

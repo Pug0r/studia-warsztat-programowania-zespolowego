@@ -7,8 +7,9 @@ export const usePetPhotoUpload = () => {
   return useMutation({
     mutationFn: ({ petId, file }: { petId: number; file: File }) =>
       uploadPetPhotoRequest(petId, file),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["get_pet_list"] });
+      queryClient.invalidateQueries({ queryKey: ["get_pet", variables.petId] });
     },
   });
 };

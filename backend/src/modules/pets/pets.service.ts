@@ -1,5 +1,6 @@
 import type {
   CreatePetWalkDTO,
+  Pet,
   PetInsert,
   PetRow,
   PetUpdate,
@@ -15,7 +16,9 @@ import {
   isPetBlockedForWalk,
 } from "#modules/medicalSchedule/medicalSchedule.service.js";
 import type { CreatePetDTO, UpdatePetDTO } from "./pets.validation.js";
-import type { Pet } from "@repo/types";
+
+const buildPhotoPath = (id: number, ext: string) =>
+  `${String(id)}/${String(Date.now())}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
@@ -210,13 +213,13 @@ export const uploadPhoto = async (
   id: number,
   buffer: Buffer,
   mimetype: string,
-): Promise<string> => {
+): Promise<PetRow> => {
   const ext = mimetype.split("/")[1] ?? "jpg";
-  const path = `${String(id)}/photo.${ext}`;
+  const path = buildPhotoPath(id, ext);
 
   const { error: uploadError } = await supabase.storage
     .from("pet-images")
-    .upload(path, buffer, { contentType: mimetype, upsert: true });
+    .upload(path, buffer, { contentType: mimetype });
 
   if (uploadError) {
     throw new Error(uploadError.message);
@@ -226,18 +229,111 @@ export const uploadPhoto = async (
     .from("pet-images")
     .getPublicUrl(path);
 
+  if (!urlData.publicUrl) {
+    throw new Error("Unable to generate public image URL.");
+  }
+
   const imageUrl = urlData.publicUrl;
 
-  const { error: updateError } = await supabase
+  const pet = await getById(id);
+  if (!pet) {
+    throw new Error("Pet not found.");
+  }
+
+  const existingUrls = pet.image_urls ?? [];
+  const imageUrls = [...existingUrls, imageUrl];
+
+  const updateRow: PetUpdate = { image_urls: imageUrls };
+  if (!pet.image_url) {
+    updateRow.image_url = imageUrl;
+  }
+
+  const { data, error: updateError } = await supabase
     .from("pets")
-    .update({ image_url: imageUrl })
-    .eq("id", id);
+    .update(updateRow)
+    .eq("id", id)
+    .select("*")
+    .maybeSingle();
 
   if (updateError) {
     throw new Error(updateError.message);
   }
 
-  return imageUrl;
+  if (!data) {
+    throw new Error("Failed to update pet record.");
+  }
+
+  return data;
+};
+
+export const setMainPhoto = async (
+  id: number,
+  imageUrl: string,
+): Promise<PetRow> => {
+  const pet = await getById(id);
+
+  if (!pet) {
+    throw new Error("Pet not found.");
+  }
+
+  const gallery = pet.image_urls ?? [];
+  if (!gallery.includes(imageUrl) && pet.image_url !== imageUrl) {
+    throw new Error("Photo not found for this pet.");
+  }
+
+  const { data, error } = await supabase
+    .from("pets")
+    .update({ image_url: imageUrl })
+    .eq("id", id)
+    .select("*")
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  if (!data) {
+    throw new Error("Failed to update pet record.");
+  }
+
+  return data;
+};
+
+export const deletePhoto = async (
+  id: number,
+  imageUrl: string,
+): Promise<PetRow | null> => {
+  const pet = await getById(id);
+  if (!pet) {
+    throw new Error("Pet not found.");
+  }
+
+  const existingUrls = pet.image_urls ?? [];
+  const newUrls = existingUrls.filter((url) => url !== imageUrl);
+  if (newUrls.length === existingUrls.length && pet.image_url !== imageUrl) {
+    throw new Error("Photo not found for this pet.");
+  }
+
+  const updateRow: PetUpdate = {
+    image_urls: newUrls.length > 0 ? newUrls : null,
+  };
+
+  if (pet.image_url === imageUrl) {
+    updateRow.image_url = newUrls[0] ?? null;
+  }
+
+  const { data, error } = await supabase
+    .from("pets")
+    .update(updateRow)
+    .eq("id", id)
+    .select("*")
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
 };
 
 export const checkWalkConflicts = async (

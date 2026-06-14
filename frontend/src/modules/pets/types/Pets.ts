@@ -8,6 +8,9 @@ export type CreatePetPayload = {
   description: string;
   breed?: string | null;
   size?: string | null;
+  ideal_home?: string | null;
+  personality?: string | null;
+  special_needs?: string | null;
 };
 
 export type UpdatePetPayload = Partial<CreatePetPayload>;

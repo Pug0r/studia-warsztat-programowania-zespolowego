@@ -1,4 +1,5 @@
 import React from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
   DialogContent,
@@ -9,7 +10,10 @@ import {
 import "./PetDetailModal.css";
 import { usePet } from "../hooks/usePet";
 import type { Pet } from "../types/Pets";
+import { deletePetPhotoRequest, setPetMainPhotoRequest } from "../api/petsApi";
 import { useNavigate } from "react-router-dom";
+import { useUserProfile } from "@/modules/auth/hooks/useUserProfile";
+import Masonry from "react-masonry-css";
 
 type Props = {
   petId: number;
@@ -25,31 +29,55 @@ export const PetDetailModal: React.FC<Props> = ({
   onClose,
 }) => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { role } = useUserProfile();
+  const isAdmin = role === "admin";
   const { data: pet } = usePet(petId, { initialData });
 
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case "available":
-        return "Available";
-      case "quarantine":
-        return "In Quarantine";
-      default:
-        return status;
-    }
-  };
+  //   const getStatusLabel = (status: string) => {
+  //     switch (status) {
+  //       case "available":
+  //         return "Available";
+  //       case "quarantine":
+  //         return "In Quarantine";
+  //       default:
+  //         return status;
+  //     }
+  //   };
 
-  const statusClass =
-    (pet?.status || "available") === "quarantine"
-      ? "pet-detail__status pet-detail__status--quarantine"
-      : "pet-detail__status pet-detail__status--available";
+  //   const statusClass =
+  //     (pet?.status || "available") === "quarantine"
+  //       ? "pet-detail__status pet-detail__status--quarantine"
+  //       : "pet-detail__status pet-detail__status--available";
+
+  const setMainPhotoMutation = useMutation({
+    mutationFn: ({ imageUrl }: { imageUrl: string }) =>
+      setPetMainPhotoRequest(petId, imageUrl),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["get_pet", petId] });
+      queryClient.invalidateQueries({ queryKey: ["get_pet_list"] });
+    },
+  });
+
+  const deletePhotoMutation = useMutation({
+    mutationFn: ({ imageUrl }: { imageUrl: string }) =>
+      deletePetPhotoRequest(petId, imageUrl),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["get_pet", petId] });
+      queryClient.invalidateQueries({ queryKey: ["get_pet_list"] });
+    },
+  });
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       {/* Tailwind for the MAX WIDTH and MAX HEIGHT only */}
-      <DialogContent className="shelter-public pet-detail-dialog p-5 pt-2 pb-2 max-h-[90vh] pr-2 max-w-4xl w-full">
+      <DialogContent
+        aria-describedby={undefined}
+        className="shelter-public pet-detail-dialog p-5 pt-1 pb-2 max-h-[90vh] pr-2 max-w-4xl w-full overflow-hidden"
+      >
         {/* Scrollable content area */}
-        <div className="overflow-y-auto flex-1 pr-3 min-h-0">
-          <DialogHeader className="pb-6">
+        <div className="overflow-y-auto pr-3">
+          <DialogHeader className="pb-6 mt-2">
             <DialogTitle className="pet-detail__title">
               Meet {pet?.name}!
             </DialogTitle>
@@ -92,23 +120,25 @@ export const PetDetailModal: React.FC<Props> = ({
                 <div className="pet-detail__info">
                   <div className="pet-detail__header">
                     <p className="pet-detail__breed">{pet.breed}</p>
-                    <span className={statusClass}>
+                    {/* <span className={statusClass}>
                       <span className="pet-detail__status-dot" />
                       {getStatusLabel(pet.status || "available")}
-                    </span>
+                    </span> */}
                   </div>
 
                   {/* Stats */}
                   <div className="pet-detail__stats">
-                    <div className="pet-detail__stat">
-                      <p className="pet-detail__stat-label">Breed</p>
-                      <p className="pet-detail__stat-value">{pet.breed}</p>
-                    </div>
+                    {pet.breed !== null && (
+                      <div className="pet-detail__stat">
+                        <p className="pet-detail__stat-label">Breed</p>
+                        <p className="pet-detail__stat-value">{pet.breed}</p>
+                      </div>
+                    )}
                     {pet.age !== null && (
                       <div className="pet-detail__stat">
                         <p className="pet-detail__stat-label">Age</p>
                         <p className="pet-detail__stat-value">
-                          {pet.age} year{pet.age !== 1 ? "s" : ""}
+                          {pet.age} year{pet.age === 1 ? "" : "s"}
                         </p>
                       </div>
                     )}
@@ -158,18 +188,57 @@ export const PetDetailModal: React.FC<Props> = ({
                 </div>
               </div>
 
-              {/* Photo Gallery - can be commented out if not ready */}
+              {/* Photo Gallery */}
+
               <div className="pet-detail__gallery pt-2">
                 <h3 className="pet-detail__gallery-title">Photo Gallery</h3>
-                <div className="pet-detail__gallery-grid">
+                <Masonry
+                  breakpointCols={3}
+                  className="pet-detail__gallery-grid"
+                  columnClassName="pet-detail__gallery-column"
+                >
                   {[pet.image_url, ...(pet.image_urls || [])]
                     .filter(Boolean)
-                    .map((url, index) => (
-                      <div key={index} className="pet-detail__gallery-item">
-                        <img src={url} alt={`${pet.name} photo ${index + 1}`} />
-                      </div>
-                    ))}
-                </div>
+                    .map((url) => {
+                      const imageUrl = String(url);
+                      const isMain = pet.image_url === imageUrl;
+
+                      return (
+                        <div
+                          key={imageUrl}
+                          className="pet-detail__gallery-item max-h-100"
+                        >
+                          <img src={imageUrl} alt={pet.name} />
+                          {isAdmin && (
+                            <div className="pet-detail__gallery-actions">
+                              <button
+                                type="button"
+                                className="hp-btn hp-btn--secondary pet-detail__gallery-button hover:bg-slate-300!"
+                                disabled={
+                                  setMainPhotoMutation.isPending || isMain
+                                }
+                                onClick={() =>
+                                  setMainPhotoMutation.mutate({ imageUrl })
+                                }
+                              >
+                                {isMain ? "Is profile" : "Set profile"}
+                              </button>
+                              <button
+                                type="button"
+                                className="hp-btn hp-btn--primary bg-red-600! hover:bg-red-700! disabled:bg-red-400!"
+                                disabled={deletePhotoMutation.isPending}
+                                onClick={() =>
+                                  deletePhotoMutation.mutate({ imageUrl })
+                                }
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                </Masonry>
               </div>
             </div>
           )}

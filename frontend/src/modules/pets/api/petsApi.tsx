@@ -149,7 +149,7 @@ export const deletePetWalkRequest = async (walkId: number): Promise<void> => {
 export const uploadPetPhotoRequest = async (
   petId: number,
   file: File,
-): Promise<string> => {
+): Promise<Pet> => {
   if (!supabase) {
     throw new Error("Supabase client is not initialized");
   }
@@ -170,7 +170,67 @@ export const uploadPetPhotoRequest = async (
     throw new Error(`Upload error: ${response.status}`);
   }
   const data = await response.json();
-  return data.image_url;
+  return data;
+};
+
+export const setPetMainPhotoRequest = async (
+  petId: number,
+  imageUrl: string,
+): Promise<Pet> => {
+  if (!supabase) {
+    throw new Error("Supabase client is not initialized");
+  }
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const token = session?.access_token;
+
+  const response = await fetch(`/api/pets/${petId}/photo/main`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify({ image_url: imageUrl }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Set main photo error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data;
+};
+
+export const deletePetPhotoRequest = async (
+  petId: number,
+  imageUrl: string,
+): Promise<Pet> => {
+  if (!supabase) {
+    throw new Error("Supabase client is not initialized");
+  }
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const token = session?.access_token;
+
+  const response = await fetch(`/api/pets/${petId}/photo`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify({ image_url: imageUrl }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Delete photo error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data;
 };
 
 export const createPetRequest = async (
